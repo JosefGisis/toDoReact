@@ -9,6 +9,7 @@ List.propTypes = {
 function List({listTitle, listToDos}) {
     const title = listTitle
     const toDos = listToDos
+    // user immer to simplify object changes
     const [selectedIndex, setSelectedIndex] = useState(-1)
     return (
         <Fragment>
