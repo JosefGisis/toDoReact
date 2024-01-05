@@ -1,15 +1,10 @@
-import List from './list.jsx'
-import Alert from './alert.jsx'
-import Form from './form.jsx'
+import MainLayout from "./layouts/MainLayout"
 
-function App() {
-  return (
-  <div>
-    <List listTitle='Have You?' listToDos={["buy milk", "buy bread", "buy cheese"]}/>
-    <Alert>Hello there</Alert>
-    <Form/>
-  </div>
-  )
+function App({children}) {
+
+	// implement context and provider
+	// implement redux
+	return <MainLayout>{children}</MainLayout>
 }
 
 export default App
