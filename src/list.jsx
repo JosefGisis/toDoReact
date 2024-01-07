@@ -1,10 +1,4 @@
 import { Fragment, useState } from 'react'
-import PropTypes from 'prop-types'
-
-List.propTypes = {
-    listTitle: PropTypes.string.isRequired,
-    listToDos: PropTypes.arrayOf(PropTypes.string).isRequired
-}
 
 function List({listTitle, listToDos}) {
     const title = listTitle
@@ -26,6 +20,5 @@ function List({listTitle, listToDos}) {
         </Fragment>
     )
 }
-
 
 export default List
