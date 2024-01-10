@@ -1,6 +1,6 @@
 import MainLayout from "./layouts/MainLayout"
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom"
-import CreateList from "./features/CreateList"
+import CreateList from "./features/NewList"
 
 function App() {
 

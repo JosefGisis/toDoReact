@@ -1,6 +1,11 @@
 import { useForm } from 'react-hook-form'
+import { useEffect, useState } from 'react'
+import usePractice from '../hooks/usePractice'
+
 
 function NewListForm() {
+    const {entry, error} = usePractice({})
+    
 	const { 
         register, 
         handleSubmit, 
@@ -10,15 +15,15 @@ function NewListForm() {
             isValid, 
             isSubmitted } 
         } = useForm()
-
-    const onSubmit = (data) => {
+        
+    const onSubmit = async(data) => {
         console.log(data)
     }
 
     const onCancel = () => {
         reset()
     }
-	
+
     return (
         <form onSubmit={ handleSubmit(onSubmit) }>
             <h3 className="text-2xl | mb-5">Enter New List Information</h3>
@@ -33,6 +38,7 @@ function NewListForm() {
                 ></input>
                 { (errors.listTitle?.type === 'minLength' && isSubmitted) && <p className='text-rose-500'>minimum five characters required</p>}
                 { (errors.listTitle?.type === 'required' && isSubmitted) && <p className='text-rose-500'>field required</p>}
+                { (errors.listTitle?.type === 'maxLength' && isSubmitted) && <p className='text-rose-500'>maximum 25 character</p>}
             </div>
             
             <div className="my-2">
@@ -62,7 +68,10 @@ function NewListForm() {
                 >submit</button>
           
             </div>
-            
+            { entry?.title && <p>{ entry.title}</p>}
+            { entry?.body && <p>{ entry.body}</p>}
+            { error && <p>{ error.message }</p>}
+               
         </form>
     )
 }
