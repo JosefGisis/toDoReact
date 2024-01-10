@@ -1,10 +1,13 @@
 import { useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react'
-import usePractice from '../hooks/usePractice'
+import listServices from '../../../services/listServices'
 
 
 function NewListForm() {
-    const {entry, error} = usePractice({})
+    // //const {entry, error} = usePractice({})
+    // const [newEntry, setNewEntry] = useState({})
+    // const [isLoading, setIsLoading] = useState(false)
+    // const [error, setError] = useState(null)
     
 	const { 
         register, 
@@ -14,10 +17,28 @@ function NewListForm() {
             errors, 
             isValid, 
             isSubmitted } 
-        } = useForm()
+    } = useForm()
         
     const onSubmit = async(data) => {
         console.log(data)
+        // listServices.postList()
+        // const listObject = {
+        //     title: data.listTitle,
+        //     list_description: data.listDescription,
+        //     users_id: 1,
+        // }
+        // try {
+        //     setIsLoading(true)
+        //     if (!response.ok) return new Error(`ERROR ${response.status} fetching ${response.url}`)
+        //     const confirmation = await response.json()
+        //     setNewEntry(confirmation)            
+        //     setIsLoading(false)
+        //     setError(null)
+        // } catch (err) {
+        //     console.error(err)
+        //     setError(err)
+        //     setIsLoading(false)
+        // }
     }
 
     const onCancel = () => {
@@ -44,7 +65,7 @@ function NewListForm() {
             <div className="my-2">
                 <p className="my-2">List Description:</p>
                 <textarea
-                    { ...register('listDescription') } 
+                    { ...register('list_description') } 
                     className="text-black | p-1 | rounded-md focus:outline-sky-500" 
                     id="new-list-description" 
                     cols="25" rows="3" 
@@ -68,9 +89,9 @@ function NewListForm() {
                 >submit</button>
           
             </div>
-            { entry?.title && <p>{ entry.title}</p>}
-            { entry?.body && <p>{ entry.body}</p>}
-            { error && <p>{ error.message }</p>}
+            {/* { newEntry?.title && <p>{ newEntry.title}</p>}
+            { newEntry?.body && <p>{ newEntry.body}</p>}
+            { error && <p>{ error.message }</p>} */}
                
         </form>
     )
