@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useLogin } from '../hooks/authHooks'
 
 function LoginForm() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false)
+	const [login, {isLoading}] = useLogin()
 
 	useEffect(() => {
 		if (isLoggedIn) console.log('logged in')
@@ -16,6 +18,7 @@ function LoginForm() {
 	} = useForm()
 
 	const onSubmit = async (data) => {
+		login()
         fetch('http://localhost:3000/api/login', {
 			method: 'POST',
 			headers: {

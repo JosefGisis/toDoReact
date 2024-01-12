@@ -45,6 +45,12 @@ function NewListForm() {
         reset()
     }
 
+    const errMap = {
+        minLength:'Minium five characters',
+        required: 'This field is required.',
+        maxLength:' Maximum of 25 characters allowed'
+    }
+
     return (
         <form onSubmit={ handleSubmit(onSubmit) }>
             <h3 className="text-2xl | mb-5">Enter New List Information</h3>
@@ -52,11 +58,12 @@ function NewListForm() {
             <div className="mt-2 mb-4">
                 <p className="my-2">List Title:</p>
                 <input 
-                    { ...register('listTitle', { required: true, minLength: 5, maxLength: 25, } ) } 
+                    { ...register('listTitle', { required: "minimum five characters", minLength: 5, maxLength: 25, } ) } 
                     className="text-black | p-1 | rounded-md focus:outline-sky-500" 
                     type="text"
                     id="new-list-title"
                 ></input>
+                {isSubmitted && errMap[errors.listTitle?.type] && <p className='text-rose-500'>{errMap[errors.listTitle?.type]}</p>}
                 { (errors.listTitle?.type === 'minLength' && isSubmitted) && <p className='text-rose-500'>minimum five characters required</p>}
                 { (errors.listTitle?.type === 'required' && isSubmitted) && <p className='text-rose-500'>field required</p>}
                 { (errors.listTitle?.type === 'maxLength' && isSubmitted) && <p className='text-rose-500'>maximum 25 character</p>}

@@ -12,7 +12,7 @@ function Appp() {
 				<Route path="/login" Component={Login} />
 				<Route path="/signup" Component={SignUpPage} />
 				<Route path="/" Component={Dashboard} />
-				<Route path="/lists" Component={Lists}></Route>
+				<Route path="/lists" Component={Lists} />
 				<Route path="/lists/:listId" Component={List}></Route>
 				<Route path="/profile"></Route>
 			</Routes>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 function SignUpForm() {
@@ -6,6 +7,8 @@ function SignUpForm() {
 		handleSubmit,
 		formState: { errors, isValid, isSubmitted },
 	} = useForm()
+
+	const [err,setErr] = useState(null)
 
 	const onSubmit = async (data) => {
         fetch('http://localhost:3000/api/register', {
@@ -18,16 +21,20 @@ function SignUpForm() {
 				email: data.email,
 				password: data.password
 			})})
-            .then((res) => res.json())
+            .then(async (res) => {
+				const data = await res.json()
+				if(res.status === 200) return data 
+				setErr(data)
+			})
 			.then((data) => console.log(data))
-			.catch((err) => console.log(err))
+			.catch((err) => err.json().then(error=>console.log('Error',error)))
 	}
     
 	return (
         <form onSubmit={handleSubmit(onSubmit)} className="w-[80%]">
 			<h3 className="text-2xl mb-5 text-center">Sign-up</h3>
             <p className="mb-5 text-center">Join <i>Have You?</i> to start creating and storing your personal tasks.</p>
-
+			{err && <div className="border rounded bg-rose-300">{err.message}</div>}
 			<div className="mb-8">
 				<input
 					{...register('username', { 
@@ -48,8 +55,6 @@ function SignUpForm() {
 				{errors.username?.type === 'minLength' && isSubmitted && (
                     <p className="text-rose-500 text-sm absolute">minimum five characters required*</p>
 				)}
-				{errors.username?.type === 'required' && isSubmitted && <p className="text-rose-500 text-sm absolute">field required*</p>}
-				{errors.username?.type === 'maxLength' && isSubmitted && <p className="text-rose-500 text-sm absolute">maximum 25 character*</p>}
 			</div>
 
 			<div className="mb-8">
