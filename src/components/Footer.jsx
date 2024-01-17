@@ -10,4 +10,5 @@ function Footer({ children }) {
 		</footer>
 	)
 }
+
 export default Footer

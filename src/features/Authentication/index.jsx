@@ -1,12 +1,5 @@
-import LoginForm from "./components/LoginForm"
-import LoginFormContainer from "./components/LoginFormContainer"
+import LoginForm from './components/LoginForm'
 
-function Authentication() {
-  return (
-    <LoginFormContainer>
-        <LoginForm />
-    </LoginFormContainer>
-  )
-}
+const Authentication = () => <LoginForm />
 
 export default Authentication

@@ -1,12 +1,5 @@
-import SignUpForm from "./components/SignUpForm"
-import SignUpFormContainer from "./components/SignUpFormContainer"
+import SignUpForm from './components/SignUpForm'
 
-function SignUp() {
-  return (
-    <SignUpFormContainer>
-        <SignUpForm />
-    </SignUpFormContainer>
-  )
-}
+const SignUp = () => <SignUpForm />
 
 export default SignUp
