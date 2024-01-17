@@ -30,7 +30,7 @@ function SignUpForm() {
 				<p className="mb-5 text-center">
 					Join <i>Have You?</i> to start creating and storing your personal tasks.
 				</p>
-				
+
 				<div className="mb-8">
 					<input
 						{...register('username', {
@@ -48,7 +48,7 @@ function SignUpForm() {
 						type="text"
 						placeholder="username"
 					></input>
-					{ errors?.username && <p className="text-rose-500 text-sm absolute">{ errors.username.message }</p>}
+					{errors?.username && <p className="text-rose-500 text-sm absolute">{errors.username.message}</p>}
 				</div>
 
 				<div className="mb-8">
@@ -64,7 +64,7 @@ function SignUpForm() {
 						type="text"
 						placeholder="email"
 					></input>
-					{ errors.email && <p className="text-rose-500 text-sm absolute">{ errors.email.message }</p> }
+					{errors.email && <p className="text-rose-500 text-sm absolute">{errors.email.message}</p>}
 				</div>
 
 				<div className="mb-8">
@@ -79,8 +79,8 @@ function SignUpForm() {
 						className="text-black p-2 w-[100%] bg-slate-50 rounded-md focus:outline-sky-500"
 						type="password"
 						placeholder="password"
-						></input>
-					{ errors?.password && <p className="text-rose-500 text-sm absolute">{ errors.password.message }</p> }
+					></input>
+					{errors?.password && <p className="text-rose-500 text-sm absolute">{errors.password.message}</p>}
 				</div>
 
 				<p className="text-center mb-4">
@@ -90,16 +90,19 @@ function SignUpForm() {
 					</a>
 				</p>
 
-				<button
-					id="new-list-submit"
-					className={
-						'w-[100%] py-2 mb-6 focus:outline-sky-500 transition ' +
-						(isValid ? 'bg-sky-500 hover:bg-sky-600 hover:underline' : 'bg-sky-800')
-					}
-					type="submit"
-				>
-					create account
-				</button>
+				<div className='mb-6'>
+					<button
+						id="new-list-submit"
+						className={
+							'w-[100%] py-2 mb-3 focus:outline-sky-500 transition ' +
+							(isValid ? 'bg-sky-500 hover:bg-sky-600 hover:underline' : 'bg-sky-800')
+						}
+						type="submit"
+					>
+						create account
+					</button>
+					{errs && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{errs.message}</div>}
+				</div>
 			</form>
 		</div>
 	)

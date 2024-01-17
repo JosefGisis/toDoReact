@@ -3,7 +3,6 @@ import Login from './pages/Login'
 import SignUpPage from './pages/SignUpPage'
 import Dashboard from './pages/Dashboard'
 import { useParams } from 'react-router-dom'
-import { list } from 'postcss'
 
 function Appp() {
 	return (
