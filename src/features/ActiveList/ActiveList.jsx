@@ -1,14 +1,15 @@
-import { useEffect, useReducer } from "react"
-import listIdReducer from "../../state-management/reducers/listIdReducer"
+import { useContext } from "react"
+import ActiveListContext from "../../state-management/contexts/ActiveListContext"
 
 function ActiveList() {
-	const [activeList, dispatch] = useReducer(listIdReducer)
+	const { activeList } = useContext(ActiveListContext)
+	console.log( activeList )
 
 	return (
 		<div>
-			<h3 className="w-fit rounded-lg | bg-sky-500 | text-4xl font-bold | p-3  mb-5">Have You?</h3>
+			<h3 className="w-fit rounded-lg | bg-sky-500 | text-4xl font-bold | p-3  mb-5">{activeList.title}</h3>
 			<p className="">
-				<i>Created: 01/01/2024</i>
+				<i>Created: {activeList.creationDate}</i>
 			</p>
 		</div>
 	)

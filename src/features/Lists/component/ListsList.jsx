@@ -1,20 +1,20 @@
-import { useState, useReducer } from 'react'
-import DeleteListButton from './DeleteListButton'
+import { useContext } from 'react'
 import { useLists } from '../hooks/useLists'
-import Spinner from '../../../components/Spinner'
-import listIdReducer from '../../../state-management/reducers/listIdReducer'
+import ActiveListContext from '../../../state-management/contexts/ActiveListContext'
 
 export default function ToDoListsList() {
 	const { lists, isLoading, errs } = useLists()
-	const [listId, dispatch] = useReducer(listIdReducer)
+	const { activeList, dispatch } = useContext(ActiveListContext)
 
 	const handleClick = (list) => {
-		dispatch({ type: 'ASSIGN', value: list.id} )
+		dispatch({ type: 'ASSIGN', value: { id: list.id, title: list.title, creationDate: list.creation_date } })
 	}
+
+	console.log(activeList)
 
 	return (
 		<div>
-			{isLoading && <div className='px-4 my-3 text-sky-200 py-4 bg-slate-700'>getting your lists...</div>}
+			{isLoading && <div className="px-4 my-3 text-sky-200 py-4 bg-slate-700">getting your lists...</div>}
 
 			{lists &&
 				lists?.map((list, i) => (
@@ -22,7 +22,7 @@ export default function ToDoListsList() {
 						key={i}
 						className={
 							'flex flex-row justify-between px-4 my-3 ' +
-							(listId === list?.id ? 'bg-slate-500 text-sky-200 py-4' : 'bg-slate-700 py-2')
+							(activeList.id === list?.id ? 'bg-slate-500 text-sky-200 py-4' : 'bg-slate-700 py-2')
 						}
 						onClick={() => handleClick(list)}
 					>
