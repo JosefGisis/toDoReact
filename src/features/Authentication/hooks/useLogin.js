@@ -33,7 +33,10 @@ export function useLogin() {
                     setErrs(null)
                 }
 			})
-			.catch((err) => console.error(err))
+			.catch(() => {
+				setErrs({message:'Error logging in. Please try again later'})
+				setIsLoading(false)
+			})
 	}, [])
 
 	return {login, isLoading, loggedIn, errs, token}

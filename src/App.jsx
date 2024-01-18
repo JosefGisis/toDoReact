@@ -1,19 +1,23 @@
-import MainLayout from "./layouts/MainLayout"
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom"
-import NewList from "./features/NewList"
-import ToDoLists from "./features/ToDoLists"
-import ToDos from "./features/ToDos/"
+import { BrowserRouter as Router, Route, Routes, Link, Navigate, Outlet } from 'react-router-dom'
+import Login from './pages/Login'
+import SignUpPage from './pages/SignUpPage'
+import Dashboard from './pages/Dashboard'
+import FourOFour from './pages/404'
+
+// implement context and provider
+// implement redux
 
 function App() {
-
-	// implement context and provider
-	// implement redux
-	return {
-			<MainLayout>
-				<ToDoLists /> 
-				<NewList />
-				<ToDos />
-			</MainLayout>
+	return (
+		<Router>
+			<Routes>
+				<Route path="/" Component={Dashboard} />
+				<Route path="/login" Component={Login} />
+				<Route path="/signup" Component={SignUpPage} />
+				<Route path="/profile"></Route>
+				<Route path="*" Component={FourOFour}></Route>
+			</Routes>
+		</Router>
 	)
 }
 
