@@ -1,7 +1,6 @@
-function Footer({ children }) {
+function Footer() {
 	return (
 		<footer id="primary-footer">
-            { children }
 			<div className="responsive-container">
 				<div className="p-2">
 					<p className="text-center">Designed by Josef Gisis 2023</p>

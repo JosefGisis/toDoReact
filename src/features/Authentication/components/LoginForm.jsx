@@ -31,7 +31,7 @@ function LoginForm() {
 	}
 
 	return (
-		<div className="flex flex-col items-center bg-slate-700 w-[25rem] px-[5rem] py-6 rounded-xl">
+		<div className="flex flex-col items-center m-auto bg-slate-700 w-[25rem] px-[5rem] py-6 rounded-xl">
 			<form onSubmit={handleSubmit(onSubmit)} className="w-[100%]">
 				<fieldset disabled={isLoading}>
 					<h3 className="text-2xl mb-5 text-center">Login</h3>

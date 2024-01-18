@@ -1,7 +1,7 @@
 import Authentication from '../features/Authentication'
 import MainLayout from '../layouts/MainLayout'
 
-function Login() {
+function LoginPage() {
 	return (
 		<MainLayout>
 			<Authentication />
@@ -9,4 +9,4 @@ function Login() {
 	)
 }
 
-export default Login
+export default LoginPage

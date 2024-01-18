@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Route, Routes, Link, Navigate, Outlet } from 'react-router-dom'
-import Login from './pages/Login'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
-import Dashboard from './pages/Dashboard'
-import FourOFour from './pages/404'
+import DashboardPage from './pages/DashboardPage'
+import FourOFourPage from './pages/404Page'
 
 // implement context and provider
 // implement redux
@@ -11,11 +11,11 @@ function App() {
 	return (
 		<Router>
 			<Routes>
-				<Route path="/" Component={Dashboard} />
-				<Route path="/login" Component={Login} />
+				<Route path="/" Component={DashboardPage} />
+				<Route path="/login" Component={LoginPage} />
 				<Route path="/signup" Component={SignUpPage} />
 				<Route path="/profile"></Route>
-				<Route path="*" Component={FourOFour}></Route>
+				<Route path="*" Component={FourOFourPage}></Route>
 			</Routes>
 		</Router>
 	)

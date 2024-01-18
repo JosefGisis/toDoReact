@@ -1,6 +1,6 @@
-const listReducer = (state, action) => {
+const listIdReducer = (state, action) => {
     if (action.type === 'ASSIGN') return action.value
     return state
 }
 
-export default listReducer
+export default listIdReducer

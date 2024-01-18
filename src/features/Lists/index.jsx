@@ -1,4 +1,4 @@
-import ToDoListsList from "./components/ToDoListsList"
+import ListsList from "./component/ListsList"
 
 const data = [
   { name:'Have You?', toDoCount:4, updatedAt:'1/1/24'},
@@ -8,11 +8,11 @@ const data = [
   { name:'house chores', toDoCount:10, updatedAt:'1/1/24'},
 ]
 
-export default function index() {
+export default function Lists() {
   
   return (
     <div>
-      <ToDoListsList data={data} />
+      <ListsList data={data} />
     </div>
   )
 }
