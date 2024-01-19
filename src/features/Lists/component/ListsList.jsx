@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useLists } from '../hooks/useLists'
 import ActiveListContext from '../../../state-management/ActiveList/ActiveListContext'
 
@@ -10,7 +10,11 @@ export default function ToDoListsList() {
 		dispatch({ type: 'ASSIGN', value: { id: list.id, title: list.title, creationDate: list.creation_date } })
 	}
 
-	console.log(activeList)
+	useEffect(() => {
+		if (!activeList.length && lists) {
+			dispatch({ type: 'ASSIGN', value: { id: lists[0].id, title: lists[0].title, creationDate: lists[0].creation_date }})
+		}
+	}, [lists])
 
 	return (
 		<div>

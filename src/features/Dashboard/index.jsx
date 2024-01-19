@@ -1,26 +1,32 @@
+import { useContext, useEffect } from 'react'
 import SectionFrame from '../../components/SectionFrame'
 import ActiveList from '../ActiveList/ActiveList'
 import NewToDoForm from '../NewToDo/NewToDoForm'
 import ToDos from '../ToDos'
 import Lists from '../Lists/index'
 import NewList from '../NewList/index'
-import AuthProvider from '../../state-management/Token/AuthProvider'
-import ActiveListProvider from '../../state-management/ActiveList/ActiveListProvider'
+import AuthContext from '../../state-management/Token/AuthContext'
+import useAuth from './hooks/useAuth'
 
 function Dashboard() {
+	useAuth()
+	const { token } = useContext(AuthContext)
+	
+	useEffect(() => {
+		console.log(token)
+	}, [token])
+
 	return (
-			<ActiveListProvider>
+		<>
+			<Lists />
+			<NewList />
 
-				<Lists />
-				<NewList />
-
-				<SectionFrame>
-					<ActiveList />
-					<NewToDoForm />
-					<ToDos />
-				</SectionFrame>
-
-			</ActiveListProvider>
+			<SectionFrame>
+				<ActiveList />
+				<NewToDoForm />
+				<ToDos />
+			</SectionFrame>
+		</>
 	)
 }
 
