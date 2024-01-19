@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { useLists } from '../hooks/useLists'
-import ActiveListContext from '../../../state-management/contexts/ActiveListContext'
+import ActiveListContext from '../../../state-management/ActiveList/ActiveListContext'
 
 export default function ToDoListsList() {
 	const { lists, isLoading, errs } = useLists()
@@ -22,7 +22,7 @@ export default function ToDoListsList() {
 						key={i}
 						className={
 							'flex flex-row justify-between px-4 my-3 ' +
-							(activeList.id === list?.id ? 'bg-slate-500 text-sky-200 py-4' : 'bg-slate-700 py-2')
+							(activeList?.id === list?.id ? 'bg-slate-500 text-sky-200 py-4' : 'bg-slate-700 py-2')
 						}
 						onClick={() => handleClick(list)}
 					>

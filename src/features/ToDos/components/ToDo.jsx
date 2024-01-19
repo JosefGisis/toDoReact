@@ -1,5 +1,4 @@
 function ToDo({data}) {
-    console.log(data.title)
 	return (
 		<div className="rounded-lg | bg-slate-800 | transition-all | p-3 mb-5 hover:bg-slate-600 ${ toDo.completed ? 'bg-slate-600' : '' }">
 			<div className="py-1">
