@@ -11,6 +11,7 @@ function AuthProvider({ children }) {
 			dispatch({ type: 'LOGIN', value: {token: JWTToken} })
 		}
 	}, [])
+	
 	return <AuthContext.Provider value={{ token, dispatch }}>{children}</AuthContext.Provider>
 }
 
