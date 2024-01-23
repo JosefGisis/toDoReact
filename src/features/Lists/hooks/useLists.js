@@ -10,12 +10,12 @@ export function useLists() {
 
 		setIsLoading(true)
 
-		fetch('http://localhost:3000/api/1/lists', {
+		fetch('http://localhost:3000/api/1/lists?sortBy=title&order=desc', {
 			headers: {
 				'content-type': 'application/json',
 				authorization:
 					'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDIsImlhdCI6MTcwNTYwMTcwN30.h7_k-q5Mdtmm5M5m1gDwFp-uFJjThOy6-7JaLCRFKOA',
-			},
+			}
 			// signal: signal,
 		})
 			.then((res) => res.json())
@@ -24,6 +24,7 @@ export function useLists() {
 					setLists(null)
 					setErrs({ message: data?.message })
 					setIsLoading(false)
+					console.log(data)
 				}
 				if (data?.status === 200) {
 					setLists(data.data)
