@@ -1,6 +1,6 @@
 const loginReducer = (token, action) => {
-    if (action.type === 'LOGIN') return action.value
-    if (action.type === 'LOGOUT') return {}
+    if (action.type === 'LOGIN') return action.payload
+    if (action.type === 'LOGOUT') return null
     return token
 }
 

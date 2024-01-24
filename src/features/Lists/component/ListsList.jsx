@@ -7,14 +7,14 @@ export default function ToDoListsList() {
 	const { activeList, dispatch } = useContext(ActiveListContext)
 
 	const handleClick = (list) => {
-		dispatch({ type: 'ASSIGN', value: { id: list.id, title: list.title, creationDate: list.creation_date } })
+		dispatch({ type: 'ASSIGN', payload: { id: list.id, title: list.title, creationDate: list.creation_date } })
 	}
 
-	useEffect(() => {
-		if (!activeList.length && lists) {
-			dispatch({ type: 'ASSIGN', value: { id: lists[0].id, title: lists[0].title, creationDate: lists[0].creation_date }})
-		}
-	}, [lists])
+	// useEffect(() => {
+	// 	if (!activeList.length && lists) {
+	// 		dispatch({ type: 'ASSIGN', payload: { id: lists[0].id, title: lists[0].title, creationDate: lists[0].creation_date }})
+	// 	}
+	// }, [lists])
 
 	return (
 		<div>
