@@ -1,20 +1,21 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import AuthContext from '../../../state-management/Token/AuthContext'
 import { useAuth } from '../../../hooks/useAuth'
 
-export function useLists() {
+export function useDeleteList() {
 	const { token } = useContext(AuthContext)
-	const [lists, setLists] = useState(null)
+	const [listDeleted, setListDeleted] = useState(false)
 	const [errs, setErrs] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
 	const { logout } = useAuth()
 
-	useEffect(() => {
+	const deleteList = useCallback((listId) => {
 		const controller = new AbortController()
 		const signal = controller.signal
 
 		setIsLoading(true)
-		fetch('http://localhost:3000/api/1/lists?sortBy=last_accessed&order=desc', {
+		fetch(`http://localhost:3000/api/1/lists/${listId}`, {
+            method: 'DELETE',
 			headers: {
 				'content-type': 'application/json',
 				authorization: `Bearer ${token}`,
@@ -26,13 +27,13 @@ export function useLists() {
 				if (res.status === 401) logout()
 				throw new Error('Error retrieving your data. Please try again later.')
 			})
-			.then((data) => {
-				setLists(data.data)
+			.then(() => {
+				setListDeleted(true)
 				setErrs(null)
 				setIsLoading(false)
 			})
 			.catch(() => {
-				setLists(null)
+				setListDeleted(false)
 				setErrs({ message: 'Error creating account. Please try again later' })
 				setIsLoading(false)
 			})
@@ -40,5 +41,5 @@ export function useLists() {
 		return () => controller.abort()
 	}, [])
 
-	return { isLoading, errs, lists }
+	return { isLoading, errs, listDeleted, deleteList }
 }

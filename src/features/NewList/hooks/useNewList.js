@@ -1,14 +1,14 @@
 import { useCallback, useContext, useState } from 'react'
 import AuthContext from '../../../state-management/Token/AuthContext'
 
-const useNewList = async (data) => {
+const useNewList = () => {
 	const [loading, setLoading] = useState(false)
 	const [errs, setErrs] = useState(null)
-    const [newList, setNewList] = useState({})
+	const [newList, setNewList] = useState({})
 	const { token } = useContext(AuthContext)
 
-	const createList = useCallback(() => {
-        setLoading(true)
+	const createList = useCallback(async (data) => {
+		setLoading(true)
 		fetch('https://localhost:3000/api/1/lists', {
 			method: 'POST',
 			headers: {
@@ -16,7 +16,7 @@ const useNewList = async (data) => {
 				authorization: `Bearer ${token}`,
 			},
 			body: JSON.stringify({
-				title: data.listTitle
+				title: data.listTitle,
 			}),
 		})
 			.then((response) => {
@@ -24,9 +24,9 @@ const useNewList = async (data) => {
 				return response.json()
 			})
 			.then((data) => {
-                setNewList(data.data)
-                setLoading(false)
-            })
+				setNewList(data.data)
+				setLoading(false)
+			})
 			.catch((err) => {
 				setErrs(err)
 			})

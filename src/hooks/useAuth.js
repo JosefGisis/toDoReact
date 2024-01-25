@@ -1,19 +1,18 @@
-import { useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useContext } from 'react'
 import AuthContext from '../state-management/Token/AuthContext'
 
 export function useAuth() {
-	const [token, dispatch] = useContext(AuthContext)
-	const navigate = useNavigate()
+	const { dispatch } = useContext(AuthContext)
 
-	useEffect(() => {
+	const login = useCallback(() => {
 		const JWTToken = localStorage.getItem('jwt')
-		if (token) dispatch({ type: 'LOGIN', payload: JWTToken })
-		if (!token) {
-			dispatch({ type: 'LOGOUT' })
-			navigate('/login')
-		} 
-	}, [])
+		if (JWTToken) dispatch({ type: 'LOGIN', payload: JWTToken })
+		else dispatch({ type: 'LOGOUT' })
+	})
 
-	return { token }
+	const logout = useCallback(() => {
+		dispatch({ type: 'LOGOUT' })
+	})
+
+	return { logout, login }
 }

@@ -8,9 +8,8 @@ function AuthProvider({ children }) {
 
 	useEffect(() => {
 		const JWTToken = localStorage.getItem('jwt')
-		if (JWTToken) {
-			dispatch({ type: 'LOGIN', payload: JWTToken })
-		}
+		if (JWTToken) dispatch({ type: 'LOGIN', payload: JWTToken })
+		else dispatch({ type: 'LOGOUT' })
 		setLoading(false)
 	}, [])
 

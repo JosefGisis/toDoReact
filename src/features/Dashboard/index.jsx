@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react'
 import SectionFrame from '../../components/SectionFrame'
-import ActiveList from '../ActiveList/ActiveList'
+import ActiveList from '../ActiveList'
 import NewToDoForm from '../NewToDo/components/NewToDoForm'
 import ToDos from '../ToDos'
 import Lists from '../Lists/index'

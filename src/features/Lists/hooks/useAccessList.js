@@ -1,24 +1,32 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import AuthContext from '../../../state-management/Token/AuthContext'
 import { useAuth } from '../../../hooks/useAuth'
+import ActiveListContext from '../../../state-management/ActiveList/ActiveListContext'
 
-export function useLists() {
+export function useAccessList() {
 	const { token } = useContext(AuthContext)
-	const [lists, setLists] = useState(null)
 	const [errs, setErrs] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
 	const { logout } = useAuth()
+    const { activeList, dispatch } = useContext(ActiveListContext)
 
-	useEffect(() => {
+	const accessList = useCallback((list) => {
 		const controller = new AbortController()
 		const signal = controller.signal
 
+        dispatch({ type: 'ASSIGN', payload: { id: list.id, title: list.title, creationDate: list.creation_date } })
+
 		setIsLoading(true)
-		fetch('http://localhost:3000/api/1/lists?sortBy=last_accessed&order=desc', {
+		fetch(`http://localhost:3000/api/1/lists/${list.id}`, {
+            method: 'PUT',
 			headers: {
 				'content-type': 'application/json',
 				authorization: `Bearer ${token}`,
 			},
+            body: JSON.stringify({
+                title: list.title,
+                accessListOnly: true
+            }),
 			signal: signal,
 		})
 			.then((res) => {
@@ -26,13 +34,11 @@ export function useLists() {
 				if (res.status === 401) logout()
 				throw new Error('Error retrieving your data. Please try again later.')
 			})
-			.then((data) => {
-				setLists(data.data)
+			.then(() => {
 				setErrs(null)
 				setIsLoading(false)
 			})
 			.catch(() => {
-				setLists(null)
 				setErrs({ message: 'Error creating account. Please try again later' })
 				setIsLoading(false)
 			})
@@ -40,5 +46,5 @@ export function useLists() {
 		return () => controller.abort()
 	}, [])
 
-	return { isLoading, errs, lists }
+	return { isLoading, errs, activeList, accessList }
 }

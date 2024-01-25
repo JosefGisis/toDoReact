@@ -1,29 +1,18 @@
-import { useContext, useEffect } from 'react'
 import { useLists } from '../hooks/useLists'
-import ActiveListContext from '../../../state-management/ActiveList/ActiveListContext'
+import { useDeleteList } from '../hooks/useDeleteList'
+import { useAccessList } from '../hooks/useAccessList'
 
 export default function ToDoListsList() {
-	const { lists, isLoading, errs } = useLists()
-	const { activeList, dispatch } = useContext(ActiveListContext)
+	const { lists, isLoading } = useLists()
+	const { deleteList } = useDeleteList()
+	const { activeList, accessList } = useAccessList()
 
 	const handleClick = (list) => {
-		dispatch({ type: 'ASSIGN', payload: { id: list.id, title: list.title, creationDate: list.creation_date } })
-	}
-
-	// useEffect(() => {
-	// 	if (!activeList.length && lists) {
-	// 		dispatch({ type: 'ASSIGN', payload: { id: lists[0].id, title: lists[0].title, creationDate: lists[0].creation_date }})
-	// 	}
-	// }, [lists])
-
-	const onComplete = (list) => {
-		console.log(list)
-
+		accessList(list)
 	}
 
 	const onDelete = (list) => {
-		console.log(list)
-
+		deleteList(list.id)
 	}
 
 	return (
@@ -41,10 +30,8 @@ export default function ToDoListsList() {
 						onClick={() => handleClick(list)}
 					>
 						<div>{list.title}</div>
-						<button className="bg-sky-500 w-20 rounded-md focus:outline-sky-500" type="button" onClick={onComplete(list)}>
-							complete
-						</button>
-						<button className="bg-sky-500 w-20 rounded-md focus:outline-sky-500" type="button" onClick={onDelete(list)}>
+						<div>{new Date(list?.creation_date?.split('T')[0]).toDateString()}</div>
+						<button className="bg-sky-500 w-20 rounded-md focus:outline-sky-500" type="button" onClick={() => onDelete(list)}>
 							delete
 						</button>
 					</div>

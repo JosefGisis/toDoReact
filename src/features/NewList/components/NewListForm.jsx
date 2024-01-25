@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form'
-import { useEffect, useState } from 'react'
+// import { useEffect, useState } from 'react'
 import useNewList from '../hooks/useNewList'
 
 function NewListForm() {
-	const { errs, createList } = useNewList()
+	const { createList } = useNewList()
 
 	const {
 		register,

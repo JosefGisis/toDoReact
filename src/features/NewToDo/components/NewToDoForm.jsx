@@ -1,13 +1,10 @@
 import { useForm } from 'react-hook-form'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 function NewToDoForm() {
-	const navigate = useNavigate()
 	const {
 		register,
 		handleSubmit,
-		forState: { errors, isValid },
+		formState: { errors, isValid },
 	} = useForm()
 
 	const onSubmit = (data) => {
@@ -50,7 +47,7 @@ function NewToDoForm() {
 						placeholder="mm/dd/yyyy"
 					></input>
 					{errors?.date && <p className="text-rose-500 text-sm absolute">{errors?.date?.message}</p>}
-					<button id="new-todo-submit" className="bg-sky-800 | my-2 w-20 h-10 | rounded-md focus:outline-sky-500" type="submit">
+					<button className="bg-sky-800 | my-2 w-20 h-10 | rounded-md focus:outline-sky-500" type="submit">
 						submit
 					</button>
 				</div>
