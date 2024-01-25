@@ -16,6 +16,16 @@ export default function ToDoListsList() {
 	// 	}
 	// }, [lists])
 
+	const onComplete = (list) => {
+		console.log(list)
+
+	}
+
+	const onDelete = (list) => {
+		console.log(list)
+
+	}
+
 	return (
 		<div>
 			{isLoading && <div className="px-4 my-3 text-sky-200 py-4 bg-slate-700">getting your lists...</div>}
@@ -31,8 +41,12 @@ export default function ToDoListsList() {
 						onClick={() => handleClick(list)}
 					>
 						<div>{list.title}</div>
-						<div>{list.creation_date}</div>
-						<div>{list.last_modified}</div>
+						<button className="bg-sky-500 w-20 rounded-md focus:outline-sky-500" type="button" onClick={onComplete(list)}>
+							complete
+						</button>
+						<button className="bg-sky-500 w-20 rounded-md focus:outline-sky-500" type="button" onClick={onDelete(list)}>
+							delete
+						</button>
 					</div>
 				))}
 		</div>

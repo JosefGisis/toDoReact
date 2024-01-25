@@ -4,12 +4,7 @@ import AuthContext from '../state-management/Token/AuthContext'
 
 function ProtectedRoute() {
 	const { token } = useContext(AuthContext)
-
-	if (token === null) return <Navigate to="/login" />
-
-	if (token === 'loading') return null
-
-	return <Outlet />
+	return token === null ? <Navigate to="/login" /> : <Outlet />
 }
 
 export default ProtectedRoute

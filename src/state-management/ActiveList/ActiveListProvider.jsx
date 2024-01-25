@@ -1,12 +1,14 @@
-import { useContext, useEffect, useReducer } from 'react'
+import { useContext, useEffect, useReducer, useState } from 'react'
 import activeListReducer from './activeListReducer.js'
 import ActiveListContext from './ActiveListContext.js'
 import AuthContext from '../Token/AuthContext.js'
+import LoadingPageIndicator from '../../components/LoadingPageIndicator.jsx'
 
 // active list contains information about the active list's id, title, and creation date, .id, .title, .creationDate
 
 const ActiveListProvider = ({ children }) => {
 	const [activeList, dispatch] = useReducer(activeListReducer, {})
+	const [loading, setLoading]	= useState(true)
 	const { token } = useContext(AuthContext)
 
 	useEffect(() => {
@@ -28,6 +30,7 @@ const ActiveListProvider = ({ children }) => {
 				if (data?.status === 200) {
 					const list = data.data[0]
 					dispatch({ type: 'ASSIGN', payload: { id: list.id, title: list.title, creationDate: list.creation_date } })
+					setLoading(false)
 				}
 			})
 			.catch((err) => {
@@ -36,6 +39,8 @@ const ActiveListProvider = ({ children }) => {
 
 		return () => controller.abort()
 	}, [])
+
+	if (loading) return <LoadingPageIndicator />
 
 	return <ActiveListContext.Provider value={{ activeList, dispatch }}>{children}</ActiveListContext.Provider>
 }

@@ -5,15 +5,15 @@ import ActiveListProvider from '../state-management/ActiveList/ActiveListProvide
 
 function DashboardPage() {
 	return (
-			<ActiveListProvider>
-
-				<MainLayout>
+		
+		<MainLayout>
 					<MainFrame>
+					<ActiveListProvider>
 						<Dashboard />
+			</ActiveListProvider>
 					</MainFrame>
 				</MainLayout>
 				
-			</ActiveListProvider>
 	)
 }
 

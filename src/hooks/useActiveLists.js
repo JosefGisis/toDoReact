@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import AuthContext from '../state-management/Token/AuthContext'
 
 export function useLists() {
-	const [lists, setLists] = useState(null)
+	const [activeList, setActiveList] = useState(null)
 	const [errs, setErrs] = useState(null)
+	const { token } = useContext(AuthContext)
+	const [loading, setLoading] = useState(true)
 
 	useEffect(() => {
         const controller  = new AbortController()
@@ -12,27 +15,28 @@ export function useLists() {
 			headers: {
 				'content-type': 'application/json',
 				authorization:
-					'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDIsImlhdCI6MTcwNTYwMTcwN30.h7_k-q5Mdtmm5M5m1gDwFp-uFJjThOy6-7JaLCRFKOA',
+					`Bearer ${token}`,
 			},
 			signal: signal,
 		})
 			.then((res) => res.json())
 			.then((data) => {
 				if (data?.status === 401 || data?.status === 400) {
-					setLists(null)
+					setActiveList(null)
 					setErrs({ message: data?.message })
 				}
 				if (data?.status === 200) {
-					setLists(data.data)
+					setActiveList(data.data[0])
 					setErrs(null)
 				}
 			})
 			.catch(() => {
 				setErrs({ message: 'Error creating account. Please try again later' })
 			})
-
+		
+		setLoading(false)
 		return () => controller.abort()
 	}, [])
 
-	return { errs, lists }
+	return { errs, activeList, loading }
 }
