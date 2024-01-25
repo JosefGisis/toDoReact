@@ -12,6 +12,7 @@ export function useDeleteList() {
 	const deleteList = useCallback((listId) => {
 		const controller = new AbortController()
 		const signal = controller.signal
+		console.log(listId)
 
 		setIsLoading(true)
 		fetch(`http://localhost:3000/api/1/lists/${listId}`, {

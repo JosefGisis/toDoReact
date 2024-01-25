@@ -1,10 +1,10 @@
-function ToDo({data}) {
+function ToDo({ data }) {
 	return (
 		<div className="rounded-lg | bg-slate-800 | transition-all | p-3 mb-5 hover:bg-slate-600 ${ toDo.completed ? 'bg-slate-600' : '' }">
 			<div className="py-1">
 				<h3 className="rounded-lg | text-2xl font-bold | my-2 | ${ toDo.completed ? 'line-through text-rose-400' : '' }">{data?.title}</h3>
 				<p className="text-sm | my-2">
-					<i>{data?.created}</i>
+					<i>{new Date(data?.creation_date?.split('T')[0]).toDateString()}</i>
 				</p>
 			</div>
 
@@ -15,8 +15,8 @@ function ToDo({data}) {
 			<div className="flex flex-row content-center justify-between flex-wrap">
 				<div className="flex items-center | min-w-[10rem] | text-lg | my-2 ">
 					<p className="after:text-sm after:italic after:ml-1">
-						Due: 
-						<span className="text-white text-bold p-1 rounded-md bg-green-700">{data.dueDate}</span>
+						Due: {' '}
+						<span className="text-white text-bold p-1 rounded-md bg-green-700">{data.due_date ? new Date(data.due_date.split('T')[0]).toDateString() : 'NA'}</span>
 					</p>
 				</div>
 

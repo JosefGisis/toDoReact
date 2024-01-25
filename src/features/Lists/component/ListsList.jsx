@@ -1,11 +1,16 @@
 import { useLists } from '../hooks/useLists'
 import { useDeleteList } from '../hooks/useDeleteList'
 import { useAccessList } from '../hooks/useAccessList'
+import { useEffect } from 'react'
 
 export default function ToDoListsList() {
-	const { lists, isLoading } = useLists()
-	const { deleteList } = useDeleteList()
+	const { lists, loading, getLists } = useLists()
+	const { listDeleted, deleteList } = useDeleteList()
 	const { activeList, accessList } = useAccessList()
+
+	useEffect(() => {
+		getLists()
+	}, [listDeleted])
 
 	const handleClick = (list) => {
 		accessList(list)
@@ -17,7 +22,7 @@ export default function ToDoListsList() {
 
 	return (
 		<div>
-			{isLoading && <div className="px-4 my-3 text-sky-200 py-4 bg-slate-700">getting your lists...</div>}
+			{loading && <div className="px-4 my-3 text-sky-200 py-4 bg-slate-700">getting your lists...</div>}
 
 			{lists &&
 				lists?.map((list, i) => (
