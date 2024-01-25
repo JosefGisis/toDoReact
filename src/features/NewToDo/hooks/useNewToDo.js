@@ -1,27 +1,29 @@
 import { useCallback, useContext, useState } from 'react'
 import AuthContext from '../../../state-management/Token/AuthContext'
 import { useAuth } from '../../../hooks/useAuth'
+import ActiveListContext from '../../../state-management/ActiveList/ActiveListContext'
 
-const useNewList = () => {
+const useNewToDo = () => {
 	const { logout } = useAuth()
 	const [loading, setLoading] = useState(false)
 	const [errs, setErrs] = useState(null)
-	const [newList, setNewList] = useState({})
+	const [newToDo, setNewToDo] = useState({})
 	const { token } = useContext(AuthContext)
+    const { activeList } = useContext(ActiveListContext)
 
-	const createList = useCallback((data) => {
+	const createNewToDo = useCallback((data) => {
 		const controller = new AbortController()
 		const signal = controller.signal
 		setLoading(true)
 
-		fetch('http://localhost:3000/api/1/lists', {
+		fetch(`http://localhost:3000/api/1/lists/${activeList.id}/to-dos`, {
 			method: 'POST',
 			headers: {
 				'content-type': 'application/json',
 				authorization: `Bearer ${token}`,
 			},
 			body: JSON.stringify({
-				title: data.listTitle,
+				title: data.toDoTitle,
 			}),
 			signal: signal,
 		})
@@ -31,7 +33,7 @@ const useNewList = () => {
 				throw new Error('error stuff')
 			})
 			.then((data) => {
-				setNewList(data.data)
+				setNewToDo(data.data)
 				setLoading(false)
 			})
 			.catch((err) => {
@@ -40,7 +42,7 @@ const useNewList = () => {
 			})
 		return () => controller.abort()
 	}, [])
-	return { newList, loading, errs, createList }
+	return { newToDo, loading, errs, createNewToDo }
 }
 
-export default useNewList
+export default useNewToDo

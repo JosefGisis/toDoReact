@@ -27,21 +27,17 @@ function NewListForm() {
 				{/* <label htmlFor="list-title">list title</label> */}
 				<input
 					{...register('listTitle', {
-						required: 'username required*',
+						required: 'title required*',
 						minLength: {
 							value: 5,
 							message: 'minimum five characters required',
-						},
-						maxLength: {
-							value: 25,
-							message: 'maximum twenty-five characters',
 						},
 					})}
 					className="text-black p-1 rounded-md focus:outline-sky-500"
 					type="text"
 					placeholder="list title"
 				></input>
-				{errors?.username && <p className="text-rose-500 text-sm absolute">{errors.username.message}</p>}
+				{errors?.listTitle && <p className="text-rose-500 text-sm absolute">{errors.listTitle.message}</p>}
 			</div>
 
 			<button

@@ -39,7 +39,7 @@ export function useSignUp() {
 			})
 
 		return () => AbortController.abort()
-	}, [])
+	})
 
 	return { signUp, isLoading, errs, token }
 }

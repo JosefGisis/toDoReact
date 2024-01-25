@@ -1,6 +1,9 @@
 import { useForm } from 'react-hook-form'
+import useNewToDo from '../hooks/useNewToDo'
 
 function NewToDoForm() {
+
+	const { createNewToDo } = useNewToDo()
 	const {
 		register,
 		handleSubmit,
@@ -8,7 +11,7 @@ function NewToDoForm() {
 	} = useForm()
 
 	const onSubmit = (data) => {
-		console.log(data)
+		createNewToDo(data)
 	}
 
 	return (
@@ -36,7 +39,7 @@ function NewToDoForm() {
 
 					<input
 						{...register('date', {
-							required: 'date required*',
+							// required: 'date required*',
 							pattern: {
 								value: /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/([0-9]{4})$/,
 								message: 'invalid date',
