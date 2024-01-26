@@ -8,9 +8,7 @@ const useActiveListInfo = () => {
 
     useEffect(() => {
         setTitle(activeList.title)
-        const date = activeList.creationDate.split('T')[0]
-        setCreationDate(new Date(date).toDateString())
-
+        setCreationDate(activeList.creationDate)
     }, [activeList])
 
     return { title, creationDate }

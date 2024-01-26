@@ -1,13 +1,7 @@
-function Footer() {
+export default function Footer() {
 	return (
-		<footer id="primary-footer">
-			<div className="responsive-container">
-				<div className="p-2">
-					<p className="text-center">Designed by Josef Gisis 2023</p>
-				</div>
-			</div>
+		<footer className="responsive-container">
+			<p className="text-center p-2">Designed by Josef Gisis 2024</p>
 		</footer>
 	)
 }
-
-export default Footer

@@ -1,13 +1,7 @@
-function Header() {
+export default function Header() {
 	return (
-		<header id="primary-header">
-			<div className="responsive-container">
-				<div className="text-center w-full | p-6">
-					<h1 className="text-4xl font-bold italic">HAVE YOU?</h1>
-				</div>
-			</div>
+		<header className="responsive-container">
+			<h1 className="text-4xl font-bold italic text-center p-1">HAVE YOU?</h1>
 		</header>
 	)
 }
-
-export default Header

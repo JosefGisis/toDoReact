@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import AuthContext from '../state-management/Token/AuthContext'
 
 export function useAuth() {
-	const { dispatch } = useContext(AuthContext)
+	const { token, dispatch } = useContext(AuthContext)
 
 	const login = useCallback(() => {
 		const JWTToken = localStorage.getItem('jwt')
@@ -14,5 +14,5 @@ export function useAuth() {
 		dispatch({ type: 'LOGOUT' })
 	})
 
-	return { logout, login }
+	return { token, logout, login }
 }

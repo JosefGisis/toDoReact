@@ -1,17 +1,15 @@
-import { useContext, useEffect, useReducer, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
+import { useAuth } from '../../hooks/useAuth.js'
 import activeListReducer from './activeListReducer.js'
 import ActiveListContext from './ActiveListContext.js'
 import LoadingPageIndicator from '../../components/LoadingPageIndicator.jsx'
-import { useAuth } from '../../hooks/useAuth.js'
-import AuthContext from '../Token/AuthContext.js'
 
 // active list contains information about the active list's id, title, and creation date, .id, .title, .creationDate
 
 const ActiveListProvider = ({ children }) => {
 	const [activeList, dispatch] = useReducer(activeListReducer, {})
 	const [loading, setLoading] = useState(true)
-	const { logout } = useAuth()
-	const { token } = useContext(AuthContext)
+	const { token, logout } = useAuth()
 	const [errs, setErrs] = useState(null)
 	
 	useEffect(() => {
@@ -27,8 +25,10 @@ const ActiveListProvider = ({ children }) => {
 				throw new Error('Error retrieving your data. Please try again later.')
 			})
 			.then((data) => {
-				const list = data.data[0]
-				dispatch({ type:  'ASSIGN', payload: { id: list.id, title: list.title, creationDate: list.creation_date } })
+				if (data.data[0]) {
+					const list = data.data[0]
+					dispatch({ type:  'ASSIGN', payload: { id: list.id, title: list.title, creationDate: list.creation_date } })
+				}
 				setLoading(false)
 			})
 			.catch((err) => {
