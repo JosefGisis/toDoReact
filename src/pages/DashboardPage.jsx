@@ -1,6 +1,6 @@
 import MainLayout from '../layouts/MainLayout'
 import MainFrame from '../components/MainFrame'
-import ActiveListProvider from '../state-management/ActiveList/ActiveListProvider'
+import ActiveListProvider from '../state-management/List/ListProvider'
 import Lists from '../features/Lists'
 import NewList from '../features/NewList'
 import SectionFrame from '../components/SectionFrame'

@@ -1,16 +1,17 @@
 import { useEffect, useReducer, useState } from 'react'
 import { useAuth } from '../../hooks/useAuth.js'
-import activeListReducer from './activeListReducer.js'
-import ActiveListContext from './ActiveListContext.js'
+import listReducer from './listReducer.js'
+import ListContext from './ListContext.js'
 import LoadingPageIndicator from '../../components/LoadingPageIndicator.jsx'
 
 // active list contains information about the active list's id, title, and creation date, .id, .title, .creationDate
 
-const ActiveListProvider = ({ children }) => {
-	const [activeList, dispatch] = useReducer(activeListReducer, {})
+const ListProvider = ({ children }) => {
+	const [activeList, dispatch] = useReducer(listReducer, {})
 	const [loading, setLoading] = useState(true)
-	const { token, logout } = useAuth()
+	const { logout, getToken } = useAuth()
 	const [errs, setErrs] = useState(null)
+	const token = getToken()
 	
 	useEffect(() => {
 		fetch('http://localhost:3000/api/1/lists?sortBy=last_accessed&order=desc', {
@@ -40,7 +41,7 @@ const ActiveListProvider = ({ children }) => {
 
 	if (loading) return <LoadingPageIndicator />
 
-	return <ActiveListContext.Provider value={{ activeList, dispatch }}>{children}</ActiveListContext.Provider>
+	return <ListContext.Provider value={{ activeList, dispatch }}>{children}</ListContext.Provider>
 }
 
-export default ActiveListProvider
+export default ListProvider

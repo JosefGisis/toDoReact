@@ -1,0 +1,21 @@
+{
+    "selectedListId":1,
+    "toDoLists":[
+        {
+            "id":1,
+            "toDos":[{},{}]
+        },
+        {
+            "id":2,
+            "toDos":null
+        },
+        {
+            "id":3,
+            "toDos":null
+        },
+        {
+            "id":4,
+            "toDos":null
+        }
+    ]
+}

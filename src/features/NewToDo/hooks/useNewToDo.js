@@ -1,7 +1,7 @@
 import { useCallback, useContext, useState } from 'react'
 import AuthContext from '../../../state-management/Token/AuthContext'
 import { useAuth } from '../../../hooks/useAuth'
-import ActiveListContext from '../../../state-management/ActiveList/ActiveListContext'
+import ActiveListContext from '../../../state-management/List/ListContext'
 
 const useNewToDo = () => {
 	const { logout } = useAuth()

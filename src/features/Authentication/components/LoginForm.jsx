@@ -1,12 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLogin } from '../hooks/useLogin'
 import { useNavigate } from 'react-router-dom'
 import Spinner from '../../../components/Spinner'
+import { useAuth } from '../../../state-management/Token/AuthProvider'
 
 function LoginForm() {
-	const { login, token, errs, isLoading } = useLogin()
+	const { setToken } = useAuth()
+	const { login, errs, isLoading } = useLogin()
 	const navigate = useNavigate()
+	const [isLoggingIn,setIsLoggingIn] = useState()
+	const [_errors, setErrors]=useState(null)
 
 	const {
 		register,
@@ -16,22 +20,29 @@ function LoginForm() {
 	} = useForm()
 
 	useEffect(() => {
-		if (token) {
-			localStorage.setItem('jwt', token)
-			navigate('/')
-		}
-	}, [token])
-
-	useEffect(() => {
 		if (errs) resetField('password')
 	}, [errs])
 
-	const onSubmit = (data) => {
-		login(data)
+	const onSubmit = async (data) => {
+		try {
+			setIsLoggingIn(true)
+			const [error, token] = await login(data)
+			if(error) {
+				setErrors(error)
+				return
+			}
+			setToken(token)
+			navigate('/')
+		} catch (error) {
+			setErrors(error.message)
+		}finally{
+			setIsLoggingIn(false)
+		}
 	}
 
 	return (
 		<div className="flex flex-col items-center m-auto bg-slate-700 w-[25rem] px-[5rem] py-6 rounded-xl">
+			{_errors && <div>{_errors}</div>}
 			<form onSubmit={handleSubmit(onSubmit)} className="w-[100%]">
 				<fieldset disabled={isLoading}>
 					<h3 className="text-2xl mb-5 text-center">Login</h3>
@@ -47,7 +58,7 @@ function LoginForm() {
 						{errors?.username && <p className="text-rose-500 text-sm absolute">{errors.username.message}</p>}
 					</div>
 
-					{isLoading && <Spinner />}
+					{isLoggingIn && <Spinner />}
 
 					<div className="mb-8">
 						<input

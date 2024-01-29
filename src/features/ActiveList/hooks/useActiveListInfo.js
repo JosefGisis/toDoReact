@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import ActiveListContext from "../../../state-management/ActiveList/ActiveListContext"
+import ActiveListContext from "../../../state-management/List/ListContext"
 
 const useActiveListInfo = () => {
     const { activeList } = useContext(ActiveListContext)
