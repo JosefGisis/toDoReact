@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useLogin } from '../hooks/useLogin'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 import Spinner from '../../../components/Spinner'
-import { useAuth } from '../../../state-management/Token/AuthProvider'
+import { useLogin } from '../hooks/useLogin'
+import { useAuth } from '../../../hooks/useAuth'
 
 function LoginForm() {
 	const { setToken } = useAuth()
-	const { login, errs, isLoading } = useLogin()
+	const { login } = useLogin()
 	const navigate = useNavigate()
-	const [isLoggingIn,setIsLoggingIn] = useState()
-	const [_errors, setErrors]=useState(null)
+	const [isLoggingIn, setIsLoggingIn] = useState(false)
+	const [_errors, setErrors] = useState(null)
 
 	const {
 		register,
@@ -19,32 +19,27 @@ function LoginForm() {
 		formState: { errors, isValid },
 	} = useForm()
 
-	useEffect(() => {
-		if (errs) resetField('password')
-	}, [errs])
-
-	const onSubmit = async (data) => {
+	async function onSubmit(data) {
 		try {
 			setIsLoggingIn(true)
 			const [error, token] = await login(data)
-			if(error) {
-				setErrors(error)
-				return
+			if (error) {
+				resetField('password')
+				throw new Error(error)
 			}
 			setToken(token)
 			navigate('/')
 		} catch (error) {
 			setErrors(error.message)
-		}finally{
+		} finally {
 			setIsLoggingIn(false)
 		}
 	}
 
 	return (
 		<div className="flex flex-col items-center m-auto bg-slate-700 w-[25rem] px-[5rem] py-6 rounded-xl">
-			{_errors && <div>{_errors}</div>}
 			<form onSubmit={handleSubmit(onSubmit)} className="w-[100%]">
-				<fieldset disabled={isLoading}>
+				<fieldset disabled={isLoggingIn}>
 					<h3 className="text-2xl mb-5 text-center">Login</h3>
 					<p className="mb-5 text-center">Welcome back! Sign-in to see your tasks.</p>
 
@@ -75,13 +70,13 @@ function LoginForm() {
 							id="new-list-submit"
 							className={
 								'w-[100%] py-2 mb-3 focus:outline-sky-500 transition ' +
-								(isValid && !isLoading ? 'bg-sky-500 hover:bg-sky-600 hover:underline' : 'bg-sky-800')
+								(isValid && !isLoggingIn ? 'bg-sky-500 hover:bg-sky-600 hover:underline' : 'bg-sky-800')
 							}
 							type="submit"
 						>
 							login
 						</button>
-						{errs && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{errs.message}</div>}
+						{_errors && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors}</div>}
 					</div>
 
 					<hr></hr>
@@ -94,7 +89,7 @@ function LoginForm() {
 						<button
 							className={
 								'w-[100%] p-2 mt-4 bg-slate-500 focus:outline-sky-500 transition' +
-								(!isLoading ? 'hover:bg-slate-600 hover:underline' : '')
+								(!isLoggingIn ? 'hover:bg-slate-600 hover:underline' : '')
 							}
 							type="button"
 						>

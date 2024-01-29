@@ -3,13 +3,9 @@ import { useCallback, useState } from 'react'
 export function useLogin() {
 	const [isLoading, setIsLoading] = useState(false)
 	const [errs, setErrs] = useState(null)
-	const [token, setToken] = useState(null)
 
 	const login = useCallback(async (data) => {
-		// const signal = new AbortController().signal
-
 		setIsLoading(true)
-		let result
 		try {
 			const response = await fetch('http://localhost:3000/api/1/auth/login', {
 				method: 'POST',
@@ -24,24 +20,25 @@ export function useLogin() {
 
 			const json = await response.json()
 
-			if (json?.status === 401 || json?.status === 400) {
-				setErrs({ message: json?.message })
-				setToken(null)
-				result = [json.message]
-			} else if (json?.status === 200) {
-				setToken(json?.token)
+			if (json.status === 200) {
 				setErrs(null)
-				result = [null, json.token]
+				return [null, json.token]
 			}
+
+			if (json.status === 401) {
+				setErrs({ message: json.message })
+				return [json.message]
+			}
+
+			setErrs({ message: json.message })
+			throw new Error('Error logging in. Please try again later.')
 		} catch (error) {
-			setErrs({ message: 'Error logging in. Please try again later' })
-			return [errs]
+			setErrs({ message: error.message })
+			return ['Error logging in. Please try again later.']
 		} finally {
 			setIsLoading(false)
 		}
-
-		return result
 	}, [])
 
-	return { login, isLoading, errs, token }
+	return { login, isLoading, errs }
 }
