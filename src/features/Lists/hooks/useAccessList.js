@@ -1,19 +1,15 @@
 import { useCallback, useContext, useState } from 'react'
-import AuthContext from '../../../state-management/Token/AuthContext'
 import { useAuth } from '../../../hooks/useAuth'
 import ActiveListContext from '../../../state-management/List/ListContext'
 
 export function useAccessList() {
-	const { token } = useContext(AuthContext)
+	const { logout, getToken } = useAuth()
 	const [errs, setErrs] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
-	const { logout } = useAuth()
 	const { activeList, dispatch } = useContext(ActiveListContext)
+	const token = getToken()
 
 	const accessList = useCallback((list) => {
-		const controller = new AbortController()
-		const signal = controller.signal
-
 		if (list) {
 			dispatch({ type: 'ASSIGN', payload: { id: list.id, title: list.title, creationDate: list.creation_date } })
 
@@ -28,7 +24,6 @@ export function useAccessList() {
 					title: list.title,
 					accessListOnly: true,
 				}),
-				signal: signal,
 			})
 				.then((res) => {
 					if (res.status === 200) return res.json()
@@ -43,10 +38,8 @@ export function useAccessList() {
 					setErrs({ message: 'Error creating account. Please try again later' })
 					setIsLoading(false)
 				})
-
-			return () => controller.abort()
 		} else {
-			dispatch({ type: 'ASSIGN', payload: null })
+			dispatch({ type: 'UNASSIGN' })
 		}
 	}, [])
 

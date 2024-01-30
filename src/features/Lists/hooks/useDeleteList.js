@@ -1,13 +1,14 @@
 import { useCallback, useContext, useState } from 'react'
-import AuthContext from '../../../state-management/Token/AuthContext'
 import { useAuth } from '../../../hooks/useAuth'
+import DataContext from '../../../state-management/data/DataContext'
 
 export function useDeleteList() {
-	const { token } = useContext(AuthContext)
 	const [listDeleted, setListDeleted] = useState(false)
 	const [errs, setErrs] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
-	const { logout } = useAuth()
+	const { logout, getToken } = useAuth()
+	const token = getToken()
+	const { data, dispatch } = useContext(DataContext)
 
 	const deleteList = useCallback((listId) => {
 		const controller = new AbortController()
@@ -29,6 +30,7 @@ export function useDeleteList() {
 				throw new Error('Error retrieving your data. Please try again later.')
 			})
 			.then(() => {
+				dispatch(data.lists.filter(list => list.id !== listId))
 				setListDeleted(true)
 				setErrs(null)
 				setIsLoading(false)

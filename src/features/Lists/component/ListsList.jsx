@@ -1,18 +1,18 @@
-import { useLists } from '../hooks/useLists'
 import { useDeleteList } from '../hooks/useDeleteList'
 import { useAccessList } from '../hooks/useAccessList'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
+import DataContext from '../../../state-management/data/DataContext'
 
 export default function ToDoListsList() {
-	const { lists, loading, getLists } = useLists()
-	const { listDeleted, deleteList } = useDeleteList()
+	const { deleteList } = useDeleteList()
 	const { activeList, accessList } = useAccessList()
+	const { data } = useContext(DataContext)
 
 	useEffect(() => {
-		getLists()
-	}, [listDeleted])
+		console.log(data?.lists)
+	}, [data])
 
-	const handleClick = (list) => {
+	const onSelect = (list) => {
 		accessList(list)
 	}
 
@@ -22,23 +22,25 @@ export default function ToDoListsList() {
 
 	return (
 		<div>
-			{loading && <div className="px-4 my-3 text-sky-200 py-4 bg-slate-700">getting your lists...</div>}
 			<div>
-				{!lists?.length && (
-					<div className={'flex flex-row justify-between px-4 my-3 bg-slate-700 text-sky-200 py-4'}>
-						<div>You do not have any lists. Create a list to start creating to-dos</div>
-					</div>
-				)}
+				<div
+					className={'flex flex-row justify-between px-4 my-3 ' + (!activeList ? 'bg-slate-500 text-sky-200 py-4' : 'bg-slate-700 py-2')}
+					onClick={() => {
+						onSelect(null)
+					}}
+				>
+					To-dos
+				</div>
 
-				{lists &&
-					lists?.map((list, i) => (
+				{data.lists &&
+					data?.lists?.map((list, i) => (
 						<div
 							key={i}
 							className={
 								'flex flex-row justify-between px-4 my-3 ' +
 								(activeList?.id === list?.id ? 'bg-slate-500 text-sky-200 py-4' : 'bg-slate-700 py-2')
 							}
-							onClick={() => handleClick(list)}
+							onClick={() => onSelect(list)}
 						>
 							<div>{list.title}</div>
 							<div>{new Date(list?.creation_date?.split('T')[0]).toDateString()}</div>

@@ -1,13 +1,12 @@
-import { useCallback, useContext, useState } from 'react'
-import AuthContext from '../../../state-management/Token/AuthContext'
+import { useCallback, useState } from 'react'
 import { useAuth } from '../../../hooks/useAuth'
 
 const useNewList = () => {
-	const { logout } = useAuth()
+	const { logout, getToken } = useAuth()
 	const [loading, setLoading] = useState(false)
 	const [errs, setErrs] = useState(null)
 	const [newList, setNewList] = useState({})
-	const { token } = useContext(AuthContext)
+	const token = getToken()
 
 	const createList = useCallback((data) => {
 		const controller = new AbortController()

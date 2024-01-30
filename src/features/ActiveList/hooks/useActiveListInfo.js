@@ -7,8 +7,8 @@ const useActiveListInfo = () => {
     const [title, setTitle] = useState(null)
 
     useEffect(() => {
-        setTitle(activeList.title)
-        setCreationDate(activeList.creationDate)
+        setTitle(activeList?.title)
+        setCreationDate(activeList?.creationDate)
     }, [activeList])
 
     return { title, creationDate }
