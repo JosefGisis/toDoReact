@@ -1,5 +1,5 @@
 const dataReducer = (data, action) => {
-    if (action.type === 'POPULATE') return action.payload
+    if (action.type === 'ALTER DATA') return action.payload
     return data
 }
 
