@@ -1,7 +1,7 @@
-import { useDeleteList } from '../hooks/useDeleteList'
-import { useAccessList } from '../hooks/useAccessList'
 import { useContext, useEffect } from 'react'
 import DataContext from '../../../state-management/data/DataContext'
+import { useAccessList } from '../hooks/useAccessList'
+import { useDeleteList } from '../hooks/useDeleteList'
 
 export default function ToDoListsList() {
 	const { deleteList } = useDeleteList()
@@ -9,8 +9,8 @@ export default function ToDoListsList() {
 	const { data } = useContext(DataContext)
 
 	useEffect(() => {
-		console.log(data?.lists)
-	}, [data?.lists])
+		console.log(data)
+	}, [data])
 
 	const onSelect = (list) => {
 		accessList(list)

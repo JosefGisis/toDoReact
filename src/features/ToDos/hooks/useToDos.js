@@ -1,44 +1,48 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import AuthContext from '../../../state-management/Token/AuthContext'
 import { useAuth } from '../../../hooks/useAuth'
-import ActiveListContext from '../../../state-management/List/ListContext'
+import ListContext from '../../../state-management/List/ListContext'
+import DataContext from '../../../state-management/data/DataContext'
 
 const useToDos = () => {
-	const { logout } = useAuth()
+	const { logout, getToken } = useAuth()
 	const [loading, setLoading] = useState(false)
 	const [errs, setErrs] = useState(null)
 	const [toDos, setToDos] = useState(null)
-	const { token } = useContext(AuthContext)
-	const { activeList } = useContext(ActiveListContext)
+	const { activeList } = useContext(ListContext)
+	const { data, dispatch } = useContext(DataContext)
+	const token = getToken()
 
-	useEffect(() => {
-		const controller = new AbortController()
-		const signal = controller.signal
+	const getToDos = useCallback(async (listId) => {
 		setLoading(true)
-
-		if (token) {
-			fetch(`http://localhost:3000/api/1/lists/${activeList.id}/to-dos`, {
+		try {
+			const response = await fetch(`http://localhost:3000/api/1/lists/${listId}/to-dos`, {
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
 				},
-				signal: signal,
 			})
-				.then((res) => {
-					if (res.status === 200) return res.json()
-					if (res.status === 401) logout()
-					throw new Error('error stuff')
-				})
-				.then((data) => {
-					setToDos(data.data)
-					setLoading(false)
-				})
-				.catch((err) => {
-					setErrs(err)
-					setLoading(false)
-				})
+
+			if (response.status === 401) {
+				logout()
+				return
+			}
+
+			if (response.status !== 200) {
+				throw new Error('error')
+			}
+
+			const json = await response.json()
+			dispatch({ type: 'ADD LIST TODOS', payload: json.data})
+		} catch (error) {
+			setErrs({ message: error.message})
+		} finally {
+			setLoading(false)
 		}
-		return () => controller.abort()
+	}, [])
+
+	useEffect(() => {
+		if (activeList !== null) getToDos(activeList.id)
 	}, [activeList])
 
 	return { toDos, loading, errs }
