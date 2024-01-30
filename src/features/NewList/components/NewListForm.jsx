@@ -1,6 +1,8 @@
 import { useForm } from 'react-hook-form'
 // import { useEffect, useState } from 'react'
 import useNewList from '../hooks/useNewList'
+import { useContext, useEffect } from 'react'
+import DataContext from '../../../state-management/data/DataContext'
 
 function NewListForm() {
 	const { createList } = useNewList()
@@ -12,8 +14,8 @@ function NewListForm() {
 		formState: { errors, isValid },
 	} = useForm()
 
-	const onSubmit = (data) => {
-		createList(data)
+	const onSubmit = (newListData) => {
+		createList(newListData)
         reset()
 	}
 

@@ -4,7 +4,7 @@ import dataReducer from './dataReducer'
 import { useAuth } from '../../hooks/useAuth'
 
 const DataProvider = ({ children }) => {
-	const [data, dispatch] = useReducer(dataReducer, {})
+	const [data, dispatch] = useReducer(dataReducer, [])
 	const { logout, getToken } = useAuth()
 	const token = getToken()
 

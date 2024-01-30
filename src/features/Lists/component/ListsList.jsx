@@ -10,7 +10,7 @@ export default function ToDoListsList() {
 
 	useEffect(() => {
 		console.log(data?.lists)
-	}, [data])
+	}, [data?.lists])
 
 	const onSelect = (list) => {
 		accessList(list)

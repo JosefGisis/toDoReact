@@ -8,40 +8,36 @@ export function useDeleteList() {
 	const [isLoading, setIsLoading] = useState(false)
 	const { logout, getToken } = useAuth()
 	const token = getToken()
-	const { data, dispatch } = useContext(DataContext)
+	const { dispatch } = useContext(DataContext)
 
-	const deleteList = useCallback((listId) => {
-		const controller = new AbortController()
-		const signal = controller.signal
-		console.log(listId)
-
+	const deleteList = useCallback(async (listId) => {
 		setIsLoading(true)
-		fetch(`http://localhost:3000/api/1/lists/${listId}`, {
-            method: 'DELETE',
-			headers: {
-				'content-type': 'application/json',
-				authorization: `Bearer ${token}`,
-			},
-			signal: signal,
-		})
-			.then((res) => {
-				if (res.status === 200) return res.json()
-				if (res.status === 401) logout()
-				throw new Error('Error retrieving your data. Please try again later.')
-			})
-			.then(() => {
-				dispatch(data.lists.filter(list => list.id !== listId))
-				setListDeleted(true)
-				setErrs(null)
-				setIsLoading(false)
-			})
-			.catch(() => {
-				setListDeleted(false)
-				setErrs({ message: 'Error creating account. Please try again later' })
-				setIsLoading(false)
+
+		try {
+			const response = await fetch(`http://localhost:3000/api/1/lists/${listId}`, {
+				method: 'DELETE',
+				headers: {
+					'content-type': 'application/json',
+					authorization: `Bearer ${token}`,
+				},
 			})
 
-		return () => controller.abort()
+			if (response.status === 401) {
+				logout()
+				return
+			}
+
+			if (response.status !== 200) throw new Error('error stuff')
+
+			const json = await response.json()
+			setListDeleted(json.data)
+			dispatch({ type: 'REMOVE LIST', payload: listId })
+		} catch (error) {
+			setErrs(error.message)
+			throw new Error(error.message)
+		} finally {
+			setIsLoading(false)
+		}
 	}, [])
 
 	return { isLoading, errs, listDeleted, deleteList }

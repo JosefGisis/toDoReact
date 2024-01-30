@@ -1,7 +1,6 @@
 import { useCallback, useState, useContext } from 'react'
 import { useAuth } from '../../../hooks/useAuth'
 import DataContext from '../../../state-management/data/DataContext'
-import ListContext from '../../../state-management/List/ListContext'
 
 const useNewList = () => {
 	const { logout, getToken } = useAuth()
@@ -9,10 +8,9 @@ const useNewList = () => {
 	const [errs, setErrs] = useState(null)
 	const [newList, setNewList] = useState({})
 	const token = getToken()
-	const { data, dispatch: dispatchData } = useContext(DataContext)
-	const { activeList, dispatch: dispatchActiveList } = useContext(ListContext)
+	const { dispatch: dispatchData } = useContext(DataContext)
 
-	const createList = useCallback(async (data) => {
+	const createList = useCallback(async (newListData) => {
 		setLoading(true)
 
 		try {
@@ -23,7 +21,7 @@ const useNewList = () => {
 					authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify({
-					title: data.listTitle,
+					title: newListData.listTitle,
 				}),
 			})
 
@@ -36,8 +34,7 @@ const useNewList = () => {
 
 			const json = await response.json()
 			setNewList(json.data)
-			console.log(json.data)
-			dispatchData()
+			dispatchData({ type: 'ADD LIST', payload: json.data })
 		} catch (error) {
 			setErrs(error.message)
 			throw new Error(error.message)
