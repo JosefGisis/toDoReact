@@ -12,7 +12,7 @@ function ToDoList() {
 		<div>
 			{activeList === null
 				? data?.toDos?.map((toDo, i) => <ToDo key={i} data={toDo}></ToDo>)
-				: data?.lists[0]?.toDos?.map((toDo, i) => <ToDo key={i} data={toDo}></ToDo>)}
+				: null}
 		</div>
 	)
 }

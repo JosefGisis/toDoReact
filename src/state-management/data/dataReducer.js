@@ -1,5 +1,3 @@
-import { list } from "postcss"
-
 const dataReducer = (data, action) => {
     if (action.type === 'ALTER DATA') return action.payload
     if (action.type === 'ADD LIST') {

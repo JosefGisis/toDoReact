@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useAuth } from '../../../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'
 
 export function useLists() {
 	const { getToken, logout } = useAuth()

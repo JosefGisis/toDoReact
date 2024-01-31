@@ -8,10 +8,6 @@ export default function ToDoListsList() {
 	const { activeList, accessList } = useAccessList()
 	const { data } = useContext(DataContext)
 
-	useEffect(() => {
-		console.log(data)
-	}, [data])
-
 	const onSelect = (list) => {
 		accessList(list)
 	}

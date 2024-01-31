@@ -3,16 +3,14 @@ import { useAuth } from '../../../hooks/useAuth'
 import DataContext from '../../../state-management/data/DataContext'
 
 export function useDeleteList() {
-	const [listDeleted, setListDeleted] = useState(false)
-	const [errs, setErrs] = useState(null)
-	const [isLoading, setIsLoading] = useState(false)
-	const { logout, getToken } = useAuth()
-	const token = getToken()
+	const [meta, setMeta] = useState({ loading: false, errors: null })
 	const { dispatch } = useContext(DataContext)
 
-	const deleteList = useCallback(async (listId) => {
-		setIsLoading(true)
+	const { logout, getToken } = useAuth()
+	const token = getToken()
 
+	const deleteList = useCallback(async (listId) => {
+		setMeta({ ...meta, loading: true })
 		try {
 			const response = await fetch(`http://localhost:3000/api/1/lists/${listId}`, {
 				method: 'DELETE',
@@ -22,23 +20,22 @@ export function useDeleteList() {
 				},
 			})
 
-			if (response.status === 401) {
+			if (response.status === 200) {
+				dispatch({ type: 'REMOVE LIST', payload: listId })
+			} else if (response.status === 401) {
 				logout()
-				return
+				throw new Error('unauthorized user')
+			} else {
+				const json = await response.json()	
+				console.log(json.message)
+				throw new Error('error deleting list')
 			}
-
-			if (response.status !== 200) throw new Error('error stuff')
-
-			const json = await response.json()
-			setListDeleted(json.data)
-			dispatch({ type: 'REMOVE LIST', payload: listId })
 		} catch (error) {
-			setErrs(error.message)
-			throw new Error(error.message)
+			setMeta({ ...meta, errors: {message: error.message} })
 		} finally {
-			setIsLoading(false)
+			setMeta({ ...meta, loading: false })
 		}
 	}, [])
 
-	return { isLoading, errs, listDeleted, deleteList }
+	return { meta, deleteList }
 }
