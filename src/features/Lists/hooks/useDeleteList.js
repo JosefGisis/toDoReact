@@ -22,16 +22,20 @@ export function useDeleteList() {
 
 			if (response.status === 200) {
 				dispatch({ type: 'REMOVE LIST', payload: listId })
+				return [null]
 			} else if (response.status === 401) {
 				logout()
-				throw new Error('unauthorized user')
+				setMeta({ ...meta, errors: { message: 'unauthorized user' }})
+				return ['unauthorized user']
 			} else {
 				const json = await response.json()	
 				console.log(json.message)
-				throw new Error('error deleting list')
+				setMeta({ ...meta, errors: { message: json.message }})
+				return ['error deleting list']
 			}
 		} catch (error) {
 			setMeta({ ...meta, errors: {message: error.message} })
+			return [error.message]
 		} finally {
 			setMeta({ ...meta, loading: false })
 		}

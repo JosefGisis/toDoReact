@@ -30,7 +30,7 @@ export function useLogin() {
 				return [json.message]
 			}
 
-			setErrs({ message: json.message })
+			console.log(json.message)
 			throw new Error('Error logging in. Please try again later.')
 		} catch (error) {
 			setErrs({ message: error.message })

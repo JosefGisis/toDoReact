@@ -25,7 +25,8 @@ function LoginForm() {
 			const [error, token] = await login(data)
 			if (error) {
 				resetField('password')
-				throw new Error(error)
+				setErrors({message: error})
+				return
 			}
 			setToken(token)
 			navigate('/')
