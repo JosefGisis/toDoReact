@@ -10,12 +10,9 @@ const useNewToDo = () => {
 
 	const createNewToDo = useCallback(async (data) => {
 		setMeta({ ...meta, loading: true })
-		let url
-		if (activeList) {
-			url = activeList.id
+		const url = activeList?.id
 			? `http://localhost:3000/api/1/lists/${activeList.id}/to-dos`
 			: `http://localhost:3000/api/1/to-dos`
-		}
 
 		try {
 			const response = await fetch(url, {
@@ -26,6 +23,7 @@ const useNewToDo = () => {
 				},
 				body: JSON.stringify({
 					title: data.toDoTitle,
+					due_date: data.date
 				}),
 			})
 
@@ -49,7 +47,7 @@ const useNewToDo = () => {
 		} finally {
 			setMeta({ ...meta, loading: false })
 		}
-	}, [])
+	}, [activeList])
 	return { meta, createNewToDo }
 }
 
