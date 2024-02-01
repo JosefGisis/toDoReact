@@ -1,27 +1,28 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from '../../../hooks/useAuth'
 
-const useToDos = () => {
+const useToggleToDos = () => {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
 
 	const { logout, getToken } = useAuth()
 	const token = getToken()
 
-	const getToDos = useCallback(async (listId) => {
+	const toggleToDo = useCallback(async (toDo) => {
 		setMeta({ ...meta, loading: true })
+		const url = toDo?.membership
+			? `http://localhost:3000/api/1/lists/${toDo.membership}/to-dos/${toDo.id}/toggle`
+			: `http://localhost:3000/api/1/to-dos/${toDo.id}/toggle`
 		try {
-			const response = await fetch(`http://localhost:3000/api/1/lists/${listId}/to-dos`, {
+			const response = await fetch(url, {
+                method: 'PUT',
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
 				},
 			})
 
-			if (response.status === 200) {
-				const json = await response.json()
-				return [null, json.data]
-			} 
-			
+			if (response.status === 200) return [null]
+
 			if (response.status === 401) {
 				logout()
 				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
@@ -32,13 +33,13 @@ const useToDos = () => {
 			throw new Error(json.message)
 		} catch (error) {
 			setMeta({ ...meta, errors: { message: error.message } })
-			return ['error getting to-dos']
+			return ['error toggling to-do']
 		} finally {
 			setMeta({ ...meta, loading: false })
 		}
 	}, [])
 
-	return { meta, getToDos }
+	return { meta, toggleToDo }
 }
 
-export default useToDos
+export default useToggleToDos
