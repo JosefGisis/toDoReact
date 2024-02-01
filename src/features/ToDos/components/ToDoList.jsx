@@ -17,24 +17,31 @@ function ToDoList() {
 	const [toDos, setToDos] = useState(null)
 	const [errors, setErrors] = useState(null)
 
+	if (listIndex && isLoading && errors) console.log()
+
 	useEffect(() => {
 		assignToDos()
-	}, [activeList])
+	}, [activeList, data])
 
 	const assignToDos = useCallback(async () => {
-		if (!activeList || !data) return
 		try {
+			if (!data) return
+			if (!activeList) {
+				setToDos(data.toDos)
+				return
+			}
 			const listIndex = await data?.lists?.findIndex((list) => list.id === activeList.id)
 			setListIndex(listIndex)
 
 			if (!data?.lists[listIndex]?.toDos.length) {
-				const [error, toDos] = await getToDos(activeList.id)
+				let [error, toDos] = await getToDos(activeList.id)
 				if (error) {
 					setErrors({ message: error })
 					return
 				}
-				dispatch({ type: 'ADD LIST TODOS', payload: toDos })
+				if (toDos.length) dispatch({ type: 'ADD LIST TODOS', payload: toDos })
 			}
+			setToDos(data.lists[listIndex].toDos)
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {
@@ -42,17 +49,7 @@ function ToDoList() {
 		}
 	}, [activeList, data])
 
-	return (
-		<div>
-			{activeList === null ? (
-				data?.toDos?.map((toDo, i) => <ToDo key={i} data={toDo}></ToDo>)
-			) : data?.lists[listIndex]?.toDos?.length ? (
-				data?.lists[listIndex]?.toDos?.map((toDo, i) => <ToDo key={i} data={toDo}></ToDo>)
-			) : ( 
-			<EmptyListMessage />
-			)}
-		</div>
-	)
+	return <div>{toDos?.length ? toDos?.map((toDo, i) => <ToDo key={i} data={toDo}></ToDo>) : <EmptyListMessage />}</div>
 }
 
 export default ToDoList

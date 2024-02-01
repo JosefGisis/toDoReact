@@ -1,17 +1,35 @@
 import { useForm } from 'react-hook-form'
 import useNewToDo from '../hooks/useNewToDo'
+import { useContext, useState } from 'react'
+import DataContext from '../../../state-management/data/DataContext'
+import ListContext from '../../../state-management/List/ListContext'
 
 function NewToDoForm() {
+	const { data, dispatch } = useContext(DataContext)
 
 	const { createNewToDo } = useNewToDo()
+	const [_errors, setErrors] = useState(null)
+	const [isLoading, setIsLoading] = useState(false)
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isValid },
+		formState: { errors },
 	} = useForm()
 
-	const onSubmit = (data) => {
-		createNewToDo(data)
+	const onSubmit = async (data) => {
+		setIsLoading(true)
+		try {
+			const [error, newToDo] = await createNewToDo(data)
+			if (error) {
+				setErrors({ message: error })
+				return
+			}
+			dispatch({ type: 'ADD TODO', payload: newToDo })
+		} catch (error) {
+			setErrors({ message: error.message })
+		} finally {
+			setIsLoading(false)
+		}
 	}
 
 	return (

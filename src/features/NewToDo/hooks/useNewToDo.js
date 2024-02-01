@@ -1,48 +1,56 @@
 import { useCallback, useContext, useState } from 'react'
-import AuthContext from '../../../state-management/Token/AuthContext'
 import { useAuth } from '../../../hooks/useAuth'
 import ActiveListContext from '../../../state-management/List/ListContext'
 
 const useNewToDo = () => {
-	const { logout } = useAuth()
-	const [loading, setLoading] = useState(false)
-	const [errs, setErrs] = useState(null)
-	const [newToDo, setNewToDo] = useState({})
-	const { token } = useContext(AuthContext)
-    const { activeList } = useContext(ActiveListContext)
+	const [meta, setMeta] = useState({ loading: false, errors: null })
+	const { activeList } = useContext(ActiveListContext)
+	const { logout, getToken } = useAuth()
+	const token = getToken()
 
-	const createNewToDo = useCallback((data) => {
-		const controller = new AbortController()
-		const signal = controller.signal
-		setLoading(true)
+	const createNewToDo = useCallback(async (data) => {
+		setMeta({ ...meta, loading: true })
+		let url
+		if (activeList) {
+			url = activeList.id
+			? `http://localhost:3000/api/1/lists/${activeList.id}/to-dos`
+			: `http://localhost:3000/api/1/to-dos`
+		}
 
-		fetch(`http://localhost:3000/api/1/lists/${activeList.id}/to-dos`, {
-			method: 'POST',
-			headers: {
-				'content-type': 'application/json',
-				authorization: `Bearer ${token}`,
-			},
-			body: JSON.stringify({
-				title: data.toDoTitle,
-			}),
-			signal: signal,
-		})
-			.then((res) => {
-				if (res.status === 200) return res.json()
-				if (res.status === 401) logout()
-				throw new Error('error stuff')
+		try {
+			const response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json',
+					authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					title: data.toDoTitle,
+				}),
 			})
-			.then((data) => {
-				setNewToDo(data.data)
-				setLoading(false)
-			})
-			.catch((err) => {
-				setErrs(err)
-				setLoading(false)
-			})
-		return () => controller.abort()
+
+			if (response.status === 200) {
+				const json = await response.json()
+				setMeta({ ...meta, errors: null })
+				return [null, json.data]
+			}
+
+			if (response.status === 401) {
+				logout()
+				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
+				return ['unauthorized user']
+			}
+
+			const json = await response.json()
+			throw new Error(json.message)
+		} catch (error) {
+			setMeta({ ...meta, errors: { message: error.message } })
+			return [error.message]
+		} finally {
+			setMeta({ ...meta, loading: false })
+		}
 	}, [])
-	return { newToDo, loading, errs, createNewToDo }
+	return { meta, createNewToDo }
 }
 
 export default useNewToDo

@@ -25,6 +25,8 @@ export default function ToDoListsList() {
 		formState: { errors, isValid },
 	} = useForm()
 
+	if (errors && isValid && editList ) console.log()
+
 	async function onSelect(list) {
 		if (list?.id === activeList?.id) return
 		setIsLoading(true)
