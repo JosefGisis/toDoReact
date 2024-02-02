@@ -21,6 +21,7 @@ function ToDoList() {
 
 	useEffect(() => {
 		assignToDos()
+		console.log(data)
 	}, [activeList, data])
 
 	const assignToDos = useCallback(async () => {
