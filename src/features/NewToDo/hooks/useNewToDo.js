@@ -23,7 +23,7 @@ const useNewToDo = () => {
 				},
 				body: JSON.stringify({
 					title: data.toDoTitle,
-					due_date: data.date
+					dueDate: data.date
 				}),
 			})
 

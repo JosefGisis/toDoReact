@@ -17,6 +17,8 @@ function NewToDoForm() {
 	} = useForm()
 
 	const onSubmit = async (data) => {
+		console.log(data.date)
+		return
 		setIsLoading(true)
 		try {
 			const [error, newToDo] = await createNewToDo(data)
@@ -61,10 +63,10 @@ function NewToDoForm() {
 					<div className="my-2">
 						<input
 							{...register('date', {
-								// pattern: {
-								// 	value: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
-								// 	message: 'invalid date format',
-								// },
+								pattern: {
+									value: /^\d{4}-\d{2}-\d{2}$/,
+									message: 'date format mm/dd/yyyy required',
+								},
 							})}
 							className="text-black max-w-[15rem] p-1 mr-4 h-10 rounded-md focus:outline-sky-500"
 							type="date"

@@ -21,7 +21,6 @@ function ToDoList() {
 
 	useEffect(() => {
 		assignToDos()
-		console.log(data)
 	}, [activeList, data])
 
 	const assignToDos = useCallback(async () => {
@@ -50,7 +49,16 @@ function ToDoList() {
 		}
 	}, [activeList, data])
 
-	return <div>{toDos?.length ? toDos?.map((toDo, i) => <ToDo key={i} data={toDo}></ToDo>) : <EmptyListMessage />}</div>
+	return toDos?.length ? (
+		<div>
+			<div>{toDos?.map((toDo, i) => (toDo.completed === 0 && <ToDo key={i} data={toDo}></ToDo>))}</div>
+			{ toDos.find(toDo => toDo.completed === 1) && <div className="mt-3 mb-6 h-2 bg-slate-500"></div>}
+			<div>{toDos?.map((toDo, i) => (toDo.completed === 1 && <ToDo key={i} data={toDo}></ToDo>))}</div>
+		</div>
+	) : (
+		<EmptyListMessage />
+	)
+
 }
 
 export default ToDoList

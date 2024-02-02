@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import DataContext from '../../../state-management/data/DataContext'
 import { useAccessList } from '../hooks/useAccessList'
@@ -7,12 +7,12 @@ import { useDeleteList } from '../hooks/useDeleteList'
 import ListContext from '../../../state-management/List/ListContext'
 
 export default function ToDoListsList() {
-	const { data } = useContext(DataContext)
+	const { data, dispatch: dispatchData } = useContext(DataContext)
 	const { activeList, dispatch } = useContext(ListContext)
 
 	const [isLoading, setIsLoading] = useState(false)
 	const [_errors, setErrors] = useState(null)
-	const [awaitingTitle, setAwaitingTitle] = useState(false)
+	const [isEditing, setIsEditing] = useState(false)
 
 	const { deleteList } = useDeleteList()
 	const { accessList } = useAccessList()
@@ -25,12 +25,13 @@ export default function ToDoListsList() {
 		formState: { errors, isValid },
 	} = useForm()
 
-	if (errors && isValid && editList ) console.log()
+	if (errors && isValid && editList && isLoading) console.log()
 
 	async function onSelect(list) {
 		if (list?.id === activeList?.id) return
 		setIsLoading(true)
-		setAwaitingTitle(false)
+		setIsEditing(false)
+		reset()
 		try {
 			if (list) {
 				const [error] = await accessList(list)
@@ -70,26 +71,20 @@ export default function ToDoListsList() {
 		}
 	}
 
-	async function onEdit() {
-		setAwaitingTitle(!awaitingTitle)
-	}
-
-	const onSubmit = (list) => (data) => {
-		console.log(list, data)
-		setAwaitingTitle(false)
-		reset()
-		// setIsLoading(true)
-		// try {
-		// 	const [error] = await editList(list?.id, data.title)
-		// 	if (error) {
-		// 		setErrors({ message: error })
-		// 		return
-		// 	}
-		// } catch (error) {
-		// 	setErrors({ message: error.message })
-		// } finally {
-		// 	setIsLoading(false)
-		// }
+	async function handleEdit(list, newTitle) {
+		setIsLoading(true)
+		try {
+			const [error, editedList] = await editList(list.id, newTitle)
+			if (error) {
+				setErrors({ message: error })
+				return
+			}
+			dispatchData({ type: 'EDIT LIST', payload: editedList })
+		} catch (error) {
+			setErrors({ message: error.message })
+		} finally {
+			setIsLoading(false)
+		}
 	}
 
 	return (
@@ -113,18 +108,23 @@ export default function ToDoListsList() {
 						}
 						onClick={() => onSelect(list)}
 					>
-						{awaitingTitle && list?.id === activeList?.id ? (
-							<form onSubmit={handleSubmit(onSubmit(list))}>
+						{isEditing && list?.id === activeList?.id ? (
+							<form
+								onBlur={() => {
+									setIsEditing(false)
+									reset()
+								}}
+								onSubmit={() => {
+									setIsEditing(false)
+									reset()
+								}}
+								onChange={(e) => handleEdit(list, e.target.value)}
+							>
 								<input
-									{...register('listTitle', {
-										required: 'title required*',
-										minLength: {
-											value: 5,
-											message: 'minimum five characters required',
-										},
-									})}
+									{...register('listTitle', { required: 'title required*' })}
 									className="text-black px-1 py-0.5 focus:outline-sky-500"
 									type="text"
+									value={list.title}
 									placeholder="list title"
 								></input>
 							</form>
@@ -136,14 +136,12 @@ export default function ToDoListsList() {
 						<button className="bg-sky-500 w-20 rounded-md focus:outline-sky-500" type="button" onClick={() => onDelete(list)}>
 							delete
 						</button>
-						<button className="bg-sky-500 w-20 rounded-md focus:outline-sky-500" type="button" onClick={() => onEdit()}>
+						<button className="bg-sky-500 w-20 rounded-md focus:outline-sky-500" type="button" onClick={() => setIsEditing(!isEditing)}>
 							edit
 						</button>
 					</div>
 				))}
-			{activeList && <p>{activeList?.id}</p>}
-			{isLoading && <p>loading...</p>}
-			{_errors && <p>errors present</p>}
+			{_errors && <p> {_errors.message} </p>}
 		</>
 	)
 }

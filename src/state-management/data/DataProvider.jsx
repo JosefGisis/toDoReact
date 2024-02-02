@@ -23,6 +23,8 @@ const DataProvider = ({ children }) => {
 			}
 
 			if (response.status !== 200) {
+				const json = await response.json()
+				console.log(json.message)
 				throw new Error('error')
 			}
 
@@ -57,13 +59,13 @@ const DataProvider = ({ children }) => {
 			throw new Error(error.message)
 		}
 	}, [])
-	
+
 	useEffect(() => {
 		getLists()
 		getDefaultToDos()
 	}, [])
 
-	return <DataContext.Provider value={{ data, dispatch }}>{children}</DataContext.Provider>
+	return <DataContext.Provider value={{data, dispatch }}>{children}</DataContext.Provider>
 }
 
 export default DataProvider

@@ -1,8 +1,5 @@
 import { useForm } from 'react-hook-form'
-// import { useEffect, useState } from 'react'
 import useNewList from '../hooks/useNewList'
-import { useContext, useEffect } from 'react'
-import DataContext from '../../../state-management/data/DataContext'
 
 function NewListForm() {
 	const { createList } = useNewList()
@@ -28,13 +25,7 @@ function NewListForm() {
 			<div className="mt-2 mb-4">
 				{/* <label htmlFor="list-title">list title</label> */}
 				<input
-					{...register('listTitle', {
-						required: 'title required*',
-						minLength: {
-							value: 5,
-							message: 'minimum five characters required',
-						},
-					})}
+					{...register('listTitle', { required: 'title required*' })}
 					className="text-black p-1 rounded-md focus:outline-sky-500"
 					type="text"
 					placeholder="list title"
