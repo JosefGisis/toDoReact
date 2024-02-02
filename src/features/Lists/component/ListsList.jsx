@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import DataContext from '../../../state-management/data/DataContext'
 import { useAccessList } from '../hooks/useAccessList'
@@ -103,7 +103,7 @@ export default function ToDoListsList() {
 				To-dos
 			</div>
 
-			{data.lists &&
+			{data?.lists &&
 				data?.lists?.map((list, i) => (
 					<div
 						key={i}

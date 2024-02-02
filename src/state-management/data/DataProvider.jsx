@@ -27,9 +27,7 @@ const DataProvider = ({ children }) => {
 			}
 
 			const json = await response.json()
-			const data = { lists: [] }
-			json.data.map((list) => data.lists.push({ ...list, toDos: [] }))
-			dispatch({ type: 'ALTER DATA', payload: {...data}})
+			dispatch({ type: 'ADD LISTS', payload: json.data })
 		} catch (error) {
 			throw new Error(error.message)
 		}

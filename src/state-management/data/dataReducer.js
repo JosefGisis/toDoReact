@@ -1,13 +1,24 @@
 const dataReducer = (data, action) => {
-	if (action.type === 'ALTER DATA') return action.payload
+	if (action.type === 'ADD LISTS') {
+		try {
+			if (!Array.isArray(action.payload)) throw new Error('Dispatch ADD LISTS requires payload of type Array')
+			return { ...data, lists: action.payload }
+		} catch (error) {
+			return { ...data, errors: { message: error.message } }
+		}
+	}
+	
 	if (action.type === 'ADD LIST') {
-		const lists = [...data.lists, { ...action.payload, toDos: [] }]
-		return { ...data, lists }
+		try {
+			if (typeof action.payload !== 'object' || !Object.keys(action.payload).length) throw new Error('Dispatch ADD LIST requires payload of type Object and can not be empty')
+			return { ...data, lists: [ ...data.lists, { ...action.payload, toDos: [] } ] }
+		} catch (error) {
+			return { ...data, errors: { message: error.message } }
+		}
 	}
 
 	if (action.type === 'REMOVE LIST') {
-		const lists = data.lists.filter((list) => list.id !== action.payload)
-		return { ...data, lists }
+		return { ...data, lists: data.lists.filter((list) => list.id !== action.payload) }
 	}
 
 	if (action.type === 'ADD TODOS') {
