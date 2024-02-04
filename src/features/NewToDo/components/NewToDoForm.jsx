@@ -17,8 +17,6 @@ function NewToDoForm() {
 	} = useForm()
 
 	const onSubmit = async (data) => {
-		console.log(data.date)
-		return
 		setIsLoading(true)
 		try {
 			const [error, newToDo] = await createNewToDo(data)
