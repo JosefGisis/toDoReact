@@ -1,10 +1,11 @@
 import { useForm } from 'react-hook-form'
 import useNewToDo from '../hooks/useNewToDo'
-import { useContext, useEffect, useState } from 'react'
-import DataContext from '../../../state-management/data/DataContext'
+import { useState } from 'react'
+import { useListContext } from '../../../hooks/useListContext'
+import { actions } from '../../../state-management/List/listReducer'
 
 function NewToDoForm() {
-	const { data, dispatch } = useContext(DataContext)
+	const { dispatch } = useListContext()
 
 	const { createNewToDo } = useNewToDo()
 	const [_errors, setErrors] = useState(null)
@@ -25,7 +26,7 @@ function NewToDoForm() {
 				return
 			}
 			reset()
-			dispatch({ type: 'ADD TODO', payload: newToDo })
+			dispatch({ type: actions.ADD_TODO, payload: newToDo })
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {

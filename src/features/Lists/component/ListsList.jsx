@@ -1,14 +1,13 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import DataContext from '../../../state-management/data/DataContext'
 import { useAccessList } from '../hooks/useAccessList'
 import { useEditList } from '../hooks/useEditList'
 import { useDeleteList } from '../hooks/useDeleteList'
-import ListContext from '../../../state-management/List/ListContext'
+import { useListContext } from '../../../hooks/useListContext'
+import { actions } from '../../../state-management/List/listReducer'
 
 export default function ToDoListsList() {
-	const { data, dispatch: dispatchData } = useContext(DataContext)
-	const { activeList, dispatch } = useContext(ListContext)
+	const { activeList, lists, dispatch, setActiveList, removeActiveList } = useListContext()
 
 	const [isLoading, setIsLoading] = useState(false)
 	const [_errors, setErrors] = useState(null)
@@ -20,7 +19,6 @@ export default function ToDoListsList() {
 
 	const {
 		register,
-		handleSubmit,
 		reset,
 		formState: { errors, isValid },
 	} = useForm()
@@ -39,8 +37,8 @@ export default function ToDoListsList() {
 					setErrors({ message: error })
 					return
 				}
-				dispatch({ type: 'ASSIGN', payload: { id: list.id, title: list.title, creationDate: list.creation_date } })
-			} else dispatch({ type: 'UNASSIGN' })
+				setActiveList(list.id)
+			} else removeActiveList()
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {
@@ -63,7 +61,7 @@ export default function ToDoListsList() {
 			 * always become active when their respective delete
 			 * buttons are pressed.
 			 */
-			dispatch({ type: 'UNASSIGN' })
+			removeActiveList()
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {
@@ -79,7 +77,7 @@ export default function ToDoListsList() {
 				setErrors({ message: error })
 				return
 			}
-			dispatchData({ type: 'EDIT LIST', payload: editedList })
+			dispatch({ type: actions.UPDATE_LIST, payload: editedList })
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {
@@ -98,8 +96,8 @@ export default function ToDoListsList() {
 				To-dos
 			</div>
 
-			{data?.lists &&
-				data?.lists?.map((list, i) => (
+			{lists &&
+				lists.map((list, i) => (
 					<div
 						key={i}
 						className={

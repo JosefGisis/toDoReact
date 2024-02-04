@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react'
-import DataContext from '../../../state-management/data/DataContext'
+import { useState } from 'react'
 import useDeleteToDos from '../hooks/useDeleteToDo'
 import useToggleToDos from '../hooks/useToggleToDo'
+import { useListContext } from '../../../hooks/useListContext'
 
 function ToDo({ data }) {
 	const { meta: deleteMeta, deleteToDo } = useDeleteToDos()
@@ -10,7 +10,7 @@ function ToDo({ data }) {
 	const [isLoading, setIsLoading] = useState(false)
 	if (deleteMeta && toggleMeta && errors && isLoading) console.log()
 
-	const { dispatch } = useContext(DataContext)
+	const { dispatch } = useListContext()
 
 	async function onDelete(toDo) {
 		try {

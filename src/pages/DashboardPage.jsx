@@ -7,7 +7,6 @@ import SectionFrame from '../components/SectionFrame'
 import ActiveList from '../features/ActiveList'
 import NewToDoForm from '../features/NewToDo/components/NewToDoForm'
 import ToDos from '../features/ToDos'
-import DataProvider from '../state-management/data/DataProvider'
 
 function DashboardPage() {
 	return (
@@ -15,20 +14,18 @@ function DashboardPage() {
 			<MainFrame>
 
 				<ListProvider>
-					<DataProvider>
 
 					<>
 						<Lists />
-						<NewList />
+						{/* <NewList /> */}
 
 						<SectionFrame>
 							<ActiveList />
-							<NewToDoForm />
-							<ToDos />
+							{/* <NewToDoForm /> */}
+							{/* <ToDos /> */}
 						</SectionFrame>
 					</>
 
-					</DataProvider>
 				</ListProvider>
 
 			</MainFrame>

@@ -1,6 +1,6 @@
-import { useCallback, useState, useContext } from 'react'
+import { useCallback, useState } from 'react'
 import { useAuth } from '../../../hooks/useAuth'
-import DataContext from '../../../state-management/data/DataContext'
+import { useListContext } from '../../../hooks/useListContext'
 
 const useNewList = () => {
 	const { logout, getToken } = useAuth()
@@ -8,7 +8,7 @@ const useNewList = () => {
 	const [errs, setErrs] = useState(null)
 	const [newList, setNewList] = useState({})
 	const token = getToken()
-	const { dispatch: dispatchData } = useContext(DataContext)
+	const { dispatch } = useListContext()
 
 	const createList = useCallback(async (newListData) => {
 		setLoading(true)
@@ -34,7 +34,7 @@ const useNewList = () => {
 
 			const json = await response.json()
 			setNewList(json.data)
-			dispatchData({ type: 'ADD LIST', payload: json.data })
+			dispatch({ type: 'ADD LIST', payload: json.data })
 		} catch (error) {
 			setErrs(error.message)
 			throw new Error(error.message)

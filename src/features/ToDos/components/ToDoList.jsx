@@ -1,53 +1,44 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import ToDo from './ToDo'
-import DataContext from '../../../state-management/data/DataContext'
-import ListContext from '../../../state-management/List/ListContext'
 import useToDos from '../hooks/useToDos'
 import EmptyListMessage from './EmptyListMessage'
+import { useListContext } from '../../../hooks/useListContext'
+import { actions } from '../../../state-management/List/listReducer'
 
 function ToDoList() {
-	const { data } = useContext(DataContext)
-	const { activeList } = useContext(ListContext)
+	const { activeList, lists, toDos, activeListToDos, dispatch } = useListContext()
 	const { getToDos } = useToDos()
-
-	const { dispatch } = useContext(DataContext)
 
 	const [listIndex, setListIndex] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
-	const [toDos, setToDos] = useState(null)
 	const [errors, setErrors] = useState(null)
 
 	if (listIndex && isLoading && errors) console.log()
 
 	useEffect(() => {
-		assignToDos()
-	}, [activeList, data])
+		fetchToDos()
+	}, [activeList, toDos ])
 
-	const assignToDos = useCallback(async () => {
+	const fetchToDos = useCallback(async () => {
 		try {
-			if (!data) return
-			if (!activeList) {
-				setToDos(data.toDos)
-				return
-			}
-			const listIndex = await data?.lists?.findIndex((list) => list.id === activeList.id)
+			if (!lists) return
+			const listIndex = await lists?.findIndex((list) => list.id === activeList.id)
 			setListIndex(listIndex)
 
-			if (!data?.lists[listIndex]?.toDos.length) {
+			if (!lists[listIndex]?.toDos.length) {
 				let [error, toDos] = await getToDos(activeList.id)
 				if (error) {
 					setErrors({ message: error })
 					return
 				}
-				if (toDos.length) dispatch({ type: 'ADD LIST TODOS', payload: toDos })
+				if (toDos.length) dispatch({ type: actions.ADD_LIST_TODOS, payload: toDos })
 			}
-			setToDos(data.lists[listIndex].toDos)
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {
 			setIsLoading(false)
 		}
-	}, [activeList, data])
+	}, [activeList, lists ])
 
 	return toDos?.length ? (
 		<div>
