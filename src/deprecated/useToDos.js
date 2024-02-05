@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useAuth } from '../../../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'
 
 const useToDos = () => {
 	const [meta, setMeta] = useState({ loading: false, errors: null })

@@ -15,16 +15,14 @@ function DashboardPage() {
 
 				<ListProvider>
 
-					<>
 						<Lists />
-						{/* <NewList /> */}
+						<NewList />
 
 						<SectionFrame>
 							<ActiveList />
-							{/* <NewToDoForm /> */}
-							{/* <ToDos /> */}
+							<NewToDoForm />
+							<ToDos />
 						</SectionFrame>
-					</>
 
 				</ListProvider>
 

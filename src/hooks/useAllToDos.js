@@ -1,22 +1,21 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from './useAuth'
 
-function useLists() {
+function useAllToDos() {
     const [meta, setMeta] = useState({ loading: false, errors: null })
-    
     const { logout, getToken } = useAuth()
     const token = getToken()
 
-    const getLists = useCallback(async () => {
-        try {
-            const response = await fetch('http://localhost:3000/api/1/lists?sortBy=title', {
-                headers: {
+	const getAllToDos = useCallback(async () => {
+		try {
+			const response = await fetch('http://localhost:3000/api/1/to-dos/all', {
+				headers: {
                     'content-type': 'application/json',
-                    authorization: `Bearer ${token}`,
-                },
-            })
-
-            const json = await response.json()
+					authorization: `Bearer ${token}`,
+				},
+			})
+            
+            const json = await response.json()	
             
             if (response.status === 200) {
                 return [null, json.data]
@@ -27,17 +26,17 @@ function useLists() {
             } else {
                 console.log(json.message)
                 setMeta({ ...meta, errors: { message: json.message }})
-                return ['error getting lists']
+                return ['error getting to-dos']
             }
-        } catch (error) {
+		} catch (error) {
             setMeta({ ...meta, errors: {message: error.message} })
             return [error.message]
-        } finally {
+		} finally {
             setMeta({ ...meta, loading: false })
         }
-    }, [])
+	}, [])
 
-    return { meta, getLists}
+	return { meta, getAllToDos }
 }
 
-export default useLists
+export default useAllToDos

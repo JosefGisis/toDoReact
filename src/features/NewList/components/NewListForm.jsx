@@ -1,8 +1,15 @@
 import { useForm } from 'react-hook-form'
 import useNewList from '../hooks/useNewList'
+import { useState } from 'react'
+import { useListContext } from '../../../hooks/useListContext'
+import { actions } from '../../../state-management/List/listReducer'
 
 function NewListForm() {
 	const { createList } = useNewList()
+	const [isLoading, setIsLoading] = useState(false)
+	const [_errors, setErrors] = useState(null)
+	const { dispatch } = useListContext()
+	if (isLoading && _errors) console.log(_errors)
 
 	const {
 		register,
@@ -11,9 +18,21 @@ function NewListForm() {
 		formState: { errors, isValid },
 	} = useForm()
 
-	const onSubmit = (newListData) => {
-		createList(newListData)
-        reset()
+	const onSubmit = async (newListData) => {
+		reset()
+		setIsLoading(true)
+		try {
+			const [error, newList] = await createList(newListData)
+			if (error) {
+				setErrors({ message: error })
+				return
+			}
+			dispatch({ type: actions.ADD_LIST, payload: newList })
+		} catch (error) {
+			setErrors({ message: error.message })
+		} finally {
+			setIsLoading(false)
+		}
 	}
 
 	const onCancel = () => {

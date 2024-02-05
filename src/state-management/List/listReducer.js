@@ -6,6 +6,7 @@ export const actions = {
 	ADD_LISTS: 'ADD_LISTS',
 	ADD_TODOS: 'ADD_TODOS',
 	ADD_LIST_TODOS: 'ADD_LIST_TODOS',
+	REMOVE_LIST_TODOS: 'REMOVE_LIST_TODOS',
 
 	ADD_LIST: 'ADD_LIST',
 	UPDATE_LIST: 'UPDATE_LIST',
@@ -66,7 +67,14 @@ const listReducer = (data, action) => {
 
 		case actions.ADD_LIST_TODOS: {
 			if (!Array.isArray(payload)) throw new Error('Dispatch ADD LIST TODOS requires payload of type Array')
+			if (!payload.length) return { ...data }
 			const lists = data.lists.map((list) => (list.id === payload[0].membership ? { ...list, toDos: payload } : list))
+			return { ...data, lists }
+		}
+
+		case actions.REMOVE_LIST_TODOS: {
+			if (typeof(payload) !== 'number') throw new Error('Dispatch REMOVE LIST TODOS requires payload of type Number')
+			const lists = data.lists.map((list) => (list.id === payload ? { ...list, toDos: []} : list))
 			return { ...data, lists }
 		}
 

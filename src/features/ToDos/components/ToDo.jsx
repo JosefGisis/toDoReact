@@ -2,6 +2,7 @@ import { useState } from 'react'
 import useDeleteToDos from '../hooks/useDeleteToDo'
 import useToggleToDos from '../hooks/useToggleToDo'
 import { useListContext } from '../../../hooks/useListContext'
+import { actions } from '../../../state-management/List/listReducer'
 
 function ToDo({ data }) {
 	const { meta: deleteMeta, deleteToDo } = useDeleteToDos()
@@ -19,7 +20,7 @@ function ToDo({ data }) {
 				setErrors({ message: error })
 				return
 			}
-			dispatch({ type: 'REMOVE TODO', payload: toDo })
+			dispatch({ type: actions.REMOVE_TODO, payload: toDo })
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {
@@ -34,7 +35,7 @@ function ToDo({ data }) {
 				setErrors({ message: error })
 				return
 			}
-			dispatch({ type: 'TOGGLE TODO', payload: toDo })
+			dispatch({ type: actions.TOGGLE_TODO, payload: toDo })
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {

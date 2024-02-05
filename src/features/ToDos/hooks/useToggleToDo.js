@@ -21,6 +21,8 @@ const useToggleToDos = () => {
 				},
 			})
 
+			const json = await response.json()
+			
 			if (response.status === 200) return [null]
 
 			if (response.status === 401) {
@@ -29,7 +31,6 @@ const useToggleToDos = () => {
 				return ['unauthorized user']
 			}
 
-			const json = await response.json()
 			throw new Error(json.message)
 		} catch (error) {
 			setMeta({ ...meta, errors: { message: error.message } })

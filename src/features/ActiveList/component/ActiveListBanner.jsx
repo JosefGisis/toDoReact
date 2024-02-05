@@ -6,9 +6,9 @@ function ActiveListBanner() {
 	return (
 		<div>
 			<h3 className="w-fit rounded-lg | bg-sky-500 | text-4xl font-bold | p-3  mb-5">{activeList ? activeList.title : 'To-dos'}</h3>
-			{activeList?.creationDate && (
+			{activeList?.creation_date && (
 				<p>
-					Created: <i>{new Date(activeList.creationDate).toDateString()}</i>
+					Created: <i>{new Date(activeList.creation_date).toDateString()}</i>
 				</p>
 			)}
 		</div>
