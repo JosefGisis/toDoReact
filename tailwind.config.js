@@ -10,7 +10,8 @@ export default {
 	plugins: [daisyui],
 	daisyui: {
 		// synthwave is dark mode and pastel is light
-		themes: ['synthwave', 'pastel'],
+		themes: [
+			'synthwave', 'pastel'],
 		// darkTheme: "synthwave",
 		base: true,
 		styled: true,
