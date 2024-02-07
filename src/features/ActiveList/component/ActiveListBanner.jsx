@@ -5,7 +5,7 @@ function ActiveListBanner() {
 
 	return (
 		<div>
-			<h3 className="w-fit rounded-lg | bg-sky-500 | text-4xl font-bold | p-3  mb-5">{activeList ? activeList.title : 'To-dos'}</h3>
+			<h3 className="w-fit rounded-lg bg-info text-4xl font-bold | p-3  mb-5">{activeList ? activeList.title : 'To-dos'}</h3>
 			{activeList?.creation_date && (
 				<p>
 					Created: <i>{new Date(activeList.creation_date).toDateString()}</i>

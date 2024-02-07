@@ -35,7 +35,7 @@ function NewToDoForm() {
 	}
 
 	return (
-		<div className="max-w-[640px] | bg-slate-800 | p-4 my-4 | rounded-lg">
+		<div className="max-w-[640px] bg-neutral p-4 my-4 rounded-lg">
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<h3 className="text-2xl | mb-5">Add New To-do</h3>
 				<div className="flex flex-col sm:flex-row">
@@ -52,11 +52,11 @@ function NewToDoForm() {
 									message: 'maximum twenty-five characters',
 								},
 							})}
-							className="text-black | max-w-[15rem] p-1 mr-4 | h-10 | rounded-md focus:outline-sky-500"
+							className="text-accent max-w-[15rem] p-1 mr-4 | h-10 | rounded-md focus:outline-accent"
 							type="text"
 							placeholder="to-do title"
 						></input>
-						{errors?.toDoTitle && <p className="text-rose-500 text-sm absolute">{errors?.toDoTitle?.message}</p>}
+						{errors?.toDoTitle && <p className="text-error text-sm absolute">{errors?.toDoTitle?.message}</p>}
 					</div>
 
 					<div className="my-2">
@@ -67,13 +67,13 @@ function NewToDoForm() {
 									message: 'date format mm/dd/yyyy required',
 								},
 							})}
-							className="text-black max-w-[15rem] p-1 mr-4 h-10 rounded-md focus:outline-sky-500"
+							className="text-accent max-w-[15rem] p-1 mr-4 h-10 rounded-md focus:outline-sky-500"
 							type="date"
 						></input>
-						{errors?.date && <p className="text-rose-500 text-sm absolute">{errors?.date?.message}</p>}
+						{errors?.date && <p className="text-error text-sm absolute">{errors?.date?.message}</p>}
 					</div>
 
-					<button className="bg-sky-800 | my-2 w-20 h-10 | rounded-md focus:outline-sky-500" type="submit">
+					<button className="btn btn-secondary" type="submit">
 						submit
 					</button>
 				</div>

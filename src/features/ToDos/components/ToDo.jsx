@@ -45,8 +45,9 @@ function ToDo({ data }) {
 
 	return (
 		<div 
-		className={'rounded-lg transition-all p-3 mb-5 hover:bg-slate-600 ' + ( data?.completed ? 'bg-slate-600' : 'bg-slate-800' )}
+		className={'rounded-lg transition-all p-3 mb-5 hover:bg-base-300 ' + ( data?.completed ? 'bg-base-300' : 'bg-neutral' )}
 		>
+
 			<div className="py-1">
 				<h3 className={'rounded-lg text-2xl font-bold my-2 ' + ( data?.completed ? 'line-through text-rose-400' : '')}>{data?.title}</h3>
 				<p className="text-sm my-2">
@@ -79,7 +80,7 @@ function ToDo({ data }) {
 								<div className={'absolute translate-y-[-1.475rem] translate-x-[0.075rem] transition-all'}>
 									{data?.completed === 1 ? (
 										<img src='/checkmark.svg' width='20px' height='20px' alt='checkmark' className='w-5 h-5' />
-									) : null}
+										) : null}
 								</div>
 							</div>
 						</div>
