@@ -76,10 +76,6 @@ const ListProvider = ({ children }) => {
 	const activeList = useMemo(() => (activeListId && lists?.length ? lists?.find((list) => list.id === activeListId) : null), [activeListId, lists])
 	const activeListToDos = useMemo(() => (activeList ? activeList?.toDos : []), [activeList])
 
-	useEffect(() => {
-		console.log(lists)
-	}, lists)
-
 	return (
 		<ListContext.Provider value={{ activeList, activeListToDos, lists, toDos, setActiveList, removeActiveList, dispatch }}>
 			{children}

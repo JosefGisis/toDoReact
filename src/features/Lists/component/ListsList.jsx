@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useEditList } from '../hooks/useEditList'
 import { useListContext } from '../../../hooks/useListContext'
@@ -8,10 +8,10 @@ import List from './List'
 export default function ToDoListsList() {
 	const { activeList, lists, removeActiveList } = useListContext()
 	const [_lists, setLists] = useState(lists)
-	const [sort, setSort] = useState({ by: 'sort by', order: 'ASC'})
+	const [change, setChange] = useState('change')
+	const [sort, setSort] = useState({ by: 'sort by', order: 'ASC' })
 
 	const sortOptions = ['sort by', 'title', 'created', 'last updated']
-	const dropDownOptions = ['edit', 'delete']
 
 	const [isLoading, setIsLoading] = useState(false)
 	const [_errors, setErrors] = useState(null)
@@ -29,29 +29,42 @@ export default function ToDoListsList() {
 
 	if (errors && isValid && editList && isLoading) console.log()
 
-	useEffect(() => {
-		console.log(_lists)
-		if (sort.by !== 'title') return
-		let sortedLists
-		const sortByTitleDesc = async () => {
-			sortedLists = await lists.sort((list1, list2) => {
-				const title1 = list1.title.toUpperCase()
-				const title2 = list2.title.toUpperCase()
-				if (title1 > title2) return -1
-				return 1
+	const sortLists = useCallback(
+		async (criteria, order) => {
+			let greaterValueDir = 1
+			let lesserValueDir = -1
+			if (order === 'DESC') {
+				greaterValueDir = -1
+				lesserValueDir = 1
+			}
+			const sortedLists = await lists.sort((list1, list2) => {
+				const prop1 = list1[criteria].toUpperCase()
+				const prop2 = list2[criteria].toUpperCase()
+				if (prop1 > prop2) return greaterValueDir
+				if (prop1 < prop2) return lesserValueDir
+				return 0
 			})
-			setLists(sortedLists)
-		}
-		sortByTitleDesc()
-	}, [sort])
+			return sortedLists
+		},
+		[lists]
+	)
 
 	function toggleSortOrder() {
 		setSort({ ...sort, order: sort.order === 'ASC' ? 'DESC' : 'ASC' })
 	}
 
+	const sortListHandler = useCallback(async (sort) => {
+		let sortedLists
+		if (sort.by === 'title' || sort.by === 'sort by') sortedLists = await sortLists('title', sort.order)
+		else if (sort.by === 'created') sortedLists = await sortLists('creation_date', sort.order)
+		else if (sort.by === 'last updated') sortedLists = await sortLists('last_accessed', sort.order)
+		setLists([ ...sortedLists] )
+	}, [lists])
+
 	useEffect(() => {
-		console.log(sort)
-	}, [sort])
+		if (!lists?.length) return
+		sortListHandler(sort)
+	}, [lists, sort, activeList])
 
 	return (
 		<div className="">
@@ -94,12 +107,18 @@ export default function ToDoListsList() {
 				</button>
 			</div>
 
-			{lists &&
-				lists.map((list, i) => (
+			{_lists ? 
+				_lists?.map((list, i) => (
 					<div key={i}>
 						<List listData={list}></List>
 					</div>
-				))}
+				)) :
+				lists?.map((list, i) => (
+					<div key={i}>
+						<List listData={list}></List>
+					</div>
+				))
+			}
 
 			{_errors && <p> {_errors.message} </p>}
 		</div>
