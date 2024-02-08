@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 export default function ThemeToggler() {
-    const themes = { light: 'pastel', dark: 'synthwave' }
+    const themes = { light: 'garden', dark: 'synthwave' }
 	const [theme, setTheme] = useState(themes.dark)
 
 	function toggleTheme() {

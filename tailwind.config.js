@@ -11,7 +11,7 @@ export default {
 	daisyui: {
 		// synthwave is dark mode and pastel is light
 		themes: [
-			'synthwave', 'pastel'],
+			'synthwave', 'garden'],
 		// darkTheme: "synthwave",
 		base: true,
 		styled: true,

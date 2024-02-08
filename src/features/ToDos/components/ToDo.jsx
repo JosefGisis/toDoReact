@@ -45,7 +45,7 @@ function ToDo({ data }) {
 
 	return (
 		<div 
-		className={'rounded-lg transition-all p-3 mb-5 hover:bg-base-300 ' + ( data?.completed ? 'bg-base-300' : 'bg-neutral' )}
+		className={'rounded-lg transition-all p-3 mb-5 hover:bg-base-300 ' + ( data?.completed ? 'bg-default' : 'bg-neutral' )}
 		>
 
 			<div className="py-1">
@@ -56,7 +56,7 @@ function ToDo({ data }) {
 			</div>
 
 			<div className="my-2">
-				<hr className="border-1 border-solid border-sky-500" />
+				<hr className="border-1 border-solid border-accent" />
 			</div>
 
 			<div className='flex flex-row content-center justify-between flex-wrap'>

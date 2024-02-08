@@ -3,6 +3,7 @@ import useNewList from '../hooks/useNewList'
 import { useState } from 'react'
 import { useListContext } from '../../../hooks/useListContext'
 import { actions } from '../../../state-management/List/listReducer'
+import { GoPlus, GoPlusCircle} from 'react-icons/go'
 
 function NewListForm() {
 	const { createList } = useNewList()
@@ -35,33 +36,26 @@ function NewListForm() {
 		}
 	}
 
-	const onCancel = () => {
-		reset()
-	}
-
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="flex items-center bg-slate-700 px-4 py-4 my-5">
-			<div className="mt-2 mb-4">
+		<form onSubmit={handleSubmit(onSubmit)} className="flex items-center align-items">
+			<div className='mr-2'>
 				{/* <label htmlFor="list-title">list title</label> */}
 				<input
 					{...register('listTitle', { required: 'title required*' })}
-					className="text-black p-1 rounded-md focus:outline-sky-500"
+					className="input input-bordered input-secondary w-full max-w-xs"
 					type="text"
 					placeholder="list title"
+					onBlur={() => reset()}
 				></input>
 				{errors?.listTitle && <p className="text-rose-500 text-sm absolute">{errors.listTitle.message}</p>}
 			</div>
 
 			<button
 				id="new-list-submit"
-				className={'w-20 ml-1 rounded-md mr-4 focus:outline-sky-500 ' + (isValid ? 'bg-sky-500' : 'bg-sky-800')}
+				className={'btn ' + (isValid ? 'btn-info' : 'bg-neutral')}
 				type="submit"
 			>
-				submit
-			</button>
-
-			<button id="new-list-cancel" className="bg-sky-500 w-20 rounded-md focus:outline-sky-500" type="button" onClick={onCancel}>
-				cancel
+				<GoPlus className='text-base-content w-5 h-5'/>
 			</button>
 		</form>
 	)

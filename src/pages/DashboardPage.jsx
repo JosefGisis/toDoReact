@@ -14,7 +14,7 @@ function DashboardPage() {
 	return (
 		<div className='max-w-screen-lg m-auto overflow-hidden px-4 pt-24 '>
 			{/* navbar component */}
-			<div className='bg-base-300 fixed px-4 py-2 left-0 top-0 w-[100%]'>
+			<div className='bg-base-300 fixed px-4 py-2 left-0 top-0 w-[100%] z-[2]'>
 				<div className='navbar mx-auto max-w-screen-lg'>
 					<div className='flex-1'>
 						<a href='/' className='text-xl'>
@@ -55,7 +55,7 @@ function DashboardPage() {
 				</div>
 			</ListProvider>
 
-			<ColorPalette />
+			{/* <ColorPalette /> */}
 
 			<footer className='footer footer-center p-4 bg-base-300 text-base-content'>
 					<p>Designed by Josef Gisis - 2024</p>
