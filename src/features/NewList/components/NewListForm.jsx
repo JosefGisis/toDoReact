@@ -3,7 +3,7 @@ import useNewList from '../hooks/useNewList'
 import { useState } from 'react'
 import { useListContext } from '../../../hooks/useListContext'
 import { actions } from '../../../state-management/List/listReducer'
-import { GoPlus, GoPlusCircle} from 'react-icons/go'
+import { GoPlus } from 'react-icons/go'
 
 function NewListForm() {
 	const { createList } = useNewList()
@@ -45,13 +45,11 @@ function NewListForm() {
 					className="input input-bordered input-secondary w-full max-w-xs"
 					type="text"
 					placeholder="list title"
-					onBlur={() => reset()}
 				></input>
 				{errors?.listTitle && <p className="text-rose-500 text-sm absolute">{errors.listTitle.message}</p>}
 			</div>
 
 			<button
-				id="new-list-submit"
 				className={'btn ' + (isValid ? 'btn-info' : 'bg-neutral')}
 				type="submit"
 			>
