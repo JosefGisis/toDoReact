@@ -1,73 +1,46 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useEditList } from '../hooks/useEditList'
+import { useCallback, useMemo, useState } from 'react'
 import { useListContext } from '../../../hooks/useListContext'
-import { GoSortAsc, GoSortDesc, GoHome, GoArrowDown, GoChevronDown } from 'react-icons/go'
+import { GoSortAsc, GoSortDesc, GoHome } from 'react-icons/go'
 import List from './List'
 
 export default function ToDoListsList() {
 	const { activeList, lists, removeActiveList } = useListContext()
-	const [_lists, setLists] = useState(lists)
-	const [change, setChange] = useState('change')
-	const [sort, setSort] = useState({ by: 'sort', order: 'ASC' })
+	const [sort, setSort] = useState({ by: 'title', order: 'ASC' })
 
-	const sortOptions = ['title', 'created', 'updated']
+	const sortOptions = [
+		{ value: 'title', label: 'Title' },
+		{ value: 'creation_date', label: 'Created' },
+		{ value: 'last_accessed', label: 'Updated' },
+	]
 
 	const [isLoading, setIsLoading] = useState(false)
-	const [_errors, setErrors] = useState(null)
+	const [errors, setErrors] = useState(null)
 
-	const { editList } = useEditList()
+	if (errors && isLoading) console.log(errors)
 
-	const {
-		register,
-		reset,
-		formState: { errors, isValid },
-	} = useForm()
-
-	if (errors && isValid && editList && isLoading) console.log()
-
-	const sortLists = useCallback(
-		async (criteria, order) => {
-			let greaterValueDir = 1
-			let lesserValueDir = -1
-			if (order === 'DESC') {
-				greaterValueDir = -1
-				lesserValueDir = 1
-			}
-			const sortedLists = await lists.sort((list1, list2) => {
-				const prop1 = list1[criteria].toUpperCase()
-				const prop2 = list2[criteria].toUpperCase()
-				if (prop1 > prop2) return greaterValueDir
-				if (prop1 < prop2) return lesserValueDir
-				return 0
-			})
-			return sortedLists
-		},
-		[lists]
-	)
+	const sortLists = useCallback((lists, criterion, order) => {
+		if (!lists?.length) return []
+		const isDesc = order === 'DESC'
+		let greaterThanDir = isDesc ? -1 : 1
+		let lessThanDir = isDesc ? 1 : -1
+		const sortedLists = lists.sort((list1, list2) => {
+			const prop1 = list1[criterion].toUpperCase()
+			const prop2 = list2[criterion].toUpperCase()
+			return prop1 === prop2 ? 0 : prop1 > prop2 ? greaterThanDir : lessThanDir
+		})
+		return sortedLists
+	}, [])
 
 	function toggleSortOrder() {
 		setSort({ ...sort, order: sort.order === 'ASC' ? 'DESC' : 'ASC' })
 	}
 
-	const sortListHandler = useCallback(
-		async (sort) => {
-			let sortedLists
-			if (sort.by === 'title' || sort.by === 'sort') sortedLists = await sortLists('title', sort.order)
-			else if (sort.by === 'created') sortedLists = await sortLists('creation_date', sort.order)
-			else if (sort.by === 'updated') sortedLists = await sortLists('last_accessed', sort.order)
-			setLists([...sortedLists])
-		},
-		[lists]
-	)
-
-	useEffect(() => {
-		if (!lists?.length) return
-		sortListHandler(sort)
-	}, [lists, sort, activeList])
+	const sortedLists = useMemo(() => sortLists(lists, sort.by, sort.order), [lists, sortLists, sort])
 
 	return (
 		<div className="">
+			<div className='sticky top-0 pt-6 pb-4 z-[10] bg-base-100'>
+
 			<div
 				className={
 					'flex flex-row items-center justify-between rounded-lg px-2 mb-3 border-2 border-primary ' +
@@ -76,8 +49,7 @@ export default function ToDoListsList() {
 				onClick={() => {
 					removeActiveList()
 				}}
-			>
-				{' '}
+				>
 				<div className="flex items-center">
 					<div className="mr-2">
 						<GoHome />
@@ -87,38 +59,32 @@ export default function ToDoListsList() {
 			</div>
 
 			<div className="flex items-center">
-				<div className="dropdown dropdown-bottom">
-					<div tabIndex={0} role="button" className="btn btn-primary mr-2">
-						<div className="flex items-center justify-between min-w-14">
-							<p className="mr-2">{sort.by}</p>
-							<GoChevronDown className="w-5 h-5" />
-						</div>
-					</div>
-					<ul tabIndex={0} className="dropdown-primary dropdown-content bg-neutral border-2 border-primary rounded-lg z-[1] menu p-2 shadow bg-base-100 rounded-box ">
-						{sortOptions?.map((sortOption, index) => (
-							<li key={index} onClick={() => setSort({ ...sort, by: sortOption })}>
-								<p>{sortOption}</p>
-							</li>
-						))}
-					</ul>
-				</div>
+				<select
+					value={sort.by}
+					onChange={(e) => setSort({ ...sort, by: e.target.value })}
+					className="select flex-auto select-secondary text-secondary w-full max-w-xs mr-2"
+					>
+					{sortOptions.map(({ value, label }, index) => (
+						<option key={index} disabled={value === sort.by} selected={value === sort.by} value={value}>
+							{label}
+						</option>
+					))}
+				</select>
 
-				<button className="btn btn-primary" onClick={toggleSortOrder}>
-					<div className="swap-off flex items-center justify-between w-14">
-						{sort.order}
+				<button className="btn btn-primary btn-outline grow-0" onClick={toggleSortOrder}>
+					<div className="swap-off flex items-center justify-between grow-0 shrink-1">
 						{sort.order === 'ASC' ? <GoSortAsc className="w-5 h-5" /> : <GoSortDesc className="w-5 h-5" />}
 					</div>
 				</button>
 			</div>
-
-			{_lists &&
-				_lists?.map((list, i) => (
-					<div key={i}>
-						<List listData={list}></List>
-					</div>
-				))}
-
-			{_errors && <p> {_errors.message} </p>}
+				</div>
+			<div className='mt-4'>
+			{sortedLists?.map?.((list, i) => (
+				<div key={i}>
+					<List listData={list}></List>
+				</div>
+			)) || null}
+			</div>
 		</div>
 	)
 }

@@ -38,3 +38,9 @@
         margin-right: auto;
     }
 }
+
+
+.list-list-item:hover .menu-btn,
+.list-list-item.active .menu-btn{
+    visibility: visible!important;
+}

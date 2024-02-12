@@ -79,8 +79,8 @@ function List({ listData }) {
 	return (
 		<div
 			className={
-				'flex flex-row items-center justify-between rounded-lg px-2 my-3 border-2 border-accent ' +
-				(activeList?.id === listData?.id ? ' bg-neutral py-4' : 'bg-base-300 py-2')
+				'list-list-item flex flex-row items-center justify-between rounded-lg px-2 my-3 border-2 border-accent ' +
+				(activeList?.id === listData?.id ? ' active bg-neutral py-4' : 'bg-base-300 py-2')
 			}
 			onClick={() => onSelect(listData)}
 		>
@@ -117,11 +117,11 @@ function List({ listData }) {
 				)}
 			</div>
 
-			<div className="dropdown dropdown-bottom">
+			<div className="menu-btn dropdown dropdown-bottom dropdown-end" style={{ visibility: 'hidden' }}>
 				<div tabIndex={0} role="button" className="btn btn-ghost btn-round btn-sm m-1">
 					<GoKebabHorizontal />
 				</div>
-				<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+				<ul tabIndex={0} className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
 					<li
 						onClick={() => {
 							setIsEditing(true)
