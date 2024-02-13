@@ -1,12 +1,11 @@
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { useListContext } from '../../../hooks/useListContext'
-import { GoKebabHorizontal, GoListUnordered } from 'react-icons/go'
+import { GoKebabHorizontal } from 'react-icons/go'
 import { actions } from '../../../state-management/List/listReducer'
 import { useDeleteList } from '../hooks/useDeleteList'
 import { useAccessList } from '../hooks/useAccessList'
 import { useEditList } from '../hooks/useEditList'
-
 function List({ listData }) {
 	const [isEditing, setIsEditing] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)

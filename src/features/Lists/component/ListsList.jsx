@@ -4,7 +4,7 @@ import { GoSortAsc, GoSortDesc, GoHome } from 'react-icons/go'
 import List from './List'
 
 export default function ToDoListsList() {
-	const { activeList, lists, removeActiveList } = useListContext()
+	const { activeList, lists, removeActiveList, } = useListContext()
 	const [sort, setSort] = useState({ by: 'title', order: 'ASC' })
 
 	const sortOptions = [
@@ -44,7 +44,7 @@ export default function ToDoListsList() {
 			<div
 				className={
 					'flex flex-row items-center justify-between rounded-lg px-2 mb-3 border-2 border-primary ' +
-					(!activeList ? 'bg-default py-3' : 'bg-base-300 py-2')
+					(activeList ? 'bg-base-300 py-2' : 'bg-neutral py-3')
 				}
 				onClick={() => {
 					removeActiveList()
