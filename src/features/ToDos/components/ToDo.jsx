@@ -3,6 +3,7 @@ import useDeleteToDos from '../hooks/useDeleteToDo'
 import useToggleToDos from '../hooks/useToggleToDo'
 import { useListContext } from '../../../hooks/useListContext'
 import { actions } from '../../../state-management/List/listReducer'
+import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
 
 function ToDo({ data }) {
 	const { meta: deleteMeta, deleteToDo } = useDeleteToDos()
@@ -44,57 +45,41 @@ function ToDo({ data }) {
 	}
 
 	return (
-		<div 
-		className={'rounded-lg transition-all p-3 mb-5 hover:bg-base-300 ' + ( data?.completed ? 'bg-default' : 'bg-neutral' )}
-		>
+		<div className={'rounded-lg transition-all p-3 mb-5 hover:bg-base-300 ' + (data?.completed ? 'bg-default' : 'bg-neutral')}>
+			<div className="flex items-center justify-between">
+				<div className="flex items-center">
+					<input type="checkbox" checked={data?.completed} onClick={() => onToggle(data)} className="checkbox checkbox-primary mr-3" />
 
-			<div className="py-1">
-				<h3 className={'rounded-lg text-2xl font-bold my-2 ' + ( data?.completed ? 'line-through text-rose-400' : '')}>{data?.title}</h3>
-				<p className="text-sm my-2">
-					<i>{new Date(data?.creation_date?.split('T')[0]).toDateString()}</i>
-				</p>
-			</div>
-
-			<div className="my-2">
-				<hr className="border-1 border-solid border-accent" />
-			</div>
-
-			<div className='flex flex-row content-center justify-between flex-wrap'>
-				<div className='flex items-center min-w-[10rem] text-lg my-2'>
-					<p className='after:text-sm after:italic after:ml-1'>
-						Due:{' '}
-						<span className='text-white text-bold p-1 rounded-md bg-green-700'>
-							{data.due_date ? new Date(data.due_date.split('T')[0]).toDateString() : 'NA'}
-						</span>
-					</p>
+					<div className="py-1">
+						<h3 className={'rounded-lg text-2xl font-bold my-2 ' + (data?.completed ? 'line-through text-rose-400' : '')}>
+							{data?.title}
+						</h3>
+					</div>
 				</div>
-
-				<div className='flex items-center' onClick={() => onToggle(data)}>
-					<div className='flex items-center my-2 mr-4'>
-						<h3 className='text-lg'>complete</h3>
-						<div className='border-2 rounded-md h-fit ml-2'>
-							<div className='complete-todo-icon p-2 rounded-md bg-slate-700 hover:bg-slate-800 transition-all'>
-								<div>
-									<img src='/checkbox.svg' alt='checkbox icon' className='w-4 h-5' />
-								</div>
-								<div className={'absolute translate-y-[-1.475rem] translate-x-[0.075rem] transition-all'}>
-									{data?.completed === 1 ? (
-										<img src='/checkmark.svg' width='20px' height='20px' alt='checkmark' className='w-5 h-5' />
-										) : null}
-								</div>
-							</div>
-						</div>
+				<div className="flex items-center">
+					<div className="flex items-center mr-6">
+						<GoCalendar className="mr-2" />
+						<p className=" text-green-500">{data.due_date ? new Date(data.due_date.split('T')[0]).toDateString() : 'no due-date'}</p>
 					</div>
-
-					<div className='flex items-center my-2' onClick={() => onDelete(data)}>
-						<h3 className='text-lg text-rose-500'>delete&lt;!&gt;</h3>
-						<div className='border-2 rounded-md h-fit ml-2'>
-							<div className='delete-todo-icon p-2 rounded-md bg-slate-700 hover:bg-slate-800 transition-all'>
-								<img src='/delete-icon.svg' alt='icon for new list button' className='h-5 w-3.5' />
-							</div>
+					<div className="dropdown dropdown-bottom dropdown-end">
+						<div tabIndex={0} role="button" className="btn btn-primary btn-outline btn-round mr-2">
+							<GoKebabHorizontal className="w-4 h-4" />
 						</div>
+						<ul tabIndex={0} className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-primary rounded-box w-52">
+							<li>
+								<p>edit</p>
+							</li>
+							<li>
+								<p>information</p>
+							</li>
+							<li onClick={() => onToggle(data)}>
+								<p>complete</p>
+							</li>
+						</ul>
 					</div>
-
+					<button className="btn btn-outline btn-primary" onClick={() => onDelete(data)}>
+						<GoTrash className="w-5 h-5" />
+					</button>
 				</div>
 			</div>
 		</div>
