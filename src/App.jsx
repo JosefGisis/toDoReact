@@ -7,7 +7,7 @@ import ProfilePage from './pages/ProfilePage'
 import FourOFourPage from './pages/404Page'
 
 import ProtectedRoute from './components/ProtectedRoute'
-import UserProvider from './state-management/Token/UserProvider'
+import UserProvider from './state-management/User/UserProvider'
 
 export default function App() {
 	return (

@@ -11,8 +11,8 @@ import ProfileButton from '../components/ProfileButton'
 function DashboardPage() {
 	return (
 		<div className="max-w-screen-lg m-auto px-4">
-			{/* navbar component
-			<div className="bg-base-300 fixed px-4 py-2 left-0 top-0 w-[100%] z-[2]">
+			{/* navbar component */}
+			<div className="bg-base-300 fixed px-4 py-2 left-0 top-0 w-[100%] z-[30]">
 				<div className="navbar mx-auto max-w-screen-lg">
 					<div className="flex-1">
 						<a href="/" className="text-xl">
@@ -34,18 +34,18 @@ function DashboardPage() {
 						</div>
 					</div>
 				</div>
-			</div> */}
+			</div>
 
 			<ListProvider>
 				<div className="flex flex-row justify-between">
-					<div className="w-[25%] flex flex-col justify-between overflow-y-scroll h-screen">
+					<div className="w-[25%] pt-16 flex flex-col justify-between overflow-y-scroll h-screen">
 						<Lists />
 						<div className="sticky bottom-0 bg-base-100 z-[10] py-6">
 							<NewList />
 						</div>
 					</div>
 
-					<div className="w-[73%] flex flex-col justify-between overflow-y-scroll h-screen">
+					<div className="w-[73%] pt-16 flex flex-col justify-between overflow-y-scroll h-screen">
 						<div>
 							<div className="sticky top-0 bg-base-100 z-[10] py-6">
 								<ActiveList />
