@@ -1,41 +1,44 @@
-import { useForm } from 'react-hook-form'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+
 import { useListContext } from '../../../hooks/useListContext'
-import { GoKebabHorizontal } from 'react-icons/go'
-import { actions } from '../../../state-management/List/listReducer'
 import { useDeleteList } from '../hooks/useDeleteList'
-import { useAccessList } from '../hooks/useAccessList'
-import { useEditList } from '../hooks/useEditList'
+import { useUpdateList } from '../hooks/useUpdateList'
+
+import { actions } from '../../../state-management/List/listReducer'
+
+import { GoKebabHorizontal } from 'react-icons/go'
+
 function List({ listData }) {
 	const [isEditing, setIsEditing] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [_errors, setErrors] = useState(null)
+	
 	const { activeList, setActiveList, removeActiveList, dispatch } = useListContext()
-
 	const { deleteList } = useDeleteList()
-	const { accessList } = useAccessList()
-	const { editList } = useEditList()
-
+	const { updateList } = useUpdateList()
+	
 	const {
 		register,
 		reset,
 		formState: { errors, isValid },
 	} = useForm()
-
-	async function onSelect(list) {
+	
+	if (_errors && isLoading && errors && isValid ) console.log('')
+	
+	async function onSelect(list, values) {
 		if (list?.id === activeList?.id) return
+		console.log(list, values)
 		setIsLoading(true)
 		setIsEditing(false)
 		reset()
 		try {
-			if (list) {
-				const [error] = await accessList(list)
-				if (error) {
-					setErrors({ message: error })
-					return
-				}
-				setActiveList(list.id)
-			} else removeActiveList()
+			const [error] = await updateList(list.id, values)
+			if (error) {
+				setErrors({ message: error })
+				return
+			}
+			setActiveList(list.id)
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {
@@ -59,10 +62,10 @@ function List({ listData }) {
 		}
 	}
 
-	async function handleEdit(list, newTitle) {
+	async function handleUpdate(list, values) {
 		setIsLoading(true)
 		try {
-			const [error, editedList] = await editList(list.id, newTitle)
+			const [error, editedList] = await updateList(list.id, values)
 			if (error) {
 				setErrors({ message: error })
 				return
@@ -81,7 +84,7 @@ function List({ listData }) {
 				'list-list-item flex flex-row items-center justify-between rounded-lg px-2 my-3 border-2 border-accent ' +
 				(activeList?.id === listData?.id ? ' active bg-neutral py-4' : 'bg-base-300 py-2')
 			}
-			onClick={() => onSelect(listData)}
+			onClick={() => onSelect( listData, { accessListOnly: true })}
 		>
 			<div className="flex flex-row items-center">
 				<div className="flex-1 mr-2">
@@ -99,7 +102,7 @@ function List({ listData }) {
 							setIsEditing(false)
 							reset()
 						}}
-						onChange={(e) => handleEdit(listData, e.target.value)}
+						onChange={(e) => handleUpdate(listData, { title: e.target.value} )}
 					>
 						<input
 							{...register('listTitle', { required: 'title required*' })}

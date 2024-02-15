@@ -1,22 +1,22 @@
 import { useState } from 'react'
-import useDeleteToDos from '../hooks/useDeleteToDo'
-import useToggleToDos from '../hooks/useToggleToDo'
+
+import { useDeleteToDo } from '../hooks/useDeleteToDo'
 import { useListContext } from '../../../hooks/useListContext'
+import { useUpdateToDo } from '../hooks/useUpdateToDo'
+
 import { actions } from '../../../state-management/List/listReducer'
+
 import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
-import { useEditToDo } from '../hooks/useEditToDo'
 
 function ToDo({ data }) {
-	const { meta: deleteMeta, deleteToDo } = useDeleteToDos()
-	const { meta: toggleMeta, toggleToDo } = useToggleToDos()
 	const [errors, setErrors] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
+	if (errors && isLoading) console.log('')
 	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
-	if (deleteMeta && toggleMeta && errors && isLoading) console.log()
 
 	const { dispatch } = useListContext()
-
-	const { editToDo } = useEditToDo()
+	const { deleteToDo } = useDeleteToDo()
+	const { updateToDo } = useUpdateToDo()
 
 	async function onDelete(toDo) {
 		try {
@@ -33,25 +33,10 @@ function ToDo({ data }) {
 		}
 	}
 
-	async function onToggle(toDo) {
-		try {
-			const [error] = await toggleToDo(toDo)
-			if (error) {
-				setErrors({ message: error })
-				return
-			}
-			dispatch({ type: actions.TOGGLE_TODO, payload: toDo })
-		} catch (error) {
-			setErrors({ message: error.message })
-		} finally {
-			setIsLoading(false)
-		}
-	}
-
-	async function handleEdit(values) {
+	async function handleUpdate(values) {
 		setIsLoading(true)
 		try {
-			const [error, editedToDo] = await editToDo(data, values)
+			const [error, editedToDo] = await updateToDo(data, values)
 			if (error) {
 				setErrors({ message: error })
 				return
@@ -65,16 +50,23 @@ function ToDo({ data }) {
 	}
 
 	return (
-		<div className={'rounded-lg transition-all p-3 mb-5 hover:bg-base-300 ' + (data?.completed ? 'bg-default' : 'bg-neutral')}>
+		<div className={'rounded-lg transition-all p-3 mb-3 hover:bg-base-300 ' + (data?.completed ? 'bg-default' : 'bg-neutral')}>
 			<div className="flex items-center justify-between">
 				<div className="flex items-center">
-					<input type="checkbox" checked={data?.completed} onClick={() => onToggle(data)} className="checkbox checkbox-primary mr-3" />
+					<input
+						type="checkbox"
+						checked={data?.completed}
+						onClick={() => handleUpdate({ toggle: true })}
+						className="checkbox checkbox-primary mr-3"
+					/>
 
-					<div className="py-1">
+					<div className="">
 						{isEditing?.title ? (
-							<form 
-							onChange={(e) => handleEdit({ title: e.target.value })}
-							onSubmit={() => setIsEditing({ isEditing, title: false })} onBlur={() => setIsEditing({ isEditing, title: false })}>
+							<form
+								onChange={(e) => handleUpdate({ title: e.target.value })}
+								onSubmit={() => setIsEditing({ isEditing, title: false })}
+								onBlur={() => setIsEditing({ isEditing, title: false })}
+							>
 								<input type="text" value={data?.title} className="input input-outline input-secondary" />
 							</form>
 						) : (
@@ -90,12 +82,17 @@ function ToDo({ data }) {
 				<div className="flex items-center">
 					{isEditing?.dueDate ? (
 						<form
-						defaultValue={data?.due_date}
-							onChange={(e) => handleEdit({ dueDate: e.target.value})}
+							defaultValue={data?.due_date}
+							onChange={(e) => handleUpdate({ dueDate: e.target.value })}
 							onBlur={() => setIsEditing({ ...isEditing, dueDate: false, title: false })}
 							onSubmit={() => setIsEditing({ ...isEditing, dueDate: false })}
 						>
-							<input type="date" defaultValue={data?.due_date} className="input input-outline input-secondary mr-6" placeholder={data?.due_date} />
+							<input
+								type="date"
+								defaultValue={data?.due_date}
+								className="input input-outline input-secondary mr-6"
+								placeholder={data?.due_date}
+							/>
 						</form>
 					) : data?.due_date ? (
 						<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className="flex items-center mr-6">
@@ -111,16 +108,14 @@ function ToDo({ data }) {
 							<li onClick={() => setIsEditing({ ...isEditing, title: true, dueDate: true })}>
 								<p>edit</p>
 							</li>
-							<li onClick={() => onToggle(data)}>
-								<p>complete</p>
+							<li onClick={() => handleUpdate({ toggle: true })}>
+								<p>{data.completed ? 'un-complete' : 'complete'}</p>
 							</li>
 							<li onClick={() => setIsEditing({ ...isEditing, dueDate: true })}>
 								<p>add due-date</p>
 							</li>
-							<li onClick={() => handleEdit({ dueDate: null })}>
-								<p>
-									remove due-date
-								</p>
+							<li onClick={() => handleUpdate({ removeDueDate: true })}>
+								<p>remove due-date</p>
 							</li>
 						</ul>
 					</div>

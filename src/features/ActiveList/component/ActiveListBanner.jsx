@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useListContext } from '../../../hooks/useListContext'
 import { GoKebabHorizontal } from 'react-icons/go'
-import { useEditList } from '../../Lists/hooks/useEditList'
+import { useUpdateList } from '../../Lists/hooks/useUpdateList'
 import { useDeleteList } from '../../Lists/hooks/useDeleteList'
 import { actions } from '../../../state-management/List/listReducer'
 
@@ -10,7 +10,7 @@ function ActiveListBanner() {
 	const [isEditing, setIsEditing] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [errors, setErrors] = useState(null)
-	const { editList } = useEditList()
+	const { updateList } = useUpdateList()
 	const { deleteList } = useDeleteList()
 
 	async function onDelete() {
@@ -32,7 +32,7 @@ function ActiveListBanner() {
 	async function handleEdit(newTitle) {
 		setIsLoading(true)
 		try {
-			const [error, editedList] = await editList(activeList.id, newTitle)
+			const [error, editedList] = await updateList(activeList.id, newTitle)
 			if (error) {
 				setErrors({ message: error })
 				return
