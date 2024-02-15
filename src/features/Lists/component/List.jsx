@@ -28,7 +28,6 @@ function List({ listData }) {
 	
 	async function onSelect(list, values) {
 		if (list?.id === activeList?.id) return
-		console.log(list, values)
 		setIsLoading(true)
 		setIsEditing(false)
 		reset()

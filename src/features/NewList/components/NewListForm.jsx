@@ -1,9 +1,11 @@
-import { useForm } from 'react-hook-form'
-import useNewList from '../hooks/useNewList'
 import { useState } from 'react'
-import { useListContext } from '../../../hooks/useListContext'
-import { actions } from '../../../state-management/List/listReducer'
+import { useForm } from 'react-hook-form'
 import { GoPlus } from 'react-icons/go'
+
+import { useNewList } from '../hooks/useNewList'
+import { useListContext } from '../../../hooks/useListContext'
+
+import { actions } from '../../../state-management/List/listReducer'
 
 function NewListForm() {
 	const { createList } = useNewList()
@@ -23,7 +25,7 @@ function NewListForm() {
 		reset()
 		setIsLoading(true)
 		try {
-			const [error, newList] = await createList(newListData)
+			const [error, newList] = await createList({ title: newListData.listTitle })
 			if (error) {
 				setErrors({ message: error })
 				return
