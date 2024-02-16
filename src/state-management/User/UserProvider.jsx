@@ -7,7 +7,7 @@ import userReducer, { actions } from "./userReducer.js"
 
 function UserProvider({ children }) {
 	const [errors, setErrors] = useState(null)
-	if (errors) console.log(errors)
+	if (errors) console.log(' ')
 	const [user, dispatch] = useReducer(userReducer, null)
 
 	const { getUser } = useUser()

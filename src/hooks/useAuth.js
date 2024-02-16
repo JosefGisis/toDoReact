@@ -8,7 +8,7 @@ export function useAuth() {
 	
 	const logout = useCallback(() => {
 		localStorage.removeItem(JWT_KEY)
-		navigate('login')
+		navigate('/login')
 	}, [])
 
 	const getToken = useCallback(() => {

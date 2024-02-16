@@ -4,41 +4,19 @@ import NewList from '../features/NewList'
 import ActiveList from '../features/ActiveList'
 import NewToDoForm from '../features/NewToDo/components/NewToDoForm'
 import ToDos from '../features/ToDos'
-import Avatar from '../components/Avatar'
-import ThemeToggler from '../components/ThemeToggler'
-// import ProfileButton from '../components/ProfileButton'
+import Navigation from '../features/Navigation'
+import DefaultList from '../features/DefaultList'
 
 function DashboardPage() {
 	return (
-		<div className="max-w-screen-lg m-auto px-4">
-			{/* navbar component */}
-			<div className="bg-base-300 fixed px-4 py-2 left-0 top-0 w-[100%] z-[30]">
-				<div className="navbar mx-auto max-w-screen-lg">
-					<div className="flex-1">
-						<a href="/" className="text-xl">
-							UNTITLED TO-DO APP
-						</a>
-					</div>
+		<ListProvider>
+			<div className="max-w-screen-lg m-auto px-4">
+				{/* navigation is fixed, so it is placed at the top for clarity.  */}
+				<Navigation />
 
-					<div className="flex-none">
-						<div className="mr-6">
-							<ThemeToggler />
-						</div>
-
-						{/*<div className="mr-5">
-							<ProfileButton />
-						</div> */}
-
-						<div className="">
-							<Avatar />
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<ListProvider>
 				<div className="flex flex-row justify-between">
 					<div className="w-[25%] pt-16 flex flex-col justify-between overflow-y-scroll h-screen">
+						<DefaultList />
 						<Lists />
 						<div className="sticky bottom-0 bg-base-100 z-[10] py-6">
 							<NewList />
@@ -59,8 +37,8 @@ function DashboardPage() {
 						</div>
 					</div>
 				</div>
-			</ListProvider>
-		</div>
+			</div>
+		</ListProvider>
 	)
 }
 

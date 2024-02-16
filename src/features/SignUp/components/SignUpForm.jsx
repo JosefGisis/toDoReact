@@ -1,28 +1,32 @@
-import { useForm } from 'react-hook-form'
-import { useSignUp } from '../hooks/useSignUp'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import Spinner from '../../../components/Spinner'
+
+import { useSignUp } from '../hooks/useSignUp'
 import { useAuth } from '../../../hooks/useAuth'
 
+import Spinner from '../../../components/Spinner'
+
 function SignUpForm() {
-	const { signUp } = useSignUp()
 	const [isLoading, setIsLoggingIn] = useState(false)
 	const [_errors, setErrors] = useState(null)
-	const navigate = useNavigate()
+
+	const { signUp } = useSignUp()
 	const { setToken } = useAuth()
-	
+
+	const navigate = useNavigate()
+
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isValid },
 	} = useForm()
-	
-	const onSubmit = async (data) => {
+
+	async function onSubmit(values) {
 		try {
-			const [error, token] = await signUp(data)
+			const [error, token] = await signUp(values)
 			if (error) {
-				setErrors({ message: error})
+				setErrors({ message: error })
 				return
 			}
 			setToken(token)
@@ -115,7 +119,9 @@ function SignUpForm() {
 						>
 							create account
 						</button>
-						{errs && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{errs.message}</div>}
+						{_errors && (
+							<div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors.message}</div>
+						)}
 					</div>
 				</fieldset>
 			</form>

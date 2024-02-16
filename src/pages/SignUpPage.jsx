@@ -1,8 +1,9 @@
 import SignUp from '../features/SignUp'
-// import MainLayout from '../layouts/MainLayout'
 
-function SignUpPage() {
-	return <SignUp />
+export default function SignUpPage() {
+	return (
+		<div className="w-screen h-screen flex items-center justify-center">
+			<SignUp />
+		</div>
+	)
 }
-
-export default SignUpPage

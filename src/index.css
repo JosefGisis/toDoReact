@@ -44,3 +44,11 @@
 .list-list-item.active .menu-btn{
     visibility: visible!important;
 }
+
+.list-card {
+    text-align: center;
+}
+
+.to-do-card {
+    text-align: center;
+}

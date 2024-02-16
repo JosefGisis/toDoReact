@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { useUserContext } from '../hooks/useUserContext'
-import { useAuth } from '../hooks/useAuth'
+import { useUserContext } from '../../../hooks/useUserContext'
+import { useAuth } from '../../../hooks/useAuth'
 
 export default function Avatar() {
 	const { user } = useUserContext()
