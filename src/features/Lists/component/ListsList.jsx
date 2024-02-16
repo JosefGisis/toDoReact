@@ -37,7 +37,7 @@ export default function ToDoListsList() {
 
 	return (
 		<div>
-			<div className="flex items-center">
+			<div className="flex items-center mb-4">
 				<select
 					value={sort.by}
 					onChange={(e) => setSort({ ...sort, by: e.target.value })}
@@ -57,7 +57,7 @@ export default function ToDoListsList() {
 				</button>
 			</div>
 
-			<div className="mt-4">
+			<div>
 				{sortedLists?.map?.((list, index) => (
 					<div key={index}>
 						<List listData={list}></List>
