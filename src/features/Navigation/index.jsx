@@ -3,7 +3,7 @@ import ThemeToggler from './components/ThemeToggler'
 
 function Navigation() {
 	return (
-		<div className="bg-base-300 fixed px-4 py-2 left-0 top-0 w-[100%] z-[30]">
+		<div className="bg-base-300 px-4 py-2 left-0 top-0 w-[100%] z-[30]">
 			<div className="navbar mx-auto max-w-screen-lg">
 				<div className="flex-1">
 					<a href="/" className="text-xl">
