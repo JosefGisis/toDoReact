@@ -1,27 +1,37 @@
 import { useForm } from 'react-hook-form'
 import { useSignUp } from '../hooks/useSignUp'
-import { useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Spinner from '../../../components/Spinner'
+import { useAuth } from '../../../hooks/useAuth'
 
 function SignUpForm() {
-	const { signUp, token, errs, isLoading } = useSignUp()
+	const { signUp } = useSignUp()
+	const [isLoading, setIsLoggingIn] = useState(false)
+	const [_errors, setErrors] = useState(null)
 	const navigate = useNavigate()
+	const { setToken } = useAuth()
+	
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isValid },
 	} = useForm()
-
-	useEffect(() => {
-		if (token) {
-			localStorage.setItem('jwt', token)
+	
+	const onSubmit = async (data) => {
+		try {
+			const [error, token] = await signUp(data)
+			if (error) {
+				setErrors({ message: error})
+				return
+			}
+			setToken(token)
 			navigate('/')
+		} catch (error) {
+			setErrors({ message: error.message })
+		} finally {
+			setIsLoggingIn(false)
 		}
-	}, [token])
-
-	const onSubmit = (data) => {
-		signUp(data)
 	}
 
 	return (

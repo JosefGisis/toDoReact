@@ -1,12 +1,8 @@
 import Authentication from '../features/Authentication'
-import MainLayout from '../layouts/MainLayout'
+// import MainLayout from '../layouts/MainLayout'
 
 function LoginPage() {
-	return (
-		<MainLayout>
-			<Authentication />
-		</MainLayout>
-	)
+	return <Authentication />
 }
 
 export default LoginPage

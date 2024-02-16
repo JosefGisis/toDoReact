@@ -6,7 +6,7 @@ import NewToDoForm from '../features/NewToDo/components/NewToDoForm'
 import ToDos from '../features/ToDos'
 import Avatar from '../components/Avatar'
 import ThemeToggler from '../components/ThemeToggler'
-import ProfileButton from '../components/ProfileButton'
+// import ProfileButton from '../components/ProfileButton'
 
 function DashboardPage() {
 	return (
@@ -25,12 +25,12 @@ function DashboardPage() {
 							<ThemeToggler />
 						</div>
 
-						<div className="mr-1">
-							<Avatar />
-						</div>
+						{/*<div className="mr-5">
+							<ProfileButton />
+						</div> */}
 
 						<div className="">
-							<ProfileButton />
+							<Avatar />
 						</div>
 					</div>
 				</div>

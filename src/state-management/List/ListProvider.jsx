@@ -1,4 +1,4 @@
-import { useCallback, useDebugValue, useEffect, useMemo, useReducer, useState } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import listReducer from './listReducer.js'
 import ListContext from './ListContext.js'
 import useToDos from '../../hooks/useToDos.js'
@@ -10,10 +10,6 @@ const ListProvider = ({ children }) => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [errors, setErrors] = useState(null)
 	if (isLoading && errors) console.log(errors)
-
-	useEffect(() => {
-		console.l
-	}, [errors])
 
 	const [{ activeListId, lists, toDos }, dispatch] = useReducer(listReducer, { activeListId: null, lists: [], toDos: [] })
 	const { getToDos } = useToDos()

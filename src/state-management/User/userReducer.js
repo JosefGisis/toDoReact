@@ -1,7 +1,23 @@
-const loginReducer = (user, action) => {
-    if (action.type === 'ADD_USER') return action.payload
-    if (action.type === 'REMOVE_USER') return null
-    return user
+export const actions = {
+	ADD_USER: 'ADD_USER',
+	REMOVE_USER: 'REMOVE_USER',
 }
 
-export default loginReducer
+const userReducer = (user, action) => {
+	const { type, payload } = action
+	switch (type) {
+		case actions.ADD_USER: {
+			return payload
+		}
+
+		case actions.REMOVE_USER: {
+			return null
+		}
+
+		default: {
+			throw new Error('no action.type provided')
+		}
+	}
+}
+
+export default userReducer

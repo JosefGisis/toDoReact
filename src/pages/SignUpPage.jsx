@@ -1,12 +1,8 @@
 import SignUp from '../features/SignUp'
-import MainLayout from '../layouts/MainLayout'
+// import MainLayout from '../layouts/MainLayout'
 
 function SignUpPage() {
-	return (
-		<MainLayout>
-			<SignUp />
-		</MainLayout>
-	)
+	return <SignUp />
 }
 
 export default SignUpPage

@@ -1,6 +1,6 @@
-import { useContext } from "react"
-import UserContext from '../state-management/Token/UserContext'
+import { useContext } from 'react'
+import UserContext from '../state-management/User/UserContext'
 
-export const useAuthContext = () => {
-    return useContext(UserContext)
+export const useUserContext = () => {
+	return useContext(UserContext)
 }

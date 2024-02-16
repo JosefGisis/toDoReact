@@ -1,45 +1,39 @@
 import { useCallback, useState } from 'react'
 
 export function useSignUp() {
-	const [isLoading, setIsLoading] = useState(false)
-	const [errs, setErrs] = useState(null)
-	const [token, setToken] = useState(null)
+	const [meta, setMeta] = useState({ loading: false, errors: null })
 
-	const signUp = useCallback((data) => {
-		const signal = new AbortController().signal
-
-		setIsLoading(true)
-		
-		fetch('http://localhost:3000/api/1/auth/register', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({
-				username: data.username,
-				email: data.email,
-				password: data.password,
-			}),
-			signal: signal,
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				if (data?.status === 401 || data?.status === 400) {
-					setToken(null)
-					setErrs({ message: data?.message })
-					setIsLoading(false)
-				}
-				if (data?.status === 200) {
-					setToken(data?.token)
-					setErrs(null)
-					setIsLoading(false)
-				}
-			})
-			.catch(() => {
-				setErrs({ message: 'Error creating account. Please try again later' })
-				setIsLoading(false)
+	const signUp = useCallback(async (data) => {
+		setMeta({ ...meta, loading: true })
+		try {
+			const response = await fetch('http://localhost:3000/api/1/auth/register', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({
+					username: data.username,
+					email: data.email,
+					password: data.password,
+				}),
 			})
 
-		return () => AbortController.abort()
+			const json = await response.json()
+
+			if (response.status === 200) {
+				setMeta({ ...meta, errors: null })
+				return [null, json.data]
+			}
+			if (response.status === 401) {
+				setMeta({ ...meta, errors: json.message })
+				return [json.message]
+			}
+			throw new Error(json.message)
+		} catch (error) {
+			setMeta({ ...meta, error: error.message })
+			return [error]
+		} finally {
+			setMeta({ ...meta, loading: false })
+		}
 	})
 
-	return { signUp, isLoading, errs, token }
+	return { meta, signUp }
 }

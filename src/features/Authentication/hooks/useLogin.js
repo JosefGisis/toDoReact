@@ -19,13 +19,14 @@ export function useLogin() {
 			})
 
 			const json = await response.json()
+			console.log(json)
 
-			if (json.status === 200) {
+			if (response.status === 200) {
 				setErrs(null)
 				return [null, json.token]
 			}
 
-			if (json.status === 401) {
+			if (response.status === 401) {
 				setErrs({ message: json.message })
 				return [json.message]
 			}

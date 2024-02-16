@@ -1,14 +1,19 @@
 export default function ProfileButton() {
 	return (
-		<button className="btn btn-square btn-ghost btn-sm">
-			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current">
-				<path
-					strokeLinecap="round"
-					strokeLinejoin="round"
-					strokeWidth="2"
-					d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-				></path>
-			</svg>
-		</button>
+		<div className="dropdown dropdown-hover dropdown-end">
+				<div tabIndex={0} role="button" className="btn btn-md">
+					<a href="/profile">
+						<p className="underline">profile</p>
+						</a>
+				</div>
+			<ul tabIndex={0} className="dropdown-content bg-info z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52">
+				<li>
+					<a href="/profile">profile</a>
+				</li>
+				<li>
+					<a>logout</a>
+				</li>
+			</ul>
+		</div>
 	)
 }

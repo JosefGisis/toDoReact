@@ -11,8 +11,9 @@ import UserProvider from './state-management/User/UserProvider'
 
 export default function App() {
 	return (
-		<UserProvider>
-			<Router>
+		<Router>
+			<UserProvider>
+
 				<Routes>
 					<Route path="/" element={<ProtectedRoute />}>
 						<Route path="" element={<DashboardPage />} />
@@ -22,7 +23,8 @@ export default function App() {
 					<Route path="/signup" element={<SignUpPage />} />
 					<Route path="*" element={<FourOFourPage />} />
 				</Routes>
-			</Router>
-		</UserProvider>
+				
+			</UserProvider>
+		</Router>
 	)
 }
