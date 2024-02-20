@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { GoKebabHorizontal } from 'react-icons/go'
 
 import { useListContext } from '../../../hooks/useListContext'
 import { useDeleteList } from '../hooks/useDeleteList'
@@ -7,13 +8,13 @@ import { useUpdateList } from '../hooks/useUpdateList'
 
 import { actions } from '../../../state-management/List/listReducer'
 
-import { GoKebabHorizontal } from 'react-icons/go'
 import ListIcon from '../../../components/ListIcon'
 
 function List({ listData }) {
 	const [isEditing, setIsEditing] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [_errors, setErrors] = useState(null)
+	if (_errors && isLoading && errors && isValid) console.log('')
 
 	const { activeList, setActiveList, removeActiveList, dispatch } = useListContext()
 	const { deleteList } = useDeleteList()
@@ -24,8 +25,6 @@ function List({ listData }) {
 		reset,
 		formState: { errors, isValid },
 	} = useForm()
-
-	if (_errors && isLoading && errors && isValid) console.log('')
 
 	async function onSelect(list, values) {
 		if (list?.id === activeList?.id) return
@@ -46,10 +45,10 @@ function List({ listData }) {
 		}
 	}
 
-	async function onDelete(list) {
+	async function onDelete(listId) {
 		setIsLoading(true)
 		try {
-			const [error] = await deleteList(list?.id)
+			const [error] = await deleteList(listId)
 			if (error) {
 				setErrors({ message: error })
 				return
@@ -86,8 +85,8 @@ function List({ listData }) {
 			}
 			onClick={() => onSelect(listData, { accessListOnly: true })}
 		>
-			<div className="flex flex-row items-center">
-				<div className="flex-1 mr-2">
+			<div className='flex flex-row items-center'>
+				<div className='flex-1 mr-2'>
 					<ListIcon />
 				</div>
 				{isEditing && listData?.id === activeList?.id ? (
@@ -105,23 +104,23 @@ function List({ listData }) {
 						<input
 							{...register('listTitle', { required: 'title required*' })}
 							className={'input input-secondary rounded-sm order-0 input-sm w-full max-w-xs p-1 m-0 '}
-							type="text"
+							type='text'
 							value={listData.title}
-							placeholder="list title"
+							placeholder='list title'
 						></input>
 					</form>
 				) : (
-					<div onDoubleClick={() => setIsEditing(true)} className="">
+					<div onDoubleClick={() => setIsEditing(true)}>
 						{listData.title}
 					</div>
 				)}
 			</div>
 
-			<div className="menu-btn dropdown dropdown-bottom dropdown-end" style={{ visibility: 'hidden' }}>
-				<div tabIndex={0} role="button" className="btn btn-ghost btn-round btn-sm m-1">
+			<div className='menu-btn dropdown dropdown-bottom dropdown-end' style={{ visibility: 'hidden' }}>
+				<div tabIndex={0} role='button' className='btn btn-ghost btn-round btn-sm m-1'>
 					<GoKebabHorizontal />
 				</div>
-				<ul tabIndex={0} className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+				<ul tabIndex={0} className='dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-100 rounded-box w-52'>
 					<li
 						onClick={() => {
 							setIsEditing(true)
@@ -129,8 +128,8 @@ function List({ listData }) {
 					>
 						<p>edit</p>
 					</li>
-					<li onClick={() => onDelete(listData)}>
-						<p className="text-rose-500">delete</p>
+					<li onClick={() => onDelete(listData?.id)}>
+						<p className='text-rose-500'>delete</p>
 					</li>
 				</ul>
 			</div>

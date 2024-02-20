@@ -3,19 +3,23 @@ import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
 import { useListContext } from '../../../hooks/useListContext'
 
-function ListOrderControls({ setOrderedLists }) {
+export default function ListOrderControls({ setOrderedLists }) {
 	const [sort, setSort] = useState({ by: 'title', order: 'ASC' })
 	const { lists } = useListContext()
 
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
 		{ value: 'creation_date', label: 'Created' },
-		{ value: 'last_accessed', label: 'Used' },
+		{ value: 'last_accessed', label: 'Accessed' },
 		{ value: 'last_modified', label: 'Updated' },
 	]
 
 	const sortLists = useCallback((lists, criterion, order) => {
-		if (!lists || !lists?.length) return []
+		// If lists are not of type array (e.g. null, object, undefined, etc.), orderedLists defaults to an empty list
+		if (!Array.isArray) {
+			setOrderedLists([])
+			return
+		}
 		const isDesc = order === 'DESC'
 		let greaterThanDir = isDesc ? -1 : 1
 		let lessThanDir = isDesc ? 1 : -1
@@ -26,17 +30,17 @@ function ListOrderControls({ setOrderedLists }) {
 		})
 		setOrderedLists([...sortedLists])
 	}, [])
+	useEffect(() => {
+		sortLists(lists, sort.by, sort.order)
+	}, [lists, sortLists, sort])
 
 	function toggleSortOrder() {
 		setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))
 	}
 
-	useEffect(() => {
-		sortLists(lists, sort.by, sort.order)
-	}, [lists, sortLists, sort])
-
 	return (
 		<div className="flex items-center mb-4">
+			{/* select for order.by */}
 			<select
 				value={sort.by}
 				onChange={(e) => setSort({ ...sort, by: e.target.value })}
@@ -49,6 +53,7 @@ function ListOrderControls({ setOrderedLists }) {
 				))}
 			</select>
 
+			{/* swap button for order.by */}
 			<button className="btn btn-primary btn-outline grow-0" onClick={toggleSortOrder}>
 				<div className="swap-off flex items-center justify-between grow-0 shrink-1">
 					{sort.order === 'ASC' ? <GoSortAsc className="w-5 h-5" /> : <GoSortDesc className="w-5 h-5" />}
@@ -57,4 +62,3 @@ function ListOrderControls({ setOrderedLists }) {
 		</div>
 	)
 }
-export default ListOrderControls
