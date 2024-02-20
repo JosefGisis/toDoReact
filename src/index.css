@@ -2,44 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-.responsive-container {
-    width: 100%;
-    padding: 1rem;
-    border: 2px;
-    /* Slate 400 from tailwind color template */
-    border-color: hex(#94a3b8); 
-    border-style: outset;
-    border-radius: 10px;
-}
-
-
-@media (min-width: 640px) {
-    .responsive-container {
-        width: 100%;
-        padding: 1rem;
-    }
-}
-
-
-@media (min-width: 768px) {
-    .responsive-container {
-        width: 100%;
-        padding: 1.5rem;
-    }
-}
-
-
-@media (min-width: 960px) {
-    .responsive-container {
-        max-width: 960px;
-        padding: 1.5rem; 
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-
-
 .list-list-item:hover .menu-btn,
 .list-list-item.active .menu-btn{
     visibility: visible!important;

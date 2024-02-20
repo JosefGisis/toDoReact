@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import ListProvider from '../state-management/List/ListProvider'
 import Lists from '../features/Lists'
 import NewList from '../features/NewList'
@@ -6,42 +8,57 @@ import NewToDoForm from '../features/NewToDo/components/NewToDoForm'
 import ToDos from '../features/ToDos'
 import Navigation from '../features/Navigation'
 import DefaultList from '../features/DefaultList'
+import OrderLists from '../features/OrderLists'
+import OrderToDos from '../features/OrderToDos'
 
 function DashboardPage() {
+	const [orderedLists, setOrderedLists] = useState([])
+	const [orderedToDos, setOrderedToDos] = useState([])
+
 	return (
 		<ListProvider>
-			<div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col">
-				{/* navigation is fixed, so it is placed at the top for clarity.  */}
-				<div className="flex flex-row border border-red-300" style={{ flex: '0 0 120px' }}>
+			<div className='w-screen h-screen overflow-hidden flex flex-col'>
+				{/* navigation bar with profile controls */}
+				<div className='flex items-center h-[80px]'>
 					<Navigation />
 				</div>
 
-				<div className="flex flex-row gap-2 flex-auto" >
+				<div className='flex flex-row justify-between' style={{ height: 'calc(100vh - 80px)'}}>
 					{/* List Column */}
-					<div className="flex flex-col justify-between h-full border px-2 border-yellow-500" style={{flex:'0 0 25%'}}>
+					<div className='flex flex-col px-2 grow-0 shrink-0 basis-3/12'>
+						<div className='flex-none my-2'>
 							<DefaultList />
-
-						<div className="overflow-y-auto flex flex-auto">
-
-							<Lists />
 						</div>
-						<div className="flex bottom-0 bg-base-100 z-[10] py-6">
+
+						<div className='flex-none'>
+							<OrderLists setOrderedLists={setOrderedLists} />
+						</div>
+
+						<div className='flex-auto overflow-y-auto'>
+							<Lists orderedLists={orderedLists} />
+						</div>
+
+						<div className='py-6 flex-none'>
 							<NewList />
 						</div>
 					</div>
 
 					{/* ToDos Column */}
-					<div className="flex flex-col border border-green-400  px-2" style={{flex:'1 1 auto'}}>
+					<div className='flex flex-col flex-auto px-2'>
 						{/* ToDos List Header */}
-						<div className="bg-base-100 z-[10] border border-red-400" style={{ flex: '0 0 60px' }}>
+						<div className='flex-none my-2'>
 							<ActiveList />
 						</div>
 
-						<div className="border border-red-400 overflow-y-auto" style={{ flex: '1 1 auto' }}>
-							<ToDos />
+						<div className='flex-none mb-6'>
+							<OrderToDos setOrderedToDos={setOrderedToDos} />
 						</div>
 
-						<div className="bg-base-100 z-[10] py-6 border border-red-500" style={{ flex: '0 0 60px' }}>
+						<div className='overflow-y-auto flex-auto'>
+							<ToDos orderedToDos={orderedToDos} />
+						</div>
+
+						<div className='py-6 flex-none'>
 							<NewToDoForm />
 						</div>
 					</div>
