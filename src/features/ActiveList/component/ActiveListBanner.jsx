@@ -1,38 +1,54 @@
-import { useState } from 'react'
-import { useListContext } from '../../../hooks/useListContext'
+import { useState, useCallback } from 'react'
+import { useForm } from 'react-hook-form'
 import { GoKebabHorizontal } from 'react-icons/go'
+
+import { useListContext } from '../../../hooks/useListContext'
 import { useUpdateList } from '../../Lists/hooks/useUpdateList'
 import { useDeleteList } from '../../Lists/hooks/useDeleteList'
+
 import { actions } from '../../../state-management/List/listReducer'
 
 function ActiveListBanner() {
-	const { activeList, dispatch, removeActiveList } = useListContext()
 	const [isEditing, setIsEditing] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
-	const [errors, setErrors] = useState(null)
+	const [_errors, setErrors] = useState(null)
+
+	const { activeList, dispatch, removeActiveList } = useListContext()
 	const { updateList } = useUpdateList()
 	const { deleteList } = useDeleteList()
 
-	async function onDelete() {
+	const {
+		register,
+		reset,
+		handleSubmit,
+		formState: { errors },
+	} = useForm()
+
+	const onDelete = useCallback(async (listId) => {
 		setIsLoading(true)
 		try {
-			const [error] = await deleteList(activeList?.id)
+			const [error] = await deleteList(listId)
 			if (error) {
 				setErrors({ message: error })
 				return
 			}
+			// removeActiveList sets activeList to to-dos (default list)
 			removeActiveList()
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {
 			setIsLoading(false)
 		}
-	}
+	}, [])
 
-	async function handleEdit(newTitle) {
+	const handleUpdate = useCallback(async (list, values) => {
+		setIsEditing(false)
+		reset()
+		// Do not update list if nothing changes because it causes lists to re-sort.
+		if (values.title === list.title) return
 		setIsLoading(true)
 		try {
-			const [error, editedList] = await updateList(activeList.id, newTitle)
+			const [error, editedList] = await updateList(list.id, values)
 			if (error) {
 				setErrors({ message: error })
 				return
@@ -43,53 +59,50 @@ function ActiveListBanner() {
 		} finally {
 			setIsLoading(false)
 		}
-	}
+	}, [])
 
 	return (
 		<div className="flex items-center justify-between">
-			<h3 className="w-fit rounded-lg bg-info text-4xl font-bold p-3">
+			<div className="text-4xl font-bold">
 				{activeList ? (
 					isEditing ? (
 						<form
-						
-							onSubmit={() => setIsEditing(false)}
+							onBlur={handleSubmit((values) => handleUpdate(activeList, { title: values.title }))}
+							onSubmit={handleSubmit((values) => handleUpdate(activeList, { title: values.title }))}
 						>
-
-						<input
-							type="text"
-							value={activeList.title}
-							onChange={(e) => handleEdit(e.target.value)}
-							onBlur={() => setIsEditing(false)} 
-							className="input input-bordered input-secondary w-full max-w-xs"
+							<input
+								{...register('title', {
+									required: 'title required*',
+									maxLength: {
+										value: 35,
+										message: 'maximum thirty-five characters',
+									},
+								})}
+								className={'input rounded-sm input-md w-full max-w-xs p-1 text-2xl ' + (errors?.title ? 'input-error' : 'input-secondary')}
+								type="text"
+								defaultValue={activeList.title}
+								placeholder={errors?.title && errors?.title?.message}
 							/>
-							</form>
+						</form>
 					) : (
-						<div onDoubleClick={() => setIsEditing(true)}>
-							{
-
-							activeList.title
-							}
-
-						</div>
+						<div onDoubleClick={() => setIsEditing(true)}>{activeList.title}</div>
 					)
 				) : (
 					'To-dos'
 				)}
-			</h3>
+			</div>
+
 			{activeList && (
 				<div className="menu-btn dropdown dropdown-bottom dropdown-end">
-					<div tabIndex={0} role="button" className="btn btn-outline btn-info btn-round btn-lg m-1">
+					<div tabIndex={0} role="button" className="btn btn-ghost btn-info btn-round btn-md m-1">
 						<GoKebabHorizontal className="w-6 h-6" />
 					</div>
-					<ul tabIndex={0} className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-						<li
-							onClick={() => {
-								setIsEditing(!isEditing)
-							}}
-						>
-							<p>edit list</p>
+					<ul tabIndex={0} className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-neutral rounded-box w-52">
+						<li onClick={() => setIsEditing(!isEditing)}>
+							<p>{isEditing ? 'stop editing' : 'edit list'}</p>
 						</li>
-						<li onClick={() => onDelete()}>
+
+						<li onClick={() => onDelete(activeList.id)}>
 							<p className="text-rose-500">delete list</p>
 						</li>
 					</ul>

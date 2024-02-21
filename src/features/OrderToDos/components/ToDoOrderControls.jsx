@@ -50,7 +50,7 @@ function ToDoOrderControls({ setOrderedToDos }) {
 					className="select flex-auto select-secondary text-secondary mr-2"
 				>
 					{sortOptions.map(({ value, label }, index) => (
-						<option key={index} disabled={value === sort.by} selected={value === sort.by} value={value}>
+						<option key={index} disabled={value === sort.by} value={value}>
 							{label}
 						</option>
 					))}

@@ -93,7 +93,7 @@ function List({ listData }) {
 	return (
 		<div
 			className={
-				'list-list-item flex flex-row items-center justify-between rounded-lg px-2 mb-3 border-2 border-accent ' +
+				'list-list-item flex flex-row items-center justify-between rounded-lg px-2 mb-3 border border-accent ' +
 				(activeList?.id === listData?.id ? ' active bg-neutral py-3' : 'bg-base-300 py-2')
 			}
 			onClick={() => onSelect(listData.id)}
