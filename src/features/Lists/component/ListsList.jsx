@@ -3,7 +3,6 @@ import NoListMessage from './NoListsMessage'
 
 export default function ToDoListsList({ orderedLists }) {
 	return (
-		<div>
 			<div>
 
 				{ orderedLists ? orderedLists?.map?.((list, index) => (
@@ -12,6 +11,5 @@ export default function ToDoListsList({ orderedLists }) {
 					</div>
 				)) : <NoListMessage />}
 			</div>
-		</div>
 	)
 }

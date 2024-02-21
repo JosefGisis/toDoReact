@@ -11,6 +11,11 @@ export function useAuth() {
 		navigate('/login')
 	}, [])
 
+	const login = useCallback((token) => {
+		localStorage.setItem(JWT_KEY, token)
+		navigate('/')
+	}, [])
+
 	const getToken = useCallback(() => {
 		return localStorage.getItem(JWT_KEY)
 	}, [])
@@ -19,5 +24,5 @@ export function useAuth() {
 		localStorage.setItem(JWT_KEY, token)
 	}, [])
 
-	return { logout, getToken, setToken}
+	return { logout, login, getToken, setToken}
 }

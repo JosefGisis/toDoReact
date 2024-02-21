@@ -9,7 +9,7 @@ function useLists() {
 
 	const getLists = useCallback(async () => {
 		try {
-			const response = await fetch('http://localhost:3000/api/1/lists?sortBy=title', {
+			const response = await fetch('http://localhost:3000/api/1/lists', {
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,

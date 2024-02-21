@@ -39,23 +39,27 @@ function NewListForm() {
 	}
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="flex items-center align-items">
-			<div className='mr-2'>
+		<form onSubmit={handleSubmit(onSubmit)}
+		className="flex items-center align-items">
+			<div className="mr-2">
 				{/* <label htmlFor="list-title">list title</label> */}
 				<input
-					{...register('listTitle', { required: 'title required*' })}
+					{...register('title', {
+						required: 'title required*',
+						maxLength: {
+							value: 35,
+							message: 'maximum thirty-five characters',
+						},
+					})}
 					className="input input-bordered input-secondary w-full max-w-xs"
 					type="text"
 					placeholder="list title"
-				></input>
-				{errors?.listTitle && <p className="text-rose-500 text-sm absolute">{errors.listTitle.message}</p>}
+					></input>
+					{errors?.title && <p className="text-rose-500 text-sm absolute">{errors?.title?.message}</p>}
 			</div>
 
-			<button
-				className={'btn ' + (isValid ? 'btn-info' : 'bg-neutral')}
-				type="submit"
-			>
-				<GoPlus className='text-base-content w-5 h-5'/>
+			<button className={'btn ' + (isValid ? 'btn-info' : 'bg-neutral')} type="submit">
+				<GoPlus className="text-base-content w-5 h-5" />
 			</button>
 		</form>
 	)

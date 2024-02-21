@@ -28,7 +28,7 @@ const useListToDos = () => {
 				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
 				return ['unauthorized user']
 			}
-
+			console.log(json.message)
 			throw new Error(json.message)
 		} catch (error) {
 			setMeta({ ...meta, errors: { message: error.message } })

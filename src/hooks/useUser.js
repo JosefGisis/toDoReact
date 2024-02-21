@@ -8,6 +8,7 @@ function useUser() {
 	const token = getToken()
 
 	const getUser = useCallback(async () => {
+		setMeta({ ...meta, loading: true })
 		try {
 			const response = await fetch('http://localhost:3000/api/1/profile', {
 				headers: {
@@ -20,15 +21,14 @@ function useUser() {
 
 			if (response.status === 200) {
 				return [null, json.data]
-			} else if (response.status === 401) {
+			}
+			if (response.status === 401) {
 				logout()
 				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
 				return ['unauthorized user']
-			} else {
-				console.log(json.message)
-				setMeta({ ...meta, errors: { message: json.message } })
-				return ['error getting user']
 			}
+			console.log(json.message)
+			throw new Error(json.message)
 		} catch (error) {
 			setMeta({ ...meta, errors: { message: error.message } })
 			return [error.message]

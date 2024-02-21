@@ -10,17 +10,13 @@ export function useUpdateList() {
 	const updateList = useCallback(async (listId, values) => {
 		setMeta({ ...meta, loading: true })
 		try {
-			const { title, accessListOnly } = values
 			const response = await fetch(`http://localhost:3000/api/1/lists/${listId}`, {
 				method: 'PUT',
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
 				},
-				body: JSON.stringify({
-					title: title,
-					accessListOnly: accessListOnly
-				}),
+				body: JSON.stringify({ title: values?.title }),
 			})
 
 			if (response.status === 200) {
