@@ -8,25 +8,27 @@ function ToDoList({ orderedToDos }) {
 	const [showCompleted, setShowCompleted] = useState(true)
 
 	return (
-			<div>
-				{orderedToDos?.length ? (
-					<div>
-						<div>{orderedToDos?.map((toDo, i) => toDo.completed === 0 && <ToDo key={i} data={toDo}></ToDo>)}</div>
+		<>
+			{orderedToDos?.length ? (
+				<div>
+					{/* displays non-completed to-dos */}
+					<div>{orderedToDos?.map((toDo, i) => toDo.completed === 0 && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>
 
-						{orderedToDos?.find((toDo) => toDo.completed === 1) && (
-							<button className="btn btn-success" onClick={() => setShowCompleted(!showCompleted)}>
-								<div className="flex items-center">
-									<p className="mr-2">completed</p>
-									{showCompleted ? <GoChevronDown className="w-5 h-5" /> : <GoChevronRight className="w-5 h-5" />}
-								</div>
-							</button>
-						)}
-						{showCompleted && <div>{ orderedToDos?.map((toDo, i) => toDo.completed === 1 && <ToDo key={i} data={toDo}></ToDo>)}</div>}
-					</div>
-				) : (
-					<EmptyListMessage />
-				)}
-			</div>
+					{/* button to toggle completed to-dos visibility */}
+					{orderedToDos?.find((toDo) => toDo.completed === 1) && (
+						<button className="btn btn-success flex items-center" onClick={() => setShowCompleted(!showCompleted)}>
+							<p className="mr-2">completed</p>
+							{showCompleted ? <GoChevronDown className="w-5 h-5" /> : <GoChevronRight className="w-5 h-5" />}
+						</button>
+					)}
+
+					{/* displays completed to-dos */}
+					{showCompleted && <div>{orderedToDos?.map((toDo, i) => toDo.completed === 1 && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>}
+				</div>
+			) : (
+				<EmptyListMessage />
+			)}
+		</>
 	)
 }
 

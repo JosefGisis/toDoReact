@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 import { useDeleteToDo } from '../hooks/useDeleteToDo'
 import { useListContext } from '../../../hooks/useListContext'
@@ -8,17 +9,25 @@ import { actions } from '../../../state-management/List/listReducer'
 
 import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
 
-function ToDo({ data }) {
-	const [errors, setErrors] = useState(null)
+function ToDo({ toDoData }) {
+	const [_errors, setErrors] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
-	if (errors && isLoading) console.log('')
+	// isEditing is a an object to control the different forms in the to-do
 	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
 
 	const { dispatch } = useListContext()
 	const { deleteToDo } = useDeleteToDo()
 	const { updateToDo } = useUpdateToDo()
 
-	async function onDelete(toDo) {
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm()
+
+	// onDelete takes toDo object instead of id to determine if toDo has membership
+	const onDelete = useCallback(async (toDo) => {
 		try {
 			const [error] = await deleteToDo(toDo)
 			if (error) {
@@ -31,12 +40,12 @@ function ToDo({ data }) {
 		} finally {
 			setIsLoading(false)
 		}
-	}
+	}, [])
 
-	async function handleUpdate(values) {
+	const handleUpdate = useCallback(async (toDoId, update) => {
 		setIsLoading(true)
 		try {
-			const [error, editedToDo] = await updateToDo(data, values)
+			const [error, editedToDo] = await updateToDo(toDoId, update)
 			if (error) {
 				setErrors({ message: error })
 				return
@@ -47,16 +56,17 @@ function ToDo({ data }) {
 		} finally {
 			setIsLoading(false)
 		}
-	}
+	}, [])
 
 	return (
-		<div className={'rounded-lg transition-all p-3 mb-3 hover:bg-base-300 ' + (data?.completed ? 'bg-default' : 'bg-neutral')}>
+		<div className={'rounded-lg transition-all p-3 mb-3 hover:bg-base-300 ' + (toDoData?.completed ? 'bg-default' : 'bg-neutral')}>
 			<div className="flex items-center justify-between">
 				<div className="flex items-center">
+					{/* to-do check to complete and un-complete */}
 					<input
 						type="checkbox"
-						checked={data?.completed}
-						onClick={() => handleUpdate({ toggle: true })}
+						checked={toDoData?.completed}
+						onChange={() => handleUpdate(toDoData.id, { ...toDoData, completed: toDoData.completed === 1 ? 0 : 1 })}
 						className="checkbox checkbox-primary mr-3"
 					/>
 
@@ -67,14 +77,14 @@ function ToDo({ data }) {
 								onSubmit={() => setIsEditing({ isEditing, title: false })}
 								onBlur={() => setIsEditing({ isEditing, title: false })}
 							>
-								<input type="text" value={data?.title} className="input input-outline input-secondary" />
+								<input type="text" value={toDoData?.title} className="input input-outline input-secondary" />
 							</form>
 						) : (
 							<h3
 								onDoubleClick={() => setIsEditing({ ...isEditing, title: true })}
-								className={'rounded-lg text-2xl font-bold my-2 ' + (data?.completed ? 'line-through text-rose-400' : '')}
+								className={'rounded-lg text-2xl font-bold my-2 ' + (toDoData?.completed ? 'line-through text-rose-400' : '')}
 							>
-								{data?.title}
+								{toDoData?.title}
 							</h3>
 						)}
 					</div>
@@ -82,22 +92,24 @@ function ToDo({ data }) {
 				<div className="flex items-center">
 					{isEditing?.dueDate ? (
 						<form
-							defaultValue={data?.due_date}
+							defaultValue={toDoData?.due_date}
 							onChange={(e) => handleUpdate({ dueDate: e.target.value })}
 							onBlur={() => setIsEditing({ ...isEditing, dueDate: false, title: false })}
 							onSubmit={() => setIsEditing({ ...isEditing, dueDate: false })}
 						>
 							<input
 								type="date"
-								defaultValue={data?.due_date}
+								defaultValue={toDoData?.due_date}
 								className="input input-outline input-secondary mr-6"
-								placeholder={data?.due_date}
+								placeholder={toDoData?.due_date}
 							/>
 						</form>
-					) : data?.due_date ? (
+					) : toDoData?.due_date ? (
 						<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className="flex items-center mr-6">
 							<GoCalendar className="mr-2" />
-							<p className=" text-green-500">{data.due_date ? new Date(data.due_date.split('T')[0]).toDateString() : 'no due-date'}</p>
+							<p className=" text-green-500">
+								{toDoData.due_date ? new Date(toDoData.due_date.split('T')[0]).toDateString() : 'no due-date'}
+							</p>
 						</div>
 					) : null}
 					<div className="dropdown dropdown-bottom dropdown-end">
@@ -109,7 +121,7 @@ function ToDo({ data }) {
 								<p>edit</p>
 							</li>
 							<li onClick={() => handleUpdate({ toggle: true })}>
-								<p>{data.completed ? 'un-complete' : 'complete'}</p>
+								<p>{toDoData.completed ? 'un-complete' : 'complete'}</p>
 							</li>
 							<li onClick={() => setIsEditing({ ...isEditing, dueDate: true })}>
 								<p>add due-date</p>
@@ -119,7 +131,7 @@ function ToDo({ data }) {
 							</li>
 						</ul>
 					</div>
-					<button className="btn btn-outline btn-primary" onClick={() => onDelete(data)}>
+					<button className="btn btn-outline btn-primary" onClick={() => onDelete(toDoData)}>
 						<GoTrash className="w-5 h-5" />
 					</button>
 				</div>

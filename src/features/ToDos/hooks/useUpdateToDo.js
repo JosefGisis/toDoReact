@@ -7,14 +7,14 @@ export function useUpdateToDo() {
 	const { logout, getToken } = useAuth()
 	const token = getToken()
 
-	const updateToDo = useCallback(async (toDo, values) => {
+	const updateToDo = useCallback(async (toDoId, update) => {
 		setMeta({ ...meta, loading: true })
-		const url = toDo?.membership
-			? `http://localhost:3000/api/1/lists/${toDo.membership}/to-dos/${toDo.id}`
-			: `http://localhost:3000/api/1/to-dos/${toDo.id}`
-
+		const url = update?.membership
+		? `http://localhost:3000/api/1/lists/${update.membership}/to-dos/${toDoId}`
+		: `http://localhost:3000/api/1/to-dos/${toDoId}`
+		
 		try {
-			const { title, dueDate, removeDueDate, toggle } = values
+			const { title, due_date, completed, membership } = update
 			const response = await fetch(url, {
 				method: 'PUT',
 				headers: {
@@ -23,9 +23,9 @@ export function useUpdateToDo() {
 				},
 				body: JSON.stringify({
 					title,
-					dueDate,
-					removeDueDate,
-					toggle,
+					dueDate: due_date,
+					completed,
+					membership,
 				}),
 			})
 
