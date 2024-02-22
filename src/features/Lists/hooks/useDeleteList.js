@@ -1,11 +1,8 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from '../../../hooks/useAuth'
-import { useListContext } from '../../../hooks/useListContext'
-import { actions } from '../../../state-management/List/listReducer'
 
 export function useDeleteList() {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
-	const { dispatch } = useListContext()
 
 	const { logout, getToken } = useAuth()
 	const token = getToken()
@@ -22,7 +19,6 @@ export function useDeleteList() {
 			})
 
 			if (response.status === 200) {
-				dispatch({ type: actions.REMOVE_LIST, payload: listId })
 				return [null]
 			} else if (response.status === 401) {
 				logout()

@@ -81,7 +81,7 @@ const ListProvider = ({ children }) => {
 	const activeListToDos = useMemo(() => (activeList ? activeList?.toDos : []), [activeList])
 
 	return (
-		<ListContext.Provider value={{ activeList, activeListToDos, lists, toDos, setActiveList, removeActiveList, dispatch }}>
+		<ListContext.Provider value={{ activeList, activeListToDos, activeListId, lists, toDos, setActiveList, removeActiveList, dispatch }}>
 			{children}
 		</ListContext.Provider>
 	)

@@ -3,6 +3,7 @@ import { GoChevronRight, GoChevronDown } from 'react-icons/go'
 
 import ToDo from './ToDo'
 import EmptyListMessage from './EmptyListMessage'
+import AllToDosCompletedMessage from './AllToDosCompletedMessage'
 
 function ToDoList({ orderedToDos }) {
 	const [showCompleted, setShowCompleted] = useState(true)
@@ -11,6 +12,8 @@ function ToDoList({ orderedToDos }) {
 		<>
 			{orderedToDos?.length ? (
 				<div>
+					{/* message for completed list and controls for completed list */}
+					<AllToDosCompletedMessage />
 					{/* displays non-completed to-dos */}
 					<div>{orderedToDos?.map((toDo, i) => toDo.completed === 0 && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>
 

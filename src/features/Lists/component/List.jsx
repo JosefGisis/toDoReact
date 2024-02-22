@@ -9,6 +9,7 @@ import { useUpdateList } from '../hooks/useUpdateList'
 import { actions } from '../../../state-management/List/listReducer'
 
 import ListIcon from '../../../components/ListIcon'
+import { useDeleteListToDos } from '../hooks/useDeleteListToDos'
 
 function List({ listData }) {
 	const [isEditing, setIsEditing] = useState(false)
@@ -18,6 +19,7 @@ function List({ listData }) {
 
 	const { activeList, setActiveList, removeActiveList, dispatch } = useListContext()
 	const { deleteList } = useDeleteList()
+	const { deleteListToDos } = useDeleteListToDos()
 	const { updateList } = useUpdateList()
 
 	const {
@@ -56,11 +58,18 @@ function List({ listData }) {
 	const onDelete = useCallback(async (listId) => {
 		setIsLoading(true)
 		try {
-			const [error] = await deleteList(listId)
-			if (error) {
-				setErrors({ message: error })
+			const [deleteListToDosError] = await deleteListToDos(listId)
+			if (deleteListToDosError) {
+				setErrors({ message: deleteListToDosError })
 				return
 			}
+			const [deleteListError] = await deleteList(listId)
+			if (deleteListError) {
+				setErrors({ message: deleteListError })
+				return
+			}
+			dispatch({ type: actions.REMOVE_LIST_TODOS, payload: listId })
+			dispatch({ type: actions.REMOVE_LIST, payload: listId })
 			// removeActiveList sets activeList to to-dos (default list)
 			removeActiveList()
 		} catch (error) {

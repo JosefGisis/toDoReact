@@ -25,11 +25,12 @@ function NewListForm() {
 		reset()
 		setIsLoading(true)
 		try {
-			const [error, newList] = await createList({ title: newListData.listTitle })
+			const [error, newList] = await createList(newListData)
 			if (error) {
 				setErrors({ message: error })
 				return
 			}
+			setErrors(null)
 			dispatch({ type: actions.ADD_LIST, payload: newList })
 		} catch (error) {
 			setErrors({ message: error.message })
@@ -39,7 +40,7 @@ function NewListForm() {
 	}
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}
+		<form onSubmit={handleSubmit((values) => onSubmit(values))}
 		className="flex items-center align-items">
 			<div className="mr-2">
 				{/* <label htmlFor="list-title">list title</label> */}

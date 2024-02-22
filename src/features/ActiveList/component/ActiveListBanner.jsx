@@ -7,6 +7,7 @@ import { useUpdateList } from '../../Lists/hooks/useUpdateList'
 import { useDeleteList } from '../../Lists/hooks/useDeleteList'
 
 import { actions } from '../../../state-management/List/listReducer'
+import { useDeleteListToDos } from '../../Lists/hooks/useDeleteListToDos'
 
 function ActiveListBanner() {
 	const [isEditing, setIsEditing] = useState(false)
@@ -16,6 +17,7 @@ function ActiveListBanner() {
 	const { activeList, dispatch, removeActiveList } = useListContext()
 	const { updateList } = useUpdateList()
 	const { deleteList } = useDeleteList()
+	const { deleteListToDos } = useDeleteListToDos()
 
 	const {
 		register,
@@ -27,11 +29,18 @@ function ActiveListBanner() {
 	const onDelete = useCallback(async (listId) => {
 		setIsLoading(true)
 		try {
-			const [error] = await deleteList(listId)
-			if (error) {
-				setErrors({ message: error })
+			const [deleteListToDosError] = await deleteListToDos(listId)
+			if (deleteListToDosError) {
+				setErrors({ message: deleteListToDosError })
 				return
 			}
+			const [deleteListError] = await deleteList(listId)
+			if (deleteListError) {
+				setErrors({ message: deleteListError })
+				return
+			}
+			dispatch({ type: actions.REMOVE_LIST_TODOS, payload: listId })
+			dispatch({ type: actions.REMOVE_LIST, payload: listId })
 			// removeActiveList sets activeList to to-dos (default list)
 			removeActiveList()
 		} catch (error) {

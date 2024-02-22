@@ -5,7 +5,7 @@ export default function ToDoListsList({ orderedLists }) {
 	return (
 			<div>
 
-				{ orderedLists ? orderedLists?.map?.((list, index) => (
+				{ orderedLists?.length ? orderedLists?.map?.((list, index) => (
 					<div key={index}>
 						<List listData={list}></List>
 					</div>

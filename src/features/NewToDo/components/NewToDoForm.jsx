@@ -6,11 +6,12 @@ import { actions } from '../../../state-management/List/listReducer'
 import { GoPlus } from 'react-icons/go'
 
 function NewToDoForm() {
-	const { dispatch } = useListContext()
-
-	const { createNewToDo } = useNewToDo()
 	const [_errors, setErrors] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
+	
+	const { dispatch, activeListId } = useListContext()
+	const { createNewToDo } = useNewToDo()
+
 	const {
 		register,
 		handleSubmit,
@@ -18,15 +19,16 @@ function NewToDoForm() {
 		formState: { errors, isValid },
 	} = useForm()
 
-	const onSubmit = async (data) => {
+	const onSubmit = async (listId, values) => {
 		setIsLoading(true)
 		try {
-			const [error, newToDo] = await createNewToDo(data)
+			const [error, newToDo] = await createNewToDo(listId, values)
 			if (error) {
 				setErrors({ message: error })
 				return
 			}
 			reset()
+			console.log(newToDo)
 			dispatch({ type: actions.ADD_TODO, payload: newToDo })
 		} catch (error) {
 			setErrors({ message: error.message })
@@ -36,19 +38,15 @@ function NewToDoForm() {
 	}
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<form onSubmit={handleSubmit((values) => onSubmit(activeListId, values))}>
 			<div className="flex items-center sm:flex-row">
 				<div className="mr-2">
 					<input
-						{...register('toDoTitle', {
+						{...register('title', {
 							required: 'title required*',
-							minLength: {
-								value: 5,
-								message: 'minimum five characters required',
-							},
 							maxLength: {
-								value: 25,
-								message: 'maximum twenty-five characters',
+								value: 100,
+								message: 'maximum one-hundred characters required',
 							},
 						})}
 						className="input input-bordered input-secondary w-full max-w-xs"
