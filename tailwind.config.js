@@ -2,7 +2,7 @@ import daisyui from 'daisyui'
 
 /** @type {import('tailwindcss').Config} */
 export default {
-	content: ['./index.html', './src/**/*.{html,js,jsx,ts,tsx,css}'],
+	content: ['./index.html', './src/**/*.{html,js,jsx,css}'],
 	theme: {
 		extend: {},
 	},
@@ -11,7 +11,7 @@ export default {
 	daisyui: {
 		// synthwave is dark mode and pastel is light
 		themes: [
-			'synthwave', 'garden'],
+			'dracula', 'nord'],
 		// darkTheme: "synthwave",
 		base: true,
 		styled: true,
@@ -43,4 +43,9 @@ export const daisyColors = {
 	warningContent: 'bg-warning-content',
 	error: 'bg-error',
 	errorContent: 'bg-error-content',
+}
+
+export const daisyThemes = {
+	dark: 'dracula',
+	light: 'nord'
 }

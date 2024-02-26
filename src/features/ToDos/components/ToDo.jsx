@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { useDeleteToDo } from '../hooks/useDeleteToDo'
@@ -7,7 +7,7 @@ import { useUpdateToDo } from '../hooks/useUpdateToDo'
 
 import { actions } from '../../../state-management/List/listReducer'
 
-import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
+import { GoKebabHorizontal, GoTrash } from 'react-icons/go'
 import DueDate from './DueDate'
 
 function ToDo({ toDoData }) {
@@ -18,12 +18,6 @@ function ToDo({ toDoData }) {
 	const { dispatch } = useListContext()
 	const { deleteToDo } = useDeleteToDo()
 	const { updateToDo } = useUpdateToDo()
-
-	useEffect(() => {
-		console.log('to-do data has changed')
-		console.log(toDoData)
-
-	}, [toDoData])
 
 	const {
 		register,
@@ -66,6 +60,24 @@ function ToDo({ toDoData }) {
 		}
 	}, [])
 
+	// const renderDueDate = (dueDate) => {
+	// 	const currentDate = new Date().setHours(0, 0, 0, 0)
+	// 	const dueDateComparison = new Date(dueDate).setHours(0, 0, 0, 0)
+
+	// 	const due = dueDateComparison === currentDate
+	// 	const overDue = dueDateComparison < currentDate
+
+	// 	const formattedDate = new Date(dueDate).toDateString()
+
+	// 	return (
+	// 		<>
+	// 			<GoCalendar className="mr-2" />
+	// 			<p className={' ' + (due ? 'text-yellow-500' : overDue ? 'text-rose-500' : 'text-green-500')}>{formattedDate}</p>
+	// 			{/* <p className={due ? 'text-warning' : overDue ? 'text-error' : 'text-success'}>{due ? ' | due today' : overDue ? ' | over-due!' : ''}</p> */}
+	// 		</>
+	// 	)
+	// }
+
 	return (
 		<div
 			className={
@@ -78,7 +90,13 @@ function ToDo({ toDoData }) {
 				<input
 					type="checkbox"
 					checked={toDoData?.completed}
-					onChange={() => handleUpdate(toDoData.id, { ...toDoData, completed: toDoData.completed === 1 ? 0 : 1 })}
+					onChange={() =>
+						handleUpdate(toDoData.id, {
+							...toDoData,
+							completed: toDoData.completed === 1 ? 0 : 1,
+							due_date: toDoData.due_date?.split('T')[0],
+						})
+					}
 					className="checkbox checkbox-primary mr-3"
 				/>
 
@@ -90,10 +108,16 @@ function ToDo({ toDoData }) {
 								setIsEditing({ ...isEditing, title: false, dueDate: false })
 								reset()
 								handleSubmit((values) => {
-									handleUpdate(toDoData.id, { ...toDoData, title: values ? values.title : toDoData.title })
+									handleUpdate(toDoData.id, {
+										...toDoData,
+										title: values ? values.title : toDoData.title,
+										due_date: toDoData.due_date.split('T')[0],
+									})
 								})
 							}}
-							onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { ...toDoData, title: values.title }))}
+							onSubmit={handleSubmit((values) =>
+								handleUpdate(toDoData.id, { ...toDoData, title: values.title, due_date: toDoData.due_date.split('T')[0] })
+							)}
 						>
 							<input
 								{...register('title', {
@@ -124,12 +148,11 @@ function ToDo({ toDoData }) {
 			<div className="flex items-center">
 				{isEditing?.dueDate ? (
 					<form
-						defaultValue={toDoData?.due_date}
-						onBlur={handleSubmit((values) => handleUpdate(toDoData.id, { due_date: values.dueDate }))}
-						onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { due_date: values.dueDate }))}
+						onBlur={handleSubmit((values) => handleUpdate(toDoData.id, { ...toDoData, due_date: values.date }))}
+						onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { ...toDoData, due_date: values.date }))}
 					>
 						<input
-							{...register('dueDate', {
+							{...register('date', {
 								pattern: {
 									value: /^\d{4}-\d{2}-\d{2}$/,
 									message: 'date format mm/dd/yyyy required',
@@ -137,12 +160,13 @@ function ToDo({ toDoData }) {
 							})}
 							type="date"
 							defaultValue={toDoData.due_date}
-							className={'input input-outline mr-6' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
+							className={'input input-outline mr-6 ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
 						/>
 					</form>
 				) : toDoData?.due_date ? (
 					<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className="flex items-center mr-6">
 						<DueDate dueDate={toDoData.due_date} />
+						{/* {renderDueDate(due)} */}
 					</div>
 				) : null}
 
@@ -172,5 +196,23 @@ function ToDo({ toDoData }) {
 		</div>
 	)
 }
+
+// function DueDate({ dueDate }) {
+// 	const currentDate = new Date().setHours(0, 0, 0, 0)
+// 	const dueDateComparison = new Date(dueDate).setHours(0, 0, 0, 0)
+
+// 	const due = dueDateComparison === currentDate
+// 	const overDue = dueDateComparison < currentDate
+
+// 	const formattedDate = new Date(dueDate).toDateString()
+
+// 	return (
+// 		<>
+// 			<GoCalendar className="mr-2" />
+// 			<p className={' ' + (due ? 'text-yellow-500' : overDue ? 'text-rose-500' : 'text-green-500')}>{formattedDate}</p>
+// 			{/* <p className={due ? 'text-warning' : overDue ? 'text-error' : 'text-success'}>{due ? ' | due today' : overDue ? ' | over-due!' : ''}</p> */}
+// 		</>
+// 	)
+// }
 
 export default ToDo

@@ -8,11 +8,11 @@ import { useListContext } from '../../../hooks/useListContext'
 import { actions } from '../../../state-management/List/listReducer'
 
 function NewListForm() {
-	const { createList } = useNewList()
 	const [isLoading, setIsLoading] = useState(false)
 	const [_errors, setErrors] = useState(null)
-	const { dispatch } = useListContext()
-	if (isLoading && _errors) console.log(_errors)
+	
+	const { dispatch, setActiveList } = useListContext()
+	const { createList } = useNewList()
 
 	const {
 		register,
@@ -32,6 +32,7 @@ function NewListForm() {
 			}
 			setErrors(null)
 			dispatch({ type: actions.ADD_LIST, payload: newList })
+			setActiveList(newList.id)
 		} catch (error) {
 			setErrors({ message: error.message })
 		} finally {

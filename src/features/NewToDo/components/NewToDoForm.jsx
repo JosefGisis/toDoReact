@@ -28,7 +28,6 @@ function NewToDoForm() {
 				return
 			}
 			reset()
-			console.log(newToDo)
 			dispatch({ type: actions.ADD_TODO, payload: newToDo })
 		} catch (error) {
 			setErrors({ message: error.message })
