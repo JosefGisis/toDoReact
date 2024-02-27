@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ function SignUpForm() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isValid, isDirty },
+		formState: { errors, isValid },
 	} = useForm()
 
 	async function onSubmit(values) {

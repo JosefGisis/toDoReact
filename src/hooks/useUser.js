@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from './useAuth'
 
+import { BASE_URL } from '../constants/url'
+
 function useUser() {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
 
@@ -10,7 +12,7 @@ function useUser() {
 	const getUser = useCallback(async () => {
 		setMeta({ ...meta, loading: true })
 		try {
-			const response = await fetch('http://localhost:3000/api/1/profile', {
+			const response = await fetch(`${BASE_URL}/profile`, {
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
@@ -27,7 +29,7 @@ function useUser() {
 				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
 				return ['unauthorized user']
 			}
-			console.log(json.message)
+	
 			throw new Error(json.message)
 		} catch (error) {
 			setMeta({ ...meta, errors: { message: error.message } })

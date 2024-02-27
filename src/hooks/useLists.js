@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from './useAuth'
 
+import { BASE_URL } from '../constants/url'
+
 function useLists() {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
 
@@ -9,7 +11,7 @@ function useLists() {
 
 	const getLists = useCallback(async () => {
 		try {
-			const response = await fetch('http://localhost:3000/api/1/lists', {
+			const response = await fetch(`${BASE_URL}/lists`, {
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
@@ -20,15 +22,20 @@ function useLists() {
 
 			if (response.status === 200) {
 				return [null, json.data]
-			} else if (response.status === 401) {
+			}
+
+			if (response.status === 401) {
 				logout()
 				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
 				return ['unauthorized user']
-			} else {
-				console.log(json.message)
-				setMeta({ ...meta, errors: { message: json.message } })
-				return ['error getting lists']
 			}
+
+			if (response.status === 400) {
+				setMeta({ ...meta, errors: { message: json.message } })
+				return [json.message]
+			}
+
+			throw new Error(json.message)
 		} catch (error) {
 			setMeta({ ...meta, errors: { message: error.message } })
 			return [error.message]

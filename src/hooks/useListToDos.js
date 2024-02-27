@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from './useAuth'
 
+import { BASE_URL } from '../constants/url'
+
 const useListToDos = () => {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
 
@@ -10,7 +12,7 @@ const useListToDos = () => {
 	const getListToDos = useCallback(async (listId) => {
 		setMeta({ ...meta, loading: true })
 		try {
-			const response = await fetch(`http://localhost:3000/api/1/lists/${listId}/to-dos`, {
+			const response = await fetch(`${BASE_URL}/lists/${listId}/to-dos`, {
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
@@ -28,7 +30,7 @@ const useListToDos = () => {
 				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
 				return ['unauthorized user']
 			}
-			console.log(json.message)
+
 			throw new Error(json.message)
 		} catch (error) {
 			setMeta({ ...meta, errors: { message: error.message } })

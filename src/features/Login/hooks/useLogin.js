@@ -23,7 +23,7 @@ export function useLogin() {
 				return [null, json.token]
 			}
 
-			if (response.status === 401) {
+			if (response.status === 401 || response.status === 400) {
 				setMeta({ ...meta, errors: { message: json.message } })
 				return [json.message]
 			}

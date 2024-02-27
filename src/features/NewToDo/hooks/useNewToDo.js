@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
+
 import { useAuth } from '../../../hooks/useAuth'
+import { BASE_URL } from '../../../constants/url'
 
 export const useNewToDo = () => {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
@@ -8,7 +10,7 @@ export const useNewToDo = () => {
 
 	const createNewToDo = useCallback(async (listId, values) => {
 		setMeta({ ...meta, loading: true })
-		const url = listId ? `http://localhost:3000/api/1/lists/${listId}/to-dos` : `http://localhost:3000/api/1/to-dos`
+		const url = listId ? `${BASE_URL}/lists/${listId}/to-dos` : `${BASE_URL}/to-dos`
 
 		try {
 			const { title, date } = values
@@ -24,8 +26,9 @@ export const useNewToDo = () => {
 				}),
 			})
 
+			const json = await response.json()
+
 			if (response.status === 200) {
-				const json = await response.json()
 				setMeta({ ...meta, errors: null })
 				return [null, json.data]
 			}
@@ -36,14 +39,15 @@ export const useNewToDo = () => {
 				return ['unauthorized user']
 			}
 
-			const json = await response.json()
 			throw new Error(json.message)
 		} catch (error) {
+			console.log(error.message)
 			setMeta({ ...meta, errors: { message: error.message } })
 			return [error.message]
 		} finally {
 			setMeta({ ...meta, loading: false })
 		}
 	})
+
 	return { meta, createNewToDo }
 }

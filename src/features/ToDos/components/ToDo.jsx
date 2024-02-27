@@ -52,7 +52,7 @@ function ToDo({ toDoData }) {
 	}, [])
 
 	useEffect(() => {
-		console.log(_errors?.message)
+		if (_errors) console.log(_errors?.message)
 	}, [_errors])
 
 	return (
@@ -175,13 +175,16 @@ function ToDo({ toDoData }) {
 }
 
 function DueDate({ dueDate, completed }) {
+	// need to remove UTC and get local date
+	const localDate = dueDate.split('Z')[0]
+	
 	const currentDate = new Date().setHours(0, 0, 0, 0)
-	const dueDateComparison = new Date(dueDate).setHours(0, 0, 0, 0)
-
+	const dueDateComparison = new Date(localDate).setHours(0, 0, 0, 0)
+	
 	const due = dueDateComparison === currentDate
 	const overDue = dueDateComparison < currentDate
 
-	const formattedDate = new Date(dueDate).toDateString()
+	const formattedDate = new Date(localDate).toDateString()
 
 	const textColor = completed ? 'text-success' : due ? 'text-warning' : overDue ? 'text-error' : 'text-success'
 

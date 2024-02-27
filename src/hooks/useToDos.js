@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from './useAuth'
 
+import { BASE_URL } from '../constants/url'
+
 function useToDos() {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
 	const { logout, getToken } = useAuth()
@@ -8,7 +10,7 @@ function useToDos() {
 
 	const getToDos = useCallback(async () => {
 		try {
-			const response = await fetch('http://localhost:3000/api/1/to-dos', {
+			const response = await fetch(`${BASE_URL}/to-dos`, {
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
@@ -27,7 +29,6 @@ function useToDos() {
 				return ['unauthorized user']
 			}
 
-			console.log(json.message)
 			throw new Error(json.message)
 		} catch (error) {
 			setMeta({ ...meta, errors: { message: error.message } })

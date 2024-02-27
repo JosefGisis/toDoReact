@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
+
 import { useAuth } from '../../../hooks/useAuth'
+import { BASE_URL } from '../../../constants/url'
 
 export function useUpdateToDo() {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
@@ -9,10 +11,8 @@ export function useUpdateToDo() {
 
 	const updateToDo = useCallback(async (toDoId, update) => {
 		setMeta({ ...meta, loading: true })
-		const url = update?.membership
-		? `http://localhost:3000/api/1/lists/${update.membership}/to-dos/${toDoId}`
-		: `http://localhost:3000/api/1/to-dos/${toDoId}`
-		
+		const url = update?.membership ? `${BASE_URL}/lists/${update.membership}/to-dos/${toDoId}` : `${BASE_URL}/to-dos/${toDoId}`
+
 		try {
 			const { title, due_date, completed, membership } = update
 			const response = await fetch(url, {
@@ -29,20 +29,21 @@ export function useUpdateToDo() {
 				}),
 			})
 
+			const json = await response.json()
+
 			if (response.status === 200) {
-				const json = await response.json()
 				return [null, json.data]
-			} else if (response.status === 401) {
+			} 
+			
+			if (response.status === 401) {
 				logout()
 				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
 				return ['unauthorized user']
-			} else {
-				const json = await response.json()
-				console.log(json.message)
-				setMeta({ ...meta, errors: { message: json.message } })
-				return ['error updating to-do']
-			}
+			} 
+			
+			throw new Error(json.message)
 		} catch (error) {
+			console.log(error.message)
 			setMeta({ ...meta, errors: { message: error.message } })
 			return [error.message]
 		} finally {

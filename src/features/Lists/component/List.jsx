@@ -88,7 +88,7 @@ function List({ listData }) {
 	}, [])
 
 	useEffect(() => {
-		console.log(_errors?.message)
+		if (_errors) console.log(_errors?.message)
 	}, [_errors])
 
 	return (
