@@ -88,12 +88,12 @@ function ToDo({ toDoData }) {
 									handleUpdate(toDoData.id, {
 										...toDoData,
 										title: values ? values.title : toDoData.title,
-										due_date: toDoData.due_date.split('T')[0],
+										due_date: toDoData?.due_date?.split('T')[0],
 									})
 								})
 							}}
 							onSubmit={handleSubmit((values) =>
-								handleUpdate(toDoData.id, { ...toDoData, title: values.title, due_date: toDoData.due_date.split('T')[0] })
+								handleUpdate(toDoData.id, { ...toDoData, title: values.title, due_date: toDoData?.due_date?.split('T')[0] })
 							)}
 						>
 							<input
@@ -159,7 +159,7 @@ function ToDo({ toDoData }) {
 						<li onClick={() => setIsEditing({ ...isEditing, dueDate: true })}>
 							<p>add due-date</p>
 						</li>
-						<li onClick={() => handleUpdate({ removeDueDate: true })}>
+						<li onClick={() => handleUpdate({  })}>
 							<p>remove due-date</p>
 						</li>
 					</ul>
@@ -176,7 +176,7 @@ function ToDo({ toDoData }) {
 
 function DueDate({ dueDate, completed }) {
 	// need to remove UTC and get local date
-	const localDate = dueDate.split('Z')[0]
+	const localDate = dueDate?.split('Z')[0]
 	
 	const currentDate = new Date().setHours(0, 0, 0, 0)
 	const dueDateComparison = new Date(localDate).setHours(0, 0, 0, 0)

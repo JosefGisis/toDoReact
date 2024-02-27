@@ -57,12 +57,15 @@ function SignUpForm() {
 								{...register('username', {
 									required: 'username required*',
 									minLength: {
-										value: 5,
-										message: 'minimum five characters required',
+										value: 8,
+										message: 'minimum 8 characters required',
 									},
 									maxLength: {
 										value: 25,
-										message: 'maximum twenty-five characters',
+										message: 'maximum 25 characters',
+									},
+									validate: {
+										noSpaces: (value) => !/\s/.test(value) || 'username cannot contain spaces',
 									},
 								})}
 								type="text"
@@ -100,7 +103,16 @@ function SignUpForm() {
 									required: 'password required*',
 									minLength: {
 										value: 8,
-										message: 'minimum eight characters required',
+										message: 'password must be minimum 8 characters',
+									},
+									maxLength: {
+										value: 20,
+										message: 'password cannot exceed 20 characters',
+									},
+									validate: {
+										uppercase: (value) => /[A-Z]/.test(value) || 'must contain at least one uppercase letter',
+										specialChar: (value) => /[@$!%*?&]/.test(value) || 'must contain at least one special character',
+										noSpaces: (value) => !/\s/.test(value) || 'password must not contain spaces',
 									},
 								})}
 								type="password"

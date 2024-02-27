@@ -85,7 +85,7 @@ function LoginForm() {
 						>
 							login
 						</button>
-						{_errors && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors}</div>}
+						{_errors && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors.message}</div>}
 					</div>
 
 					<hr className="border-secondary"></hr>
