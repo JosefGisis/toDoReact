@@ -1,21 +1,18 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { GoKebabHorizontal } from 'react-icons/go'
 
 import { useListContext } from '../../../hooks/useListContext'
 import { useDeleteList } from '../hooks/useDeleteList'
 import { useUpdateList } from '../hooks/useUpdateList'
+import { useDeleteListToDos } from '../hooks/useDeleteListToDos'
 
 import { actions } from '../../../state-management/List/listReducer'
-
 import ListIcon from '../../../components/ListIcon'
-import { useDeleteListToDos } from '../hooks/useDeleteListToDos'
 
 function List({ listData }) {
 	const [isEditing, setIsEditing] = useState(false)
-	const [isLoading, setIsLoading] = useState(false)
 	const [_errors, setErrors] = useState(null)
-	// if (_errors && isLoading && errors && isValid) console.log('')
 
 	const { activeList, setActiveList, removeActiveList, dispatch } = useListContext()
 	const { deleteList } = useDeleteList()
@@ -33,7 +30,6 @@ function List({ listData }) {
 	const onSelect = useCallback(
 		async (listId) => {
 			if (listId === activeList?.id) return
-			setIsLoading(true)
 			setIsEditing(false)
 			reset()
 			try {
@@ -48,15 +44,12 @@ function List({ listData }) {
 				// dispatch({ type: actions.UPDATE_LIST, payload: updatedList })
 			} catch (error) {
 				setErrors({ message: error.message })
-			} finally {
-				setIsLoading(false)
 			}
 		},
 		[activeList]
 	)
 
 	const onDelete = useCallback(async (listId) => {
-		setIsLoading(true)
 		try {
 			const [deleteListToDosError] = await deleteListToDos(listId)
 			if (deleteListToDosError) {
@@ -74,8 +67,6 @@ function List({ listData }) {
 			removeActiveList()
 		} catch (error) {
 			setErrors({ message: error.message })
-		} finally {
-			setIsLoading(false)
 		}
 	}, [])
 
@@ -84,7 +75,6 @@ function List({ listData }) {
 		reset()
 		// Do not update list if nothing changes because it causes lists to re-sort.
 		if (values.title === list.title) return
-		setIsLoading(true)
 		try {
 			const [error, editedList] = await updateList(list.id, values)
 			if (error) {
@@ -94,16 +84,18 @@ function List({ listData }) {
 			dispatch({ type: actions.UPDATE_LIST, payload: editedList })
 		} catch (error) {
 			setErrors({ message: error.message })
-		} finally {
-			setIsLoading(false)
 		}
 	}, [])
+
+	useEffect(() => {
+		console.log(_errors?.message)
+	}, [_errors])
 
 	return (
 		<div
 			className={
-				'list-list-item flex flex-row items-center justify-between rounded-lg px-2 mb-3 border border-accent ' +
-				(activeList?.id === listData?.id ? ' active bg-neutral py-3' : 'bg-base-300 py-2')
+				'list-list-item flex items-center justify-between rounded-lg px-2 mb-3 ' +
+				(activeList?.id === listData?.id ? 'active bg-base-300 border-2 border-neutral py-3' : 'bg-neutral py-2')
 			}
 			onClick={() => onSelect(listData.id)}
 		>
@@ -132,13 +124,7 @@ function List({ listData }) {
 							/>
 						</form>
 					) : (
-						<div
-							onDoubleClick={() => {
-								setIsEditing(true)
-							}}
-						>
-							{listData.title}
-						</div>
+						<div onDoubleClick={() => setIsEditing(true)}>{listData.title}</div>
 					)}
 				</div>
 			</div>

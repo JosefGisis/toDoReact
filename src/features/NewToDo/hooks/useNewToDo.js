@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from '../../../hooks/useAuth'
 
-const useNewToDo = () => {
+export const useNewToDo = () => {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
 	const { logout, getToken } = useAuth()
 	const token = getToken()
@@ -47,5 +47,3 @@ const useNewToDo = () => {
 	})
 	return { meta, createNewToDo }
 }
-
-export default useNewToDo

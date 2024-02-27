@@ -7,8 +7,8 @@ export default function DefaultListButton() {
 	return (
 		<div
 			className={
-				'flex flex-row items-center justify-between rounded-lg px-2 border border-primary ' +
-				(activeList ? 'bg-base-300 py-2' : 'bg-neutral py-3')
+				'flex flex-row items-center justify-between rounded-lg px-2 ' +
+				(activeList ? 'bg-neutral py-3' : 'bg-base-300 border-2 border-neutral py-4')
 			}
 			onClick={() => {
 				removeActiveList()

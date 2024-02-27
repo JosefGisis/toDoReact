@@ -1,15 +1,15 @@
-import { useState } from "react"
-import { daisyThemes } from "../../../../tailwind.config"
+import { useState } from 'react'
+import { daisyThemes } from '../../../../tailwind.config'
 
 export default function ThemeToggler() {
-    const themes = { light: daisyThemes.light, dark: daisyThemes.dark }
+	const themes = { light: daisyThemes.light, dark: daisyThemes.dark }
 	const [theme, setTheme] = useState(themes.dark)
 
 	function toggleTheme() {
 		const newTheme = theme === themes.dark ? themes.light : themes.dark
 		document.documentElement.setAttribute('data-theme', newTheme)
 		setTheme(newTheme)
-    }
+	}
 
 	return (
 		<>

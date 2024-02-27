@@ -19,7 +19,7 @@ function ToDoList({ orderedToDos }) {
 
 					{/* button to toggle completed to-dos visibility */}
 					{orderedToDos?.find((toDo) => toDo.completed === 1) && (
-						<button className="btn btn-success flex items-center" onClick={() => setShowCompleted(!showCompleted)}>
+						<button className="btn btn-secondary flex items-center mb-2" onClick={() => setShowCompleted(!showCompleted)}>
 							<p className="mr-2">completed</p>
 							{showCompleted ? <GoChevronDown className="w-5 h-5" /> : <GoChevronRight className="w-5 h-5" />}
 						</button>

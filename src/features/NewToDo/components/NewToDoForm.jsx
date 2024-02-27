@@ -1,14 +1,14 @@
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import useNewToDo from '../hooks/useNewToDo'
-import { useState } from 'react'
+import { GoPlus } from 'react-icons/go'
+
+import { useNewToDo } from '../hooks/useNewToDo'
 import { useListContext } from '../../../hooks/useListContext'
 import { actions } from '../../../state-management/List/listReducer'
-import { GoPlus } from 'react-icons/go'
 
 function NewToDoForm() {
 	const [_errors, setErrors] = useState(null)
-	const [isLoading, setIsLoading] = useState(false)
-	
+
 	const { dispatch, activeListId } = useListContext()
 	const { createNewToDo } = useNewToDo()
 
@@ -20,7 +20,6 @@ function NewToDoForm() {
 	} = useForm()
 
 	const onSubmit = async (listId, values) => {
-		setIsLoading(true)
 		try {
 			const [error, newToDo] = await createNewToDo(listId, values)
 			if (error) {
@@ -31,13 +30,16 @@ function NewToDoForm() {
 			dispatch({ type: actions.ADD_TODO, payload: newToDo })
 		} catch (error) {
 			setErrors({ message: error.message })
-		} finally {
-			setIsLoading(false)
 		}
 	}
 
+	useEffect(() => {
+		if (_errors) console.log(_errors?.message)
+	}, [_errors])
+
 	return (
 		<form onSubmit={handleSubmit((values) => onSubmit(activeListId, values))}>
+			{errors?.title && <p className="text-error mb-1 text-sm">{errors?.title?.message}</p>}
 			<div className="flex items-center sm:flex-row">
 				<div className="mr-2">
 					<input
@@ -52,7 +54,6 @@ function NewToDoForm() {
 						type="text"
 						placeholder="to-do title"
 					></input>
-					{errors?.toDoTitle && <p className="text-error text-sm absolute">{errors?.toDoTitle?.message}</p>}
 				</div>
 
 				<div className="mr-2">
@@ -66,11 +67,11 @@ function NewToDoForm() {
 						className="input input-bordered input-secondary w-full max-w-xs"
 						type="date"
 					></input>
-					{errors?.date && <p className="text-error text-sm absolute">{errors?.date?.message}</p>}
+					{/* {errors?.date && <p className="text-error text-sm absolute">{errors?.date?.message}</p>} */}
 				</div>
 
 				<button className={'btn ' + (isValid ? 'btn-info' : 'bg-neutral')} type="submit">
-					<GoPlus className="text-base-content w-5 h-5" />
+					<GoPlus className="w-5 h-5" />
 				</button>
 			</div>
 		</form>

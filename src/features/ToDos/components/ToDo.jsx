@@ -1,18 +1,14 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
 
 import { useDeleteToDo } from '../hooks/useDeleteToDo'
 import { useListContext } from '../../../hooks/useListContext'
 import { useUpdateToDo } from '../hooks/useUpdateToDo'
-
 import { actions } from '../../../state-management/List/listReducer'
-
-import { GoKebabHorizontal, GoTrash } from 'react-icons/go'
-import DueDate from './DueDate'
 
 function ToDo({ toDoData }) {
 	const [_errors, setErrors] = useState(null)
-	const [isLoading, setIsLoading] = useState(false)
 	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
 
 	const { dispatch } = useListContext()
@@ -37,15 +33,12 @@ function ToDo({ toDoData }) {
 			dispatch({ type: actions.REMOVE_TODO, payload: toDo })
 		} catch (error) {
 			setErrors({ message: error.message })
-		} finally {
-			setIsLoading(false)
 		}
 	}, [])
 
 	const handleUpdate = useCallback(async (toDoId, update) => {
 		setIsEditing({ ...isEditing, title: false, dueDate: false })
 		reset()
-		setIsLoading(true)
 		try {
 			const [error, editedToDo] = await updateToDo(toDoId, update)
 			if (error) {
@@ -55,34 +48,18 @@ function ToDo({ toDoData }) {
 			dispatch({ type: actions.UPDATE_TODO, payload: editedToDo })
 		} catch (error) {
 			setErrors({ message: error.message })
-		} finally {
-			setIsLoading(false)
 		}
 	}, [])
 
-	// const renderDueDate = (dueDate) => {
-	// 	const currentDate = new Date().setHours(0, 0, 0, 0)
-	// 	const dueDateComparison = new Date(dueDate).setHours(0, 0, 0, 0)
-
-	// 	const due = dueDateComparison === currentDate
-	// 	const overDue = dueDateComparison < currentDate
-
-	// 	const formattedDate = new Date(dueDate).toDateString()
-
-	// 	return (
-	// 		<>
-	// 			<GoCalendar className="mr-2" />
-	// 			<p className={' ' + (due ? 'text-yellow-500' : overDue ? 'text-rose-500' : 'text-green-500')}>{formattedDate}</p>
-	// 			{/* <p className={due ? 'text-warning' : overDue ? 'text-error' : 'text-success'}>{due ? ' | due today' : overDue ? ' | over-due!' : ''}</p> */}
-	// 		</>
-	// 	)
-	// }
+	useEffect(() => {
+		console.log(_errors?.message)
+	}, [_errors])
 
 	return (
 		<div
 			className={
 				'flex items-center justify-between rounded-lg transition-all p-3 mb-3 hover:bg-base-300 ' +
-				(toDoData?.completed ? 'bg-default' : 'bg-neutral')
+				(toDoData?.completed ? 'bg-base-200' : 'bg-neutral')
 			}
 		>
 			<div className="flex items-center">
@@ -165,7 +142,7 @@ function ToDo({ toDoData }) {
 					</form>
 				) : toDoData?.due_date ? (
 					<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className="flex items-center mr-6">
-						<DueDate dueDate={toDoData.due_date} />
+						<DueDate dueDate={toDoData.due_date} completed={toDoData.completed} />
 						{/* {renderDueDate(due)} */}
 					</div>
 				) : null}
@@ -197,22 +174,23 @@ function ToDo({ toDoData }) {
 	)
 }
 
-// function DueDate({ dueDate }) {
-// 	const currentDate = new Date().setHours(0, 0, 0, 0)
-// 	const dueDateComparison = new Date(dueDate).setHours(0, 0, 0, 0)
+function DueDate({ dueDate, completed }) {
+	const currentDate = new Date().setHours(0, 0, 0, 0)
+	const dueDateComparison = new Date(dueDate).setHours(0, 0, 0, 0)
 
-// 	const due = dueDateComparison === currentDate
-// 	const overDue = dueDateComparison < currentDate
+	const due = dueDateComparison === currentDate
+	const overDue = dueDateComparison < currentDate
 
-// 	const formattedDate = new Date(dueDate).toDateString()
+	const formattedDate = new Date(dueDate).toDateString()
 
-// 	return (
-// 		<>
-// 			<GoCalendar className="mr-2" />
-// 			<p className={' ' + (due ? 'text-yellow-500' : overDue ? 'text-rose-500' : 'text-green-500')}>{formattedDate}</p>
-// 			{/* <p className={due ? 'text-warning' : overDue ? 'text-error' : 'text-success'}>{due ? ' | due today' : overDue ? ' | over-due!' : ''}</p> */}
-// 		</>
-// 	)
-// }
+	const textColor = completed ? 'text-success' : due ? 'text-warning' : overDue ? 'text-error' : 'text-success'
+
+	return (
+		<>
+			<GoCalendar className="mr-2" />
+			<p className={textColor}>{formattedDate}</p>
+		</>
+	)
+}
 
 export default ToDo
