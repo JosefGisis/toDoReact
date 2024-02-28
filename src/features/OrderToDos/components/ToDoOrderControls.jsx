@@ -7,6 +7,7 @@ function ToDoOrderControls({ setOrderedToDos }) {
 	const [sort, setSort] = useState({ by: 'title', order: 'ASC' })
 	const { toDos, activeList } = useListContext()
 
+	console.log(activeList?.toDos)
 	// sort options are to-do parameters for sorting
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
