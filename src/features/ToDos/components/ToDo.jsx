@@ -67,13 +67,7 @@ function ToDo({ toDoData }) {
 				<input
 					type="checkbox"
 					checked={toDoData?.completed}
-					onChange={() =>
-						handleUpdate(toDoData.id, {
-							...toDoData,
-							completed: toDoData.completed === 1 ? 0 : 1,
-							dueDate: toDoData.dueDate?.split('T')[0],
-						})
-					}
+					onChange={() => handleUpdate(toDoData.id, { completed: !toDoData.completed })}
 					className="checkbox checkbox-primary mr-3"
 				/>
 
@@ -85,16 +79,10 @@ function ToDo({ toDoData }) {
 								setIsEditing({ ...isEditing, title: false, dueDate: false })
 								reset()
 								handleSubmit((values) => {
-									handleUpdate(toDoData.id, {
-										...toDoData,
-										title: values ? values.title : toDoData.title,
-										dueDate: toDoData?.dueDate?.split('T')[0],
-									})
+									handleUpdate(toDoData.id, { title: values ? values.title : toDoData.title })
 								})
 							}}
-							onSubmit={handleSubmit((values) =>
-								handleUpdate(toDoData.id, { ...toDoData, title: values.title, dueDate: toDoData?.dueDate?.split('T')[0] })
-							)}
+							onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { title: values.title }))}
 						>
 							<input
 								{...register('title', {
@@ -125,8 +113,8 @@ function ToDo({ toDoData }) {
 			<div className="flex items-center">
 				{isEditing?.dueDate ? (
 					<form
-						onBlur={handleSubmit((values) => handleUpdate(toDoData.id, { ...toDoData, dueDate: values.date }))}
-						onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { ...toDoData, dueDate: values.date }))}
+						onBlur={handleSubmit((values) => handleUpdate(toDoData.id, { dueDate: values.date }))}
+						onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { dueDate: values.date }))}
 					>
 						<input
 							{...register('date', {
@@ -143,7 +131,6 @@ function ToDo({ toDoData }) {
 				) : toDoData?.dueDate ? (
 					<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className="flex items-center mr-6">
 						<DueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
-						{/* {renderDueDate(due)} */}
 					</div>
 				) : null}
 
@@ -159,7 +146,7 @@ function ToDo({ toDoData }) {
 						<li onClick={() => setIsEditing({ ...isEditing, dueDate: true })}>
 							<p>add due-date</p>
 						</li>
-						<li onClick={() => handleUpdate({  })}>
+						<li onClick={() => handleUpdate(toDoData.id, { dueDate: null })}>
 							<p>remove due-date</p>
 						</li>
 					</ul>
@@ -177,10 +164,10 @@ function ToDo({ toDoData }) {
 function DueDate({ dueDate, completed }) {
 	// need to remove UTC and get local date
 	const localDate = dueDate?.split('Z')[0]
-	
+
 	const currentDate = new Date().setHours(0, 0, 0, 0)
 	const dueDateComparison = new Date(localDate).setHours(0, 0, 0, 0)
-	
+
 	const due = dueDateComparison === currentDate
 	const overDue = dueDateComparison < currentDate
 

@@ -15,10 +15,10 @@ function ToDoList({ orderedToDos }) {
 					{/* message for completed list and controls for completed list */}
 					<AllToDosCompletedMessage />
 					{/* displays non-completed to-dos */}
-					<div>{orderedToDos?.map((toDo, i) => toDo.completed === 0 && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>
+					<div>{orderedToDos?.map((toDo, i) => !toDo.completed && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>
 
 					{/* button to toggle completed to-dos visibility */}
-					{orderedToDos?.find((toDo) => toDo.completed === 1) && (
+					{orderedToDos?.find((toDo) => toDo.completed) && (
 						<button className="btn btn-secondary flex items-center mb-2" onClick={() => setShowCompleted(!showCompleted)}>
 							<p className="mr-2">completed</p>
 							{showCompleted ? <GoChevronDown className="w-5 h-5" /> : <GoChevronRight className="w-5 h-5" />}
@@ -26,7 +26,7 @@ function ToDoList({ orderedToDos }) {
 					)}
 
 					{/* displays completed to-dos */}
-					{showCompleted && <div>{orderedToDos?.map((toDo, i) => toDo.completed === 1 && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>}
+					{showCompleted && <div>{orderedToDos?.map((toDo, i) => toDo.completed && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>}
 				</div>
 			) : (
 				<EmptyListMessage />

@@ -41,7 +41,7 @@ export default function AllToDosCompletedMessage() {
 
 	return (
 		<>
-			{!activeToDos?.find?.((toDo) => toDo.completed === 0) ? (
+			{!activeToDos?.find?.((toDo) => !toDo.completed) ? (
 				<div className="my-4">
 					<p className="text-xl mb-2">Looks like you completed all to-dos in this list</p>
 					{activeListId && (
