@@ -4,13 +4,13 @@ import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 import { useListContext } from '../../../hooks/useListContext'
 
 export default function ListOrderControls({ setOrderedLists }) {
-	const [sort, setSort] = useState({ by: 'creation_date', order: 'DESC' })
+	const [sort, setSort] = useState({ by: 'creationDate', order: 'DESC' })
 	const { lists } = useListContext()
 
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
-		{ value: 'creation_date', label: 'Created' },
-		{ value: 'last_modified', label: 'Updated' },
+		{ value: 'creationDate', label: 'Created' },
+		{ value: 'lastModified', label: 'Updated' },
 	]
 
 	const sortLists = useCallback((lists, criterion, order) => {

@@ -10,9 +10,9 @@ function ToDoOrderControls({ setOrderedToDos }) {
 	// sort options are to-do parameters for sorting
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
-		{ value: 'due_date', label: 'Due-date' },
-		{ value: 'creation_date', label: 'Created' },
-		{ value: 'last_modified', label: 'Updated' },
+		{ value: 'dueDate', label: 'Due-date' },
+		{ value: 'creationDate', label: 'Created' },
+		{ value: 'lastModified', label: 'Updated' },
 	]
 
 	const sortToDos = useCallback((toDos, criterion = 'title', order = 'ASC') => {

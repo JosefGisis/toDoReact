@@ -14,33 +14,28 @@ export function useUpdateToDo() {
 		const url = update?.membership ? `${BASE_URL}/lists/${update.membership}/to-dos/${toDoId}` : `${BASE_URL}/to-dos/${toDoId}`
 
 		try {
-			const { title, due_date, completed, membership } = update
+			const { title, dueDate, completed, membership } = update
 			const response = await fetch(url, {
 				method: 'PUT',
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
 				},
-				body: JSON.stringify({
-					title,
-					dueDate: due_date,
-					completed,
-					membership,
-				}),
+				body: JSON.stringify({ title, dueDate, completed, membership }),
 			})
 
 			const json = await response.json()
 
 			if (response.status === 200) {
 				return [null, json.data]
-			} 
-			
+			}
+
 			if (response.status === 401) {
 				logout()
 				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
 				return ['unauthorized user']
-			} 
-			
+			}
+
 			throw new Error(json.message)
 		} catch (error) {
 			console.log(error.message)

@@ -71,7 +71,7 @@ function ToDo({ toDoData }) {
 						handleUpdate(toDoData.id, {
 							...toDoData,
 							completed: toDoData.completed === 1 ? 0 : 1,
-							due_date: toDoData.due_date?.split('T')[0],
+							dueDate: toDoData.dueDate?.split('T')[0],
 						})
 					}
 					className="checkbox checkbox-primary mr-3"
@@ -88,12 +88,12 @@ function ToDo({ toDoData }) {
 									handleUpdate(toDoData.id, {
 										...toDoData,
 										title: values ? values.title : toDoData.title,
-										due_date: toDoData?.due_date?.split('T')[0],
+										dueDate: toDoData?.dueDate?.split('T')[0],
 									})
 								})
 							}}
 							onSubmit={handleSubmit((values) =>
-								handleUpdate(toDoData.id, { ...toDoData, title: values.title, due_date: toDoData?.due_date?.split('T')[0] })
+								handleUpdate(toDoData.id, { ...toDoData, title: values.title, dueDate: toDoData?.dueDate?.split('T')[0] })
 							)}
 						>
 							<input
@@ -125,8 +125,8 @@ function ToDo({ toDoData }) {
 			<div className="flex items-center">
 				{isEditing?.dueDate ? (
 					<form
-						onBlur={handleSubmit((values) => handleUpdate(toDoData.id, { ...toDoData, due_date: values.date }))}
-						onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { ...toDoData, due_date: values.date }))}
+						onBlur={handleSubmit((values) => handleUpdate(toDoData.id, { ...toDoData, dueDate: values.date }))}
+						onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { ...toDoData, dueDate: values.date }))}
 					>
 						<input
 							{...register('date', {
@@ -136,13 +136,13 @@ function ToDo({ toDoData }) {
 								},
 							})}
 							type="date"
-							defaultValue={toDoData.due_date}
+							defaultValue={toDoData.dueDate}
 							className={'input input-outline mr-6 ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
 						/>
 					</form>
-				) : toDoData?.due_date ? (
+				) : toDoData?.dueDate ? (
 					<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className="flex items-center mr-6">
-						<DueDate dueDate={toDoData.due_date} completed={toDoData.completed} />
+						<DueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
 						{/* {renderDueDate(due)} */}
 					</div>
 				) : null}

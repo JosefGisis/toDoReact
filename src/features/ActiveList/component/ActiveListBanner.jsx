@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { GoKebabHorizontal } from 'react-icons/go'
 
@@ -11,7 +11,6 @@ import { useDeleteListToDos } from '../../Lists/hooks/useDeleteListToDos'
 
 function ActiveListBanner() {
 	const [isEditing, setIsEditing] = useState(false)
-	const [isLoading, setIsLoading] = useState(false)
 	const [_errors, setErrors] = useState(null)
 
 	const { activeList, dispatch, removeActiveList } = useListContext()
@@ -27,7 +26,6 @@ function ActiveListBanner() {
 	} = useForm()
 
 	const onDelete = useCallback(async (listId) => {
-		setIsLoading(true)
 		try {
 			const [deleteListToDosError] = await deleteListToDos(listId)
 			if (deleteListToDosError) {
@@ -45,8 +43,6 @@ function ActiveListBanner() {
 			removeActiveList()
 		} catch (error) {
 			setErrors({ message: error.message })
-		} finally {
-			setIsLoading(false)
 		}
 	}, [])
 
@@ -55,7 +51,6 @@ function ActiveListBanner() {
 		reset()
 		// Do not update list if nothing changes because it causes lists to re-sort.
 		if (values.title === list.title) return
-		setIsLoading(true)
 		try {
 			const [error, editedList] = await updateList(list.id, values)
 			if (error) {
@@ -65,10 +60,12 @@ function ActiveListBanner() {
 			dispatch({ type: actions.UPDATE_LIST, payload: editedList })
 		} catch (error) {
 			setErrors({ message: error.message })
-		} finally {
-			setIsLoading(false)
 		}
 	}, [])
+
+	useEffect(() => {
+		if (_errors) console.log(_errors.message)
+	}, [_errors])
 
 	return (
 		<div className="flex items-center justify-between">
