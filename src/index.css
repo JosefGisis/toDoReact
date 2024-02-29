@@ -1,25 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.list-list-item:hover .menu-btn,
-.list-list-item.active .menu-btn{
-    visibility: visible!important;
-}
-
-/* .list-card {
-} */
-
-.list-card:hover .dropdown-btn,
-.list-card.active .dropdown-btn {
-    visibility: visible!important;
-}
-
-/* .to-do-card {
-    text-align: center;
-}
-
-.to-do-card:hover .dropdown-btn,
-.to-do-card.active .dropdown-btn {
-    visibility: visible!important;
-} */

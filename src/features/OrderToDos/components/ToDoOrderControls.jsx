@@ -47,7 +47,7 @@ function ToDoOrderControls({ setOrderedToDos }) {
 				<select
 					value={sort.by}
 					onChange={(e) => setSort((prevSort) => ({ ...prevSort, by: e.target.value }))}
-					className="select flex-auto select-secondary text-secondary mr-2"
+					className="select select-secondary text-secondary w-40 mr-3"
 				>
 					{sortOptions.map(({ value, label }, index) => (
 						<option key={index} disabled={value === sort.by} value={value}>

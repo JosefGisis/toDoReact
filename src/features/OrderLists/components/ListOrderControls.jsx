@@ -38,12 +38,12 @@ export default function ListOrderControls({ setOrderedLists }) {
 	}
 
 	return (
-		<div className="flex items-center mb-4">
+		<div className="flex items-center">
 			{/* select for order.by */}
 			<select
 				value={sort.by}
 				onChange={(e) => setSort({ ...sort, by: e.target.value })}
-				className="select flex-auto select-secondary text-secondary w-full max-w-xs mr-2"
+				className="select select-secondary text-secondary w-40 mr-3"
 			>
 				{sortOptions.map(({ value, label }, index) => (
 					<option key={index} disabled={value === sort.by} value={value}>
