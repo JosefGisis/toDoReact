@@ -11,6 +11,7 @@ import { actions } from '../../../state-management/List/listReducer'
 import ListIcon from '../../../components/ListIcon'
 
 function List({ listData }) {
+	const [dropdownOpen, setDropdownOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
 	const [_errors, setErrors] = useState(null)
 
@@ -96,12 +97,14 @@ function List({ listData }) {
 		<div
 			className={
 				'group flex items-center justify-between rounded-lg px-2 mb-3 ' +
-				(activeList?.id !== listData?.id ? 'bg-base-300 text-base-content border-2 border-neutral py-2' : 'bg-neutral text-neutral-content py-3')
+				(activeList?.id !== listData?.id
+					? 'bg-base-300 text-base-content border-2 border-neutral py-2'
+					: 'bg-neutral text-neutral-content py-3')
 			}
 			onClick={() => onSelect(listData.id)}
 		>
-			<div className='flex flex-row items-center'>
-				<div className='flex-1 mr-2'>
+			<div className="flex flex-row items-center">
+				<div className="flex-1 mr-2">
 					<ListIcon />
 				</div>
 				<div>
@@ -119,7 +122,7 @@ function List({ listData }) {
 									},
 								})}
 								className={'input rounded-sm input-sm w-full max-w-xs p-1 m-0 ' + (errors?.title ? 'input-error' : 'input-secondary')}
-								type='text'
+								type="text"
 								defaultValue={listData.title}
 								placeholder={errors?.title && errors?.title?.message}
 							/>
@@ -130,16 +133,34 @@ function List({ listData }) {
 				</div>
 			</div>
 
-			<div className={'dropdown dropdown-bottom dropdown-end ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')}>
-				<div tabIndex={0} role='button' className='btn btn-ghost btn-round btn-sm m-1'>
+			<div
+				className={'dropdown dropdown-bottom dropdown-end ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')}
+				onClick={() => setDropdownOpen(true)}
+			>
+				<div role="button" className="btn btn-ghost btn-round btn-sm m-1">
 					<GoKebabHorizontal />
 				</div>
-				<ul tabIndex={0} className='dropdown-content dropdown-left menu p-2 shadow bg-base-300 border border-primary rounded-md w-24'>
-					<li onClick={() => setIsEditing(true)}>
+				<ul
+					className={
+						'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-primary rounded-md w-24 z-[1] ' +
+						(dropdownOpen ? '' : 'hidden')
+					}
+				>
+					<li
+						onClick={() => {
+							setDropdownOpen(false)
+							setIsEditing(true)
+						}}
+					>
 						<p>edit</p>
 					</li>
-					<li onClick={() => onDelete(listData.id)}>
-						<p className='text-rose-500'>delete!</p>
+					<li
+						onClick={() => {
+							setDropdownOpen(false)
+							onDelete(listData.id)
+						}}
+					>
+						<p className="text-rose-500">delete!</p>
 					</li>
 				</ul>
 			</div>
