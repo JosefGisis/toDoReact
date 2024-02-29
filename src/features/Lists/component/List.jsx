@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { GoKebabHorizontal } from 'react-icons/go'
 
@@ -14,6 +14,8 @@ function List({ listData }) {
 	const [dropdownOpen, setDropdownOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
 	const [_errors, setErrors] = useState(null)
+
+	const dropdownRef = useRef(null)
 
 	const { activeList, setActiveList, removeActiveList, dispatch } = useListContext()
 	const { deleteList } = useDeleteList()
@@ -92,6 +94,14 @@ function List({ listData }) {
 		if (_errors) console.log(_errors?.message)
 	}, [_errors])
 
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setDropdownOpen(false)
+		}
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => document.removeEventListener('mousedown', handleClickOutside)
+	}, [])
+
 	return (
 		// div contains group tailwind class to interact with dropdown menu
 		<div
@@ -133,31 +143,28 @@ function List({ listData }) {
 				</div>
 			</div>
 
-			<div
-				className={'dropdown dropdown-bottom dropdown-end ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')}
-				onClick={() => setDropdownOpen(true)}
-			>
-				<div role="button" className="btn btn-ghost btn-round btn-sm m-1">
+			<div className={' ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')} ref={dropdownRef}>
+				<button className="btn btn-ghost btn-round btn-sm m-1" onClick={() => setDropdownOpen(!dropdownOpen)} type="button">
 					<GoKebabHorizontal />
-				</div>
+				</button>
 				<ul
 					className={
-						'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-primary rounded-md w-24 z-[1] ' +
+						'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-primary rounded-md w-[7rem] z-[1] -translate-x-[4rem]	absolute ' +
 						(dropdownOpen ? '' : 'hidden')
 					}
 				>
 					<li
 						onClick={() => {
-							setDropdownOpen(false)
 							setIsEditing(true)
+							setDropdownOpen(false)
 						}}
 					>
 						<p>edit</p>
 					</li>
 					<li
 						onClick={() => {
-							setDropdownOpen(false)
 							onDelete(listData.id)
+							setDropdownOpen(false)
 						}}
 					>
 						<p className="text-rose-500">delete!</p>
