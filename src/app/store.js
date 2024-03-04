@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
-import listReducer from './listSlice'
-import userReducer from '../state-management/User/userReducer'
+import activeListReducer from './activeListSlice'
+// import listsReducer from './listsSlice'
+// import toDosReducer from './toDosSlice'
+// import userReducer from './userSlice'
+import { apiSlice } from '../api/apiSlice'
 
 export default configureStore({
 	reducer: {
-		list: listReducer,
-        user: userReducer, 
+		activeList: activeListReducer,
+		[apiSlice.reducerPath]: apiSlice.reducer,
 	},
+	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(apiSlice.middleware),
 })
-
-console.log('hello world')

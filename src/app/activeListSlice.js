@@ -2,20 +2,19 @@ import { createSlice } from '@reduxjs/toolkit'
 
 export const activeListSlice = createSlice({
 	name: 'activeList',
-	initialState: {
-		value: null,
-	},
+	initialState: { data: null },
 	reducers: {
-		set: (state, action) => {
-			state.value = action.payload
+		setActiveList: (state, action) => {
+			state.data = action.payload
 		},
-		remove: (state) => {
-			state.value = null
-		},
+		removeActiveList: (state) => {
+			state.data = null
+		},	
 	},
 })
 
-console.log(activeListSlice.actions.set())
+export const selectActiveList = state => state.activeList.data
+
 export const { setActiveList, removeActiveList } = activeListSlice.actions
 
 export default activeListSlice.reducer
