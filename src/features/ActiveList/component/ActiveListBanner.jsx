@@ -18,6 +18,8 @@ function ActiveListBanner() {
 	const { deleteList } = useDeleteList()
 	const { deleteListToDos } = useDeleteListToDos()
 
+	// pre refactor for redux
+
 	const {
 		register,
 		reset,
