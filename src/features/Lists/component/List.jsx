@@ -1,26 +1,24 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { setActiveList, selectActiveList, removeActiveList} from '../../../app/activeListSlice'
 import { useForm } from 'react-hook-form'
 import { GoKebabHorizontal } from 'react-icons/go'
 
-import { useListContext } from '../../../hooks/useListContext'
-import { useDeleteList } from '../hooks/useDeleteList'
-import { useUpdateList } from '../hooks/useUpdateList'
-import { useDeleteListToDos } from '../hooks/useDeleteListToDos'
-
-import { actions } from '../../../state-management/List/listReducer'
 import ListIcon from '../../../components/ListIcon'
+import { useDeleteListMutation, useDeleteListToDosMutation, useUpdateListMutation } from '../../../api/apiSlice'
+import { list } from 'postcss'
 
 function List({ listData }) {
 	const [dropdownOpen, setDropdownOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
-	const [_errors, setErrors] = useState(null)
-
 	const dropdownRef = useRef(null)
 
-	const { activeList, setActiveList, removeActiveList, dispatch } = useListContext()
-	const { deleteList } = useDeleteList()
-	const { deleteListToDos } = useDeleteListToDos()
-	const { updateList } = useUpdateList()
+	const activeList = useSelector(selectActiveList)
+	const dispatch = useDispatch()
+
+	const [deleteList] = useDeleteListMutation()
+	const [deleteListToDos] = useDeleteListToDosMutation()
+	const [updateList] = useUpdateListMutation()
 
 	const {
 		register,
@@ -31,22 +29,15 @@ function List({ listData }) {
 
 	// onSelect cannot be handled by handleUpdate because dispatch and other states need to be handled differently
 	const onSelect = useCallback(
-		async (listId) => {
-			if (listId === activeList?.id) return
+		async (list) => {
+			if (list.id === activeList?.id) return
 			setIsEditing(false)
 			reset()
 			try {
-				const [error] = await updateList(listId)
-				if (error) {
-					console.log(error)
-					setErrors({ message: error })
-					return
-				}
-				setActiveList(listId)
-				// if dispatched, sorting features cause list to sort on click
-				// dispatch({ type: actions.UPDATE_LIST, payload: updatedList })
+				await updateList({listId: list.id}).unwrap()
+				dispatch(setActiveList(list))
 			} catch (error) {
-				setErrors({ message: error.message })
+				console.log(error?.data?.message)
 			}
 		},
 		[activeList]
@@ -54,22 +45,11 @@ function List({ listData }) {
 
 	const onDelete = useCallback(async (listId) => {
 		try {
-			const [deleteListToDosError] = await deleteListToDos(listId)
-			if (deleteListToDosError) {
-				setErrors({ message: deleteListToDosError })
-				return
-			}
-			const [deleteListError] = await deleteList(listId)
-			if (deleteListError) {
-				setErrors({ message: deleteListError })
-				return
-			}
-			dispatch({ type: actions.REMOVE_LIST_TODOS, payload: listId })
-			dispatch({ type: actions.REMOVE_LIST, payload: listId })
-			// removeActiveList sets activeList to to-dos (default list)
-			removeActiveList()
+			await deleteListToDos(listId).unwrap()
+			await deleteList(listId).unwrap()
+			dispatch(removeActiveList())
 		} catch (error) {
-			setErrors({ message: error.message })
+			console.log(error?.data?.message)
 		}
 	}, [])
 
@@ -79,20 +59,16 @@ function List({ listData }) {
 		// Do not update list if nothing changes because it causes lists to re-sort.
 		if (values.title === list.title) return
 		try {
-			const [error, editedList] = await updateList(list.id, values)
-			if (error) {
-				setErrors({ message: error })
-				return
-			}
-			dispatch({ type: actions.UPDATE_LIST, payload: editedList })
+			await updateList({listId: list.id, update: { ...values } }).unwrap()
 		} catch (error) {
-			setErrors({ message: error.message })
+			console.log(error?.data?.message)
 		}
 	}, [])
 
 	useEffect(() => {
-		if (_errors) console.log(_errors?.message)
-	}, [_errors])
+		if (listData.id === activeList?.id) 
+		dispatch(setActiveList(listData))
+	}, [listData])
 
 	useEffect(() => {
 		const handleClickOutside = (event) => {
@@ -111,7 +87,7 @@ function List({ listData }) {
 					? 'bg-base-300 text-base-content border-2 border-neutral py-2'
 					: 'bg-neutral text-neutral-content py-3')
 			}
-			onClick={() => onSelect(listData.id)}
+			onClick={() => onSelect(listData)}
 		>
 			<div className="flex flex-row items-center">
 				<div className="flex-1 mr-2">

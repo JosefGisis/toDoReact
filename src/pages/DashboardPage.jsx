@@ -1,6 +1,5 @@
 import { useState } from 'react'
 
-import ListProvider from '../state-management/List/ListProvider'
 import Lists from '../features/Lists'
 import NewList from '../features/NewList'
 import ActiveList from '../features/ActiveList'
@@ -16,7 +15,6 @@ function DashboardPage() {
 	const [orderedToDos, setOrderedToDos] = useState([])
 
 	return (
-		<ListProvider>
 			<div className='w-screen h-screen overflow-hidden'>
 				{/* navigation bar with profile controls */}
 				<div className='flex items-center h-[80px]'>
@@ -69,7 +67,6 @@ function DashboardPage() {
 					</div>
 				</div>
 			</div>
-		</ListProvider>
 	)
 }
 

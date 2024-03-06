@@ -1,11 +1,14 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
-import { useListContext } from '../../../hooks/useListContext'
+import { useGetListsQuery } from '../../../api/apiSlice'
 
 export default function ListOrderControls({ setOrderedLists }) {
 	const [sort, setSort] = useState({ by: 'creationDate', order: 'DESC' })
-	const { lists } = useListContext()
+	const navigate = useNavigate()
+	
+	const { data, error } = useGetListsQuery()
 
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
@@ -15,14 +18,15 @@ export default function ListOrderControls({ setOrderedLists }) {
 
 	const sortLists = useCallback((lists, criterion, order) => {
 		// If lists are not of type array (e.g. null, object, undefined, etc.), orderedLists defaults to an empty list
-		if (!Array.isArray) {
+		if (!Array.isArray(lists)) {
 			setOrderedLists([])
 			return
 		}
 		const isDesc = order === 'DESC'
 		let greaterThanDir = isDesc ? -1 : 1
 		let lessThanDir = isDesc ? 1 : -1
-		const sortedLists = lists.sort((list1, list2) => {
+		const listCopy = [...lists]
+		const sortedLists = listCopy.sort((list1, list2) => {
 			const prop1 = list1[criterion].toUpperCase()
 			const prop2 = list2[criterion].toUpperCase()
 			return prop1 === prop2 ? 0 : prop1 > prop2 ? greaterThanDir : lessThanDir
@@ -30,8 +34,9 @@ export default function ListOrderControls({ setOrderedLists }) {
 		setOrderedLists([...sortedLists])
 	}, [])
 	useEffect(() => {
-		sortLists(lists, sort.by, sort.order)
-	}, [lists, sortLists, sort])
+			if (error?.originalStatus === 401) navigate('/login')
+			sortLists(data?.data, sort.by, sort.order)
+	}, [data, error, sortLists, sort])
 
 	function toggleSortOrder() {
 		setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))

@@ -1,15 +1,21 @@
+import { useGetListsQuery } from '../../../api/apiSlice'
+
 import List from './List'
 import NoListMessage from './NoListsMessage'
 
 export default function ToDoListsList({ orderedLists }) {
-	return (
-			<div>
+	const { isError, error, isFetching, isSuccess } = useGetListsQuery()
 
-				{ orderedLists?.length ? orderedLists?.map?.((list, index) => (
-					<div key={index}>
-						<List listData={list}></List>
-					</div>
-				)) : <NoListMessage />}
+	let content
+	if (orderedLists?.length) {
+		content = orderedLists.map((list, index) => (
+			<div key={index}>
+				<List listData={list} />
 			</div>
-	)
+		))
+	} else if (!isFetching && isSuccess) {
+		content = <NoListMessage />
+	} else content = null
+
+	return <div className="h-full">{content}</div>
 }

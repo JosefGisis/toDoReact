@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { removeActiveList, selectActiveList} from '../../../app/activeListSlice'
 import { useForm } from 'react-hook-form'
 import { GoKebabHorizontal } from 'react-icons/go'
 
@@ -13,19 +15,21 @@ function ActiveListBanner() {
 	const [isEditing, setIsEditing] = useState(false)
 	const [_errors, setErrors] = useState(null)
 
-	const { activeList, dispatch, removeActiveList } = useListContext()
+	const activeList = useSelector(selectActiveList)
+	const dispatch = useDispatch()
+
+	const { dispatch: oldDispatch } = useListContext()
 	const { updateList } = useUpdateList()
 	const { deleteList } = useDeleteList()
 	const { deleteListToDos } = useDeleteListToDos()
-
-	// pre refactor for redux
-
+	
 	const {
 		register,
 		reset,
 		handleSubmit,
 		formState: { errors },
 	} = useForm()
+
 
 	const onDelete = useCallback(async (listId) => {
 		try {
@@ -39,10 +43,10 @@ function ActiveListBanner() {
 				setErrors({ message: deleteListError })
 				return
 			}
-			dispatch({ type: actions.REMOVE_LIST_TODOS, payload: listId })
-			dispatch({ type: actions.REMOVE_LIST, payload: listId })
+			oldDispatch({ type: actions.REMOVE_LIST_TODOS, payload: listId })
+			oldDispatch({ type: actions.REMOVE_LIST, payload: listId })
 			// removeActiveList sets activeList to to-dos (default list)
-			removeActiveList()
+			dispatch(removeActiveList())
 		} catch (error) {
 			setErrors({ message: error.message })
 		}
@@ -59,7 +63,7 @@ function ActiveListBanner() {
 				setErrors({ message: error })
 				return
 			}
-			dispatch({ type: actions.UPDATE_LIST, payload: editedList })
+			oldDispatch({ type: actions.UPDATE_LIST, payload: editedList })
 		} catch (error) {
 			setErrors({ message: error.message })
 		}
@@ -93,7 +97,7 @@ function ActiveListBanner() {
 							/>
 						</form>
 					) : (
-						<div onDoubleClick={() => setIsEditing(true)}>{activeList.title}</div>
+						<div onDoubleClick={() => setIsEditing(true)}>{activeList?.title}</div>
 					)
 				) : (
 					'To-dos'
