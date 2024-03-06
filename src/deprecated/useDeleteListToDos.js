@@ -1,32 +1,31 @@
 import { useCallback, useState } from 'react'
-import { useAuth } from '../../../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'
 
-import { BASE_URL } from '../../../constants/url'
+import { BASE_URL } from '../constants/url'
 
-export function useUpdateList() {
+export function useDeleteListToDos() {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
 
 	const { logout, getToken } = useAuth()
 	const token = getToken()
 
-	const updateList = useCallback(async (listId, values) => {
+	const deleteListToDos = useCallback(async (listId) => {
 		setMeta({ ...meta, loading: true })
 		try {
-			const response = await fetch(`${BASE_URL}/lists/${listId}`, {
-				method: 'PUT',
+			const response = await fetch(`${BASE_URL}/lists/${listId}/to-dos`, {
+				method: 'DELETE',
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
 				},
-				body: JSON.stringify({ title: values?.title }),
 			})
-
+			
 			const json = await response.json()
 
 			if (response.status === 200) {
-				return [null, json.data]
-			} 
-			
+				return [null]
+			}
+
 			if (response.status === 401) {
 				logout()
 				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
@@ -43,5 +42,5 @@ export function useUpdateList() {
 		}
 	}, [])
 
-	return { meta, updateList }
+	return { meta, deleteListToDos }
 }

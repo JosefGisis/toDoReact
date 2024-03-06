@@ -5,8 +5,7 @@ import { useForm } from 'react-hook-form'
 import { GoKebabHorizontal } from 'react-icons/go'
 
 import ListIcon from '../../../components/ListIcon'
-import { useDeleteListMutation, useDeleteListToDosMutation, useUpdateListMutation } from '../../../api/apiSlice'
-import { list } from 'postcss'
+import { useDeleteListMutation, useDeleteToDosByListMutation, useUpdateListMutation } from '../../../api/apiSlice'
 
 function List({ listData }) {
 	const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -17,7 +16,7 @@ function List({ listData }) {
 	const dispatch = useDispatch()
 
 	const [deleteList] = useDeleteListMutation()
-	const [deleteListToDos] = useDeleteListToDosMutation()
+	const [deleteToDosByList] = useDeleteToDosByListMutation()
 	const [updateList] = useUpdateListMutation()
 
 	const {
@@ -45,7 +44,7 @@ function List({ listData }) {
 
 	const onDelete = useCallback(async (listId) => {
 		try {
-			await deleteListToDos(listId).unwrap()
+			await deleteToDosByList(listId).unwrap()
 			await deleteList(listId).unwrap()
 			dispatch(removeActiveList())
 		} catch (error) {

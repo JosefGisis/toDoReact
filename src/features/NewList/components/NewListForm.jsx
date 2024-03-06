@@ -1,17 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { setActiveList } from '../../../app/activeListSlice'
+import { useCreateListMutation } from '../../../api/apiSlice'
+
 import { useForm } from 'react-hook-form'
 import { GoPlus } from 'react-icons/go'
 
-import { useNewList } from '../hooks/useNewList'
-import { useListContext } from '../../../hooks/useListContext'
-
-import { actions } from '../../../state-management/List/listReducer'
-
 function NewListForm() {
-	const [_errors, setErrors] = useState(null)
-
-	const { dispatch, setActiveList } = useListContext()
-	const { createList } = useNewList()
+	const dispatch = useDispatch()
+	const [createList] = useCreateListMutation()
 
 	const {
 		register,
@@ -23,21 +19,12 @@ function NewListForm() {
 	const onSubmit = async (newListData) => {
 		reset()
 		try {
-			const [error, newList] = await createList(newListData)
-			if (error) {
-				setErrors({ message: error })
-				return
-			}
-			dispatch({ type: actions.ADD_LIST, payload: newList })
-			setActiveList(newList.id)
+			const { data } = await createList(newListData).unwrap()
+			dispatch(setActiveList(data))
 		} catch (error) {
-			setErrors({ message: error.message })
+			console.error(error)
 		}
 	}
-
-	useEffect(() => {
-		if (_errors) console.log( _errors?.message )
-	}, [_errors])
 
 	return (
 		<form onSubmit={handleSubmit((values) => onSubmit(values))}>

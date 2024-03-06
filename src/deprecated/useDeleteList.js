@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
-import { useAuth } from '../../../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'
 
-import { BASE_URL } from '../../../constants/url'
+import { BASE_URL } from '../constants/url'
 
 export function useDeleteList() {
 	const [meta, setMeta] = useState({ loading: false, errors: null })

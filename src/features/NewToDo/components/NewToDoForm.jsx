@@ -1,16 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useCreateToDoMutation } from '../../../api/apiSlice'
+import { selectActiveList } from '../../../app/activeListSlice'
+
 import { useForm } from 'react-hook-form'
 import { GoPlus } from 'react-icons/go'
 
-import { useNewToDo } from '../hooks/useNewToDo'
-import { useListContext } from '../../../hooks/useListContext'
-import { actions } from '../../../state-management/List/listReducer'
-
 function NewToDoForm() {
-	const [_errors, setErrors] = useState(null)
-
-	const { dispatch, activeListId } = useListContext()
-	const { createNewToDo } = useNewToDo()
+	const activeList = useSelector(selectActiveList)
+	const [createToDo] = useCreateToDoMutation()
 
 	const {
 		register,
@@ -19,26 +16,17 @@ function NewToDoForm() {
 		formState: { errors, isValid },
 	} = useForm()
 
-	const onSubmit = async (listId, values) => {
+	const onSubmit = async (activeListId, values) => {
 		try {
-			const [error, newToDo] = await createNewToDo(listId, values)
-			if (error) {
-				setErrors({ message: error })
-				return
-			}
 			reset()
-			dispatch({ type: actions.ADD_TODO, payload: newToDo })
+			await createToDo({ ...values, membership: activeListId}).unwrap()
 		} catch (error) {
-			setErrors({ message: error.message })
+			console.error(error)
 		}
 	}
 
-	useEffect(() => {
-		if (_errors) console.log(_errors?.message)
-	}, [_errors])
-
 	return (
-		<form onSubmit={handleSubmit((values) => onSubmit(activeListId, values))}>
+		<form onSubmit={handleSubmit((values) => onSubmit(activeList?.id, values))}>
 			{errors?.title && <p className="text-error mb-1 text-sm">{errors?.title?.message}</p>}
 			<div className="flex items-center sm:flex-row">
 				<div className="mr-2">

@@ -28,7 +28,7 @@ export const apiSlice = createApi({
 		 */
 		getLists: builder.query({
 			query: () => '/lists',
-			providesTags:['Lists'],
+			providesTags: ['Lists'],
 		}),
 
 		getList: builder.query({
@@ -37,7 +37,7 @@ export const apiSlice = createApi({
 			}),
 		}),
 
-		addList: builder.mutation({
+		createList: builder.mutation({
 			query: (list) => ({
 				url: '/lists',
 				method: 'POST',
@@ -68,7 +68,7 @@ export const apiSlice = createApi({
 		 */
 		getToDos: builder.query({
 			query: () => ({
-				url: '/to-dos/all',
+				url: '/to-dos',
 			}),
 			providesTags: ['ToDos'],
 		}),
@@ -79,16 +79,27 @@ export const apiSlice = createApi({
 			}),
 		}),
 
-		getListToDos: builder.query({
-			query: (listId) => ({
-				url: `/lists/${listId}/to-dos`,
+		getToDosByList: builder.query({
+			query: (membership) => ({
+				url: '/to-dos/by-list',
+				body: membership,
 			}),
 		}),
 
-		deleteListToDos: builder.mutation({
-			query: (listId) => ({
-				url: `/lists/${listId}/to-dos`,
+		deleteToDosByList: builder.mutation({
+			query: (membership) => ({
+				url: '/to-dos/by-list',
 				method: 'DELETE',
+				body: membership,
+			}),
+			invalidatesTags: ['ToDos'],
+		}),
+
+		createToDo: builder.mutation({
+			query: (payload) => ({
+				url: `/to-dos`,
+				method: 'POST',
+				body: payload,
 			}),
 			invalidatesTags: ['ToDos'],
 		}),
@@ -116,13 +127,14 @@ export const {
 	useGetUserQuery,
 	useGetListsQuery,
 	useGetListQuery,
-	useAddListMutation,
+	useCreateListMutation,
 	useUpdateListMutation,
 	useDeleteListMutation,
 	useGetToDosQuery,
-	useGetListToDosQuery,
+	useGetToDosByListQuery,
 	useGetToDoQuery,
+	useCreateToDoMutation,
 	useDeleteToDoMutation,
-	useDeleteListToDosMutation,
+	useDeleteToDosByListMutation,
 	useUpdateToDoMutation,
 } = apiSlice

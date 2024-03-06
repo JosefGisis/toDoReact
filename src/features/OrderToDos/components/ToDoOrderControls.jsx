@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
-import { GoSortAsc, GoSortDesc } from 'react-icons/go'
+import { useSelector } from 'react-redux'
+import { selectActiveList } from '../../../app/activeListSlice'
+import { useGetToDosQuery } from '../../../api/apiSlice'
 
-import { useListContext } from '../../../hooks/useListContext'
+import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
 function ToDoOrderControls({ setOrderedToDos }) {
 	const [sort, setSort] = useState({ by: 'title', order: 'ASC' })
-	const { toDos, activeList } = useListContext()
+	const activeList = useSelector(selectActiveList)
+
+	const {data} = useGetToDosQuery()
 
 	// sort options are to-do parameters for sorting
 	const sortOptions = [
@@ -24,7 +28,8 @@ function ToDoOrderControls({ setOrderedToDos }) {
 		const isDesc = order === 'DESC'
 		let greaterThanDir = isDesc ? -1 : 1
 		let lessThanDir = isDesc ? 1 : -1
-		const sortedToDos = toDos.sort((toDo1, toDo2) => {
+		const toDosCopy = [ ...toDos ]
+		const sortedToDos = toDosCopy.sort((toDo1, toDo2) => {
 			const prop1 = toDo1[criterion]?.toUpperCase()
 			const prop2 = toDo2[criterion]?.toUpperCase()
 			return prop1 === prop2 ? 0 : prop1 > prop2 ? greaterThanDir : lessThanDir
@@ -32,9 +37,13 @@ function ToDoOrderControls({ setOrderedToDos }) {
 		setOrderedToDos([...sortedToDos])
 	}, [])
 	useEffect(() => {
-		// checks if non-list to-dos need to be sorted or vice versa
-		activeList ? sortToDos(activeList.toDos, sort.by, sort.order) : sortToDos(toDos, sort.by, sort.order)
-	}, [activeList, toDos, sort])
+		let toDos
+		if (data?.data) {
+			if (activeList) toDos = data.data.filter(toDo => toDo.membership === activeList.id)
+			else toDos = data.data.filter(toDo => toDo.membership === null )
+		}
+		sortToDos(toDos, sort.by, sort.order)
+	}, [activeList, data, sort])
 
 	function toggleSortOrder() {
 		setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))
