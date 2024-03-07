@@ -1,5 +1,5 @@
-import Avatar from './components/Avatar'
-import ThemeToggler from './components/ThemeToggler'
+import Avatar from './Avatar'
+import ThemeToggler from './ThemeToggler'
 
 export default function Navigation() {
 	return (

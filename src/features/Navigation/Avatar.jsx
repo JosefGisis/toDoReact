@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
-import { useUserContext } from '../../../hooks/useUserContext'
-import { useAuth } from '../../../hooks/useAuth'
+import { useGetUserQuery } from '../../api/apiSlice'
+import { useAuth } from '../../hooks/useAuth'
 
 export default function Avatar() {
-	const { user } = useUserContext()
+	const { data } = useGetUserQuery()
 	const { logout } = useAuth()
 
 	function getAvatarColor() {
@@ -15,7 +15,7 @@ export default function Avatar() {
 	}
 
 	const avatarColor = useMemo(() => getAvatarColor(), [])
-	const initial = useMemo(() => (user?.username ? user.username.charAt(0) : ''), [user])
+	const firstLetter = useMemo(() => (data?.data?.username ? data?.data?.username.charAt(0) : ''), [data])
 
 	return (
 		<div className="dropdown dropdown-hover dropdown-end">
@@ -23,7 +23,7 @@ export default function Avatar() {
 				<a href="/profile">
 					<div className="avatar placeholder">
 						<div className={'text-neutral-content rounded-full w-12 ' + avatarColor}>
-							<span className="text-3xl">{initial}</span>
+							<span className="text-3xl">{firstLetter}</span>
 						</div>
 					</div>
 				</a>

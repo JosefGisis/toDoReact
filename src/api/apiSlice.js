@@ -48,6 +48,7 @@ export const apiSlice = createApi({
 
 		updateList: builder.mutation({
 			query: (payload) => ({
+				// payload contains listId and update values
 				url: `/lists/${payload.listId}`,
 				method: 'PUT',
 				body: payload.update,
@@ -80,26 +81,28 @@ export const apiSlice = createApi({
 		}),
 
 		getToDosByList: builder.query({
-			query: (membership) => ({
+			// payload contains membership param with listId
+			query: (payload) => ({
 				url: '/to-dos/by-list',
-				body: membership,
+				body: payload,
 			}),
 		}),
 
 		deleteToDosByList: builder.mutation({
-			query: (membership) => ({
+			// payload contains membership param with listId
+			query: (payload) => ({
 				url: '/to-dos/by-list',
 				method: 'DELETE',
-				body: membership,
+				body: payload,
 			}),
 			invalidatesTags: ['ToDos'],
 		}),
 
 		createToDo: builder.mutation({
-			query: (payload) => ({
+			query: (toDo) => ({
 				url: `/to-dos`,
 				method: 'POST',
-				body: payload,
+				body: toDo,
 			}),
 			invalidatesTags: ['ToDos'],
 		}),
@@ -113,10 +116,10 @@ export const apiSlice = createApi({
 		}),
 
 		updateToDo: builder.mutation({
-			query: (toDoId, update) => ({
-				url: `/to-dos/${toDoId}`,
+			query: (payload) => ({
+				url: `/to-dos/${payload.toDoId}`,
 				method: 'PUT',
-				body: update,
+				body: payload.update,
 			}),
 			invalidatesTags: ['ToDos'],
 		}),

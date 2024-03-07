@@ -1,4 +1,4 @@
-import ActiveListBanner from './component/ActiveListBanner'
+import ActiveListBanner from './ActiveListBanner'
 
 const ActiveList = () => <ActiveListBanner />
 

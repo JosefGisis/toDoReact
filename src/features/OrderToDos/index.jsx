@@ -1,4 +1,4 @@
-import ToDoOrderControls from './components/ToDoOrderControls.jsx'
+import ToDoOrderControls from './ToDoOrderControls.jsx'
 
 function OrderToDos({ setOrderedToDos }) {
 	return <ToDoOrderControls setOrderedToDos={setOrderedToDos} />

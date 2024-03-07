@@ -1,19 +1,14 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/apiSlice'
+
 import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
 
-import { useDeleteToDo } from '../hooks/useDeleteToDo'
-import { useListContext } from '../../../hooks/useListContext'
-import { useUpdateToDo } from '../hooks/useUpdateToDo'
-import { actions } from '../../../state-management/List/listReducer'
-
 function ToDo({ toDoData }) {
-	const [_errors, setErrors] = useState(null)
 	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
 
-	const { dispatch } = useListContext()
-	const { deleteToDo } = useDeleteToDo()
-	const { updateToDo } = useUpdateToDo()
+	const [deleteToDo] = useDeleteToDoMutation()
+	const [updateToDo] = useUpdateToDoMutation()
 
 	const {
 		register,
@@ -25,14 +20,9 @@ function ToDo({ toDoData }) {
 	// onDelete takes toDo object instead of id to determine if toDo has membership
 	const onDelete = useCallback(async (toDo) => {
 		try {
-			const [error] = await deleteToDo(toDo)
-			if (error) {
-				setErrors({ message: error })
-				return
-			}
-			dispatch({ type: actions.REMOVE_TODO, payload: toDo })
+			await deleteToDo(toDo.id).unwrap()
 		} catch (error) {
-			setErrors({ message: error.message })
+			console.log(error)
 		}
 	}, [])
 
@@ -40,20 +30,11 @@ function ToDo({ toDoData }) {
 		setIsEditing({ ...isEditing, title: false, dueDate: false })
 		reset()
 		try {
-			const [error, editedToDo] = await updateToDo(toDoId, update)
-			if (error) {
-				setErrors({ message: error })
-				return
-			}
-			dispatch({ type: actions.UPDATE_TODO, payload: editedToDo })
+			await updateToDo({ toDoId, update })
 		} catch (error) {
-			setErrors({ message: error.message })
+			console.log(error)
 		}
 	}, [])
-
-	useEffect(() => {
-		if (_errors) console.log(_errors?.message)
-	}, [_errors])
 
 	return (
 		<div

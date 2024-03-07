@@ -1,8 +1,8 @@
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
-import { useGetListsQuery } from '../../../api/apiSlice'
+import { useGetListsQuery } from '../../api/apiSlice'
 
 export default function ListOrderControls({ setOrderedLists }) {
 	const [sort, setSort] = useState({ by: 'creationDate', order: 'DESC' })

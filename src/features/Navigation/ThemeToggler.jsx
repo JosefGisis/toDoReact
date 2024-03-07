@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { daisyThemes } from '../../../../tailwind.config'
+import { daisyThemes } from '../../../tailwind.config'
 
 export default function ThemeToggler() {
 	const themes = { light: daisyThemes.light, dark: daisyThemes.dark }

@@ -1,6 +1,5 @@
-import ListsList from './component/ListsList'
+import ListsList from './ListsList'
 
 export default function Lists({ orderedLists }) {
-	// const {loadList} = useLists()
 	return <ListsList orderedLists={orderedLists} />
 }

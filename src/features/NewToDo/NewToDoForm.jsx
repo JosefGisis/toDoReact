@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
-import { useCreateToDoMutation } from '../../../api/apiSlice'
-import { selectActiveList } from '../../../app/activeListSlice'
+import { useCreateToDoMutation } from '../../api/apiSlice'
+import { selectActiveList } from '../../app/activeListSlice'
 
 import { useForm } from 'react-hook-form'
 import { GoPlus } from 'react-icons/go'

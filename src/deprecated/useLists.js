@@ -1,37 +1,50 @@
 import { useCallback, useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 
-export function useLists() {
-	const { getToken, logout } = useAuth()
-	const [lists, setLists] = useState(null)
-	const [errs, setErrs] = useState(null)
-	const [loading, setLoading] = useState(false)
+import { BASE_URL } from '../constants/url'
+
+function useLists() {
+	const [meta, setMeta] = useState({ loading: false, errors: null })
+
+	const { logout, getToken } = useAuth()
 	const token = getToken()
 
-	const getLists = useCallback(() => {
-		setLoading(true)
-		fetch('http://localhost:3000/api/1/lists?sortBy=last_accessed&order=desc', {
-			headers: {
-				'content-type': 'application/json',
-				authorization: `Bearer ${token}`,
+	const getLists = useCallback(async () => {
+		try {
+			const response = await fetch(`${BASE_URL}/lists`, {
+				headers: {
+					'content-type': 'application/json',
+					authorization: `Bearer ${token}`,
+				},
+			})
+
+			const json = await response.json()
+
+			if (response.status === 200) {
+				return [null, json.data]
 			}
-		})
-			.then((res) => {
-				if (res.status === 200) return res.json()
-				if (res.status === 401) logout()
-				throw new Error()
-			})
-			.then((data) => {
-				setLists(data.data)
-				setErrs(null)
-				setLoading(false)
-			})
-			.catch(() => {
-				setLists(null)
-				setErrs({ message: 'Error retrieving lists for list component' })
-				setLoading(false)
-			})
+
+			if (response.status === 401) {
+				logout()
+				setMeta({ ...meta, errors: { message: 'unauthorized user' } })
+				return ['unauthorized user']
+			}
+
+			if (response.status === 400) {
+				setMeta({ ...meta, errors: { message: json.message } })
+				return [json.message]
+			}
+
+			throw new Error(json.message)
+		} catch (error) {
+			setMeta({ ...meta, errors: { message: error.message } })
+			return [error.message]
+		} finally {
+			setMeta({ ...meta, loading: false })
+		}
 	}, [])
 
-	return { loading, errs, lists, getLists }
+	return { meta, getLists }
 }
+
+export default useLists

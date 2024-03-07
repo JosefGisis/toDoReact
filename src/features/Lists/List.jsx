@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { setActiveList, selectActiveList, removeActiveList} from '../../../app/activeListSlice'
+import { setActiveList, selectActiveList, removeActiveList } from '../../app/activeListSlice'
 import { useForm } from 'react-hook-form'
 import { GoKebabHorizontal } from 'react-icons/go'
 
-import ListIcon from '../../../components/ListIcon'
-import { useDeleteListMutation, useDeleteToDosByListMutation, useUpdateListMutation } from '../../../api/apiSlice'
+import ListIcon from '../../components/ListIcon'
+import { useDeleteListMutation, useDeleteToDosByListMutation, useUpdateListMutation } from '../../api/apiSlice'
 
 function List({ listData }) {
 	const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -23,7 +23,7 @@ function List({ listData }) {
 		register,
 		reset,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors: formErrors },
 	} = useForm()
 
 	// onSelect cannot be handled by handleUpdate because dispatch and other states need to be handled differently
@@ -33,10 +33,10 @@ function List({ listData }) {
 			setIsEditing(false)
 			reset()
 			try {
-				await updateList({listId: list.id}).unwrap()
+				await updateList({ listId: list.id }).unwrap()
 				dispatch(setActiveList(list))
 			} catch (error) {
-				console.log(error?.data?.message)
+				console.log(error)
 			}
 		},
 		[activeList]
@@ -44,11 +44,11 @@ function List({ listData }) {
 
 	const onDelete = useCallback(async (listId) => {
 		try {
-			await deleteToDosByList(listId).unwrap()
+			await deleteToDosByList({ membership: listId }).unwrap()
 			await deleteList(listId).unwrap()
 			dispatch(removeActiveList())
 		} catch (error) {
-			console.log(error?.data?.message)
+			console.log(error)
 		}
 	}, [])
 
@@ -58,15 +58,14 @@ function List({ listData }) {
 		// Do not update list if nothing changes because it causes lists to re-sort.
 		if (values.title === list.title) return
 		try {
-			await updateList({listId: list.id, update: { ...values } }).unwrap()
+			await updateList({ listId: list.id, update: { ...values } }).unwrap()
 		} catch (error) {
-			console.log(error?.data?.message)
+			console.log(error)
 		}
 	}, [])
 
 	useEffect(() => {
-		if (listData.id === activeList?.id) 
-		dispatch(setActiveList(listData))
+		if (listData.id === activeList?.id) dispatch(setActiveList(listData))
 	}, [listData])
 
 	useEffect(() => {
@@ -88,8 +87,8 @@ function List({ listData }) {
 			}
 			onClick={() => onSelect(listData)}
 		>
-			<div className="flex flex-row items-center">
-				<div className="flex-1 mr-2">
+			<div className='flex flex-row items-center'>
+				<div className='mr-2'>
 					<ListIcon />
 				</div>
 				<div>
@@ -106,10 +105,12 @@ function List({ listData }) {
 										message: 'maximum thirty-five characters',
 									},
 								})}
-								className={'input rounded-sm input-sm w-full max-w-xs p-1 m-0 ' + (errors?.title ? 'input-error' : 'input-secondary')}
-								type="text"
+								className={
+									'input rounded-sm input-sm w-full max-w-xs p-1 m-0 ' + (formErrors?.title ? 'input-error' : 'input-secondary')
+								}
+								type='text'
 								defaultValue={listData.title}
-								placeholder={errors?.title && errors?.title?.message}
+								placeholder={formErrors?.title && formErrors?.title?.message}
 							/>
 						</form>
 					) : (
@@ -119,12 +120,12 @@ function List({ listData }) {
 			</div>
 
 			<div className={' ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')} ref={dropdownRef}>
-				<button className="btn btn-ghost btn-round btn-sm m-1" onClick={() => setDropdownOpen(!dropdownOpen)} type="button">
+				<button className='btn btn-ghost btn-round btn-sm m-1' onClick={() => setDropdownOpen(!dropdownOpen)} type='button'>
 					<GoKebabHorizontal />
 				</button>
 				<ul
 					className={
-						'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-primary rounded-md w-[7rem] z-[1] -translate-x-[4rem]	absolute ' +
+						'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] z-[1] -translate-x-[4rem] absolute ' +
 						(dropdownOpen ? '' : 'hidden')
 					}
 				>
@@ -142,7 +143,7 @@ function List({ listData }) {
 							setDropdownOpen(false)
 						}}
 					>
-						<p className="text-rose-500">delete!</p>
+						<p className='text-error'>delete!</p>
 					</li>
 				</ul>
 			</div>

@@ -1,35 +1,30 @@
 import { useCallback, useState } from 'react'
 
-import { useAuth } from '../../../hooks/useAuth'
-import { BASE_URL } from '../../../constants/url'
+import { useAuth } from '../hooks/useAuth'
+import { BASE_URL } from '../constants/url'
 
-export const useNewToDo = () => {
+export const useNewList = () => {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
+
 	const { logout, getToken } = useAuth()
 	const token = getToken()
 
-	const createNewToDo = useCallback(async (listId, values) => {
+	const createList = useCallback(async (values) => {
 		setMeta({ ...meta, loading: true })
-		const url = listId ? `${BASE_URL}/lists/${listId}/to-dos` : `${BASE_URL}/to-dos`
-
 		try {
-			const { title, date } = values
-			const response = await fetch(url, {
+			const { title } = values
+			const response = await fetch(`${BASE_URL}/lists`, {
 				method: 'POST',
 				headers: {
 					'content-type': 'application/json',
 					authorization: `Bearer ${token}`,
 				},
-				body: JSON.stringify({
-					title,
-					dueDate: date,
-				}),
+				body: JSON.stringify({ title }),
 			})
 
 			const json = await response.json()
 
 			if (response.status === 200) {
-				setMeta({ ...meta, errors: null })
 				return [null, json.data]
 			}
 
@@ -47,7 +42,6 @@ export const useNewToDo = () => {
 		} finally {
 			setMeta({ ...meta, loading: false })
 		}
-	})
-
-	return { meta, createNewToDo }
+	}, [])
+	return { meta, createList }
 }

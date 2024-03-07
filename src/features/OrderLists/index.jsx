@@ -1,4 +1,4 @@
-import ListOrderControls from './components/ListOrderControls'
+import ListOrderControls from './ListOrderControls'
 
 function OrderLists({ setOrderedLists }) {
 	return <ListOrderControls setOrderedLists={setOrderedLists} />

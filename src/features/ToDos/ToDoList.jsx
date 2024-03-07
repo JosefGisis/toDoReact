@@ -13,7 +13,7 @@ function ToDoList({ orderedToDos }) {
 			{orderedToDos?.length ? (
 				<div>
 					{/* message for completed list and controls for completed list */}
-					<AllToDosCompletedMessage />
+					<AllToDosCompletedMessage orderedToDos={orderedToDos} />
 					{/* displays non-completed to-dos */}
 					<div>{orderedToDos?.map((toDo, i) => !toDo.completed && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>
 

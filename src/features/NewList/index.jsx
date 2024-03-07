@@ -1,9 +1,5 @@
-import NewListForm from './components/NewListForm.jsx'
+import NewListForm from './NewListForm.jsx'
 
-function CreateList() {
-  return (
-        <NewListForm/>
-  )
-}
+const CreateList = () => <NewListForm />
 
 export default CreateList

@@ -1,4 +1,4 @@
-import NewToDoForm from "./components/NewToDoForm"
+import NewToDoForm from "./NewToDoForm"
 
 export default function NewToDo() {
     return <NewToDoForm />

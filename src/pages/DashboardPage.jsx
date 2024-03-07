@@ -3,7 +3,7 @@ import { useState } from 'react'
 import Lists from '../features/Lists'
 import NewList from '../features/NewList'
 import ActiveList from '../features/ActiveList'
-import NewToDoForm from '../features/NewToDo/components/NewToDoForm'
+import NewToDo from '../features/NewToDo'
 import ToDos from '../features/ToDos'
 import Navigation from '../features/Navigation'
 import DefaultList from '../features/DefaultList'
@@ -61,7 +61,7 @@ function DashboardPage() {
 							</div>
 
 							<div className='py-6 flex-none'>
-								<NewToDoForm />
+								<NewToDo />
 							</div>
 						</div>
 					</div>

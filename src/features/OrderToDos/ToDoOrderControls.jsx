@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { selectActiveList } from '../../../app/activeListSlice'
-import { useGetToDosQuery } from '../../../api/apiSlice'
+import { selectActiveList } from '../../app/activeListSlice'
+import { useGetToDosQuery } from '../../api/apiSlice'
 
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
