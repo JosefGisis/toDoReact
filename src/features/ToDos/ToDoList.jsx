@@ -19,14 +19,19 @@ function ToDoList({ orderedToDos }) {
 
 					{/* button to toggle completed to-dos visibility */}
 					{orderedToDos?.find((toDo) => toDo.completed) && (
-						<button className="btn btn-secondary flex items-center mb-2" onClick={() => setShowCompleted(!showCompleted)}>
-							<p className="mr-2">completed</p>
-							{showCompleted ? <GoChevronDown className="w-5 h-5" /> : <GoChevronRight className="w-5 h-5" />}
-						</button>
+						<div>
+							<hr className="border-2 border-neutral mb-3" />
+							<button className="btn btn-secondary flex items-center mb-2" onClick={() => setShowCompleted(!showCompleted)}>
+								<p className="mr-2">completed</p>
+								{showCompleted ? <GoChevronDown className="w-5 h-5" /> : <GoChevronRight className="w-5 h-5" />}
+							</button>
+						</div>
 					)}
 
 					{/* displays completed to-dos */}
-					{showCompleted && <div>{orderedToDos?.map((toDo, i) => toDo.completed && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>}
+					<div className="mt-3">
+						{showCompleted && <div>{orderedToDos?.map((toDo, i) => toDo.completed && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>}
+					</div>
 				</div>
 			) : (
 				<EmptyListMessage />

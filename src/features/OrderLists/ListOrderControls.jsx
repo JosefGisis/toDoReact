@@ -8,7 +8,7 @@ export default function ListOrderControls({ setOrderedLists }) {
 	const [sort, setSort] = useState({ by: 'creationDate', order: 'DESC' })
 	const navigate = useNavigate()
 	
-	const { data, error } = useGetListsQuery()
+	const { data: lists, error } = useGetListsQuery()
 
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
@@ -35,8 +35,8 @@ export default function ListOrderControls({ setOrderedLists }) {
 	}, [])
 	useEffect(() => {
 			if (error?.originalStatus === 401) navigate('/login')
-			sortLists(data?.data, sort.by, sort.order)
-	}, [data, error, sortLists, sort])
+			sortLists(lists, sort.by, sort.order)
+	}, [lists, error, sortLists, sort])
 
 	function toggleSortOrder() {
 		setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))

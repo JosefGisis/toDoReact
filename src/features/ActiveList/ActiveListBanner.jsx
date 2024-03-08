@@ -72,7 +72,7 @@ function ActiveListBanner() {
 		)
 	}
 	if (!activeList) {
-		content = 'To-dos'
+		content = <div className='my-2'>To-dos</div>
 	}
 
 	return (
@@ -86,7 +86,10 @@ function ActiveListBanner() {
 					<div tabIndex={0} role="button" className="btn btn-ghost btn-info btn-round btn-md m-1">
 						<GoKebabHorizontal className="w-6 h-6" />
 					</div>
-					<ul tabIndex={0} className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-neutral rounded-box w-52">
+					<ul
+						tabIndex={0}
+						className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-secondary rounded-lg w-[7rem]"
+					>
 						<li onClick={() => setIsEditing(!isEditing)}>
 							<p>{isEditing ? 'stop editing' : 'edit list'}</p>
 						</li>

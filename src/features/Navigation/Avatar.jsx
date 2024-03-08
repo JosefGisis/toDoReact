@@ -3,7 +3,7 @@ import { useGetUserQuery } from '../../api/apiSlice'
 import { useAuth } from '../../hooks/useAuth'
 
 export default function Avatar() {
-	const { data } = useGetUserQuery()
+	const { data: user } = useGetUserQuery()
 	const { logout } = useAuth()
 
 	function getAvatarColor() {
@@ -15,7 +15,7 @@ export default function Avatar() {
 	}
 
 	const avatarColor = useMemo(() => getAvatarColor(), [])
-	const firstLetter = useMemo(() => (data?.data?.username ? data?.data?.username.charAt(0) : ''), [data])
+	const firstLetter = useMemo(() => (user?.username ? user?.username.charAt(0) : ''), [user])
 
 	return (
 		<div className="dropdown dropdown-hover dropdown-end">

@@ -1,23 +1,60 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi } from '@reduxjs/toolkit/query/react'
+
+const BASE_URL = 'http://localhost:3000/api/1'
+
+const customFetchBaseQuery = async (args) => {
+	// depending on query is structured url may be contained in args.url or as args itself
+	// Puts url in in args.url
+	if (typeof args === 'string') {
+		args = { url: args }
+	}
+
+	const headers = { 'content-type': 'application/json' }
+	// if not in auth router adds authorization to headers
+	if (args.url !== '/auth/login' && args.url !== '/auth/register') {
+		const token = localStorage.getItem('jwt')
+		headers.Authorization = `Bearer ${token}`
+	}
+
+	const { url, body, method } = args
+	const response = await fetch(`${BASE_URL}${url}`, {
+		// rtkq does not pass method for GET requests
+		method: method || 'GET',
+		headers,
+		body: JSON.stringify(body),
+	})
+
+	if (response.status === 401) return { error: { message: 'unauthorized', status: 401 } }
+	else {
+		const json = await response.json()
+		if (response.ok) return { data: json.data }
+		else return { error: { message: json.message, status: response.status } }
+	}
+}
 
 export const apiSlice = createApi({
 	reducerPath: 'api',
-
-	baseQuery: fetchBaseQuery({
-		baseUrl: 'http://localhost:3000/api/1',
-		prepareHeaders: (headers) => {
-			const token = localStorage.getItem('jwt')
-			headers.set('Authorization', `Bearer ${token}`)
-			return headers
-		},
-	}),
-
+	baseQuery: customFetchBaseQuery,
 	tagTypes: ['User', 'Lists', 'ToDos'],
 
 	endpoints: (builder) => ({
 		/**
 		 * profile queries and mutations
 		 */
+		login: builder.query({
+			query: (payload) => ({
+				url: '/auth/login',
+				body: payload,
+			}),
+		}),
+
+		register: builder.query({
+			query: (payload) => ({
+				url: '/auth/register',
+				body: payload,
+			}),
+		}),
+
 		getUser: builder.query({
 			query: () => `/profile`,
 			providesTags: 'User',

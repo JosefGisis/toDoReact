@@ -43,17 +43,17 @@ function ToDo({ toDoData }) {
 				(toDoData?.completed ? 'bg-base-200' : 'bg-neutral')
 			}
 		>
-			<div className="flex items-center">
+			<div className='flex items-center'>
 				{/* to-do check to complete and un-complete */}
 				<input
-					type="checkbox"
+					type='checkbox'
 					checked={toDoData?.completed}
 					onChange={() => handleUpdate(toDoData.id, { completed: !toDoData.completed })}
-					className="checkbox checkbox-primary mr-3"
+					className='checkbox checkbox-primary mr-3'
 				/>
 
 				{/* to-do title and title editing form */}
-				<div>
+				<div className='mr-2'>
 					{isEditing?.title ? (
 						<form
 							onBlur={() => {
@@ -73,7 +73,7 @@ function ToDo({ toDoData }) {
 										message: 'maximum one-hundred characters',
 									},
 								})}
-								type="text"
+								type='text'
 								defaultValue={toDoData?.title}
 								className={'input input-outline ' + (errors?.title ? 'input-error' : 'input-secondary')}
 								placeholder={errors?.title && errors?.title?.message}
@@ -82,7 +82,7 @@ function ToDo({ toDoData }) {
 					) : (
 						<h3
 							onDoubleClick={() => setIsEditing({ ...isEditing, title: true })}
-							className={'rounded-lg text-2xl font-bold my-2 ' + (toDoData.completed ? 'line-through text-rose-400' : '')}
+							className={'rounded-lg text-2xl font-bold my-2 ' + (toDoData.completed && 'line-through text-rose-400')}
 						>
 							{toDoData.title}
 						</h3>
@@ -91,7 +91,7 @@ function ToDo({ toDoData }) {
 			</div>
 
 			{/* to-do due-date and editing form */}
-			<div className="flex items-center">
+			<div className='flex items-center'>
 				{isEditing?.dueDate ? (
 					<form
 						onBlur={handleSubmit((values) => handleUpdate(toDoData.id, { dueDate: values.date }))}
@@ -104,24 +104,24 @@ function ToDo({ toDoData }) {
 									message: 'date format mm/dd/yyyy required',
 								},
 							})}
-							type="date"
+							type='date'
 							defaultValue={toDoData.dueDate}
 							className={'input input-outline mr-6 ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
 						/>
 					</form>
 				) : toDoData?.dueDate ? (
-					<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className="flex items-center mr-6">
+					<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className='flex items-center mr-6'>
 						<DueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
 					</div>
 				) : null}
 
 				{/* dropdown button for to-do */}
-				<div className="dropdown dropdown-bottom dropdown-end">
-					<div tabIndex={0} role="button" className="btn btn-primary btn-outline btn-round mr-2">
-						<GoKebabHorizontal className="w-4 h-4" />
+				<div className='dropdown dropdown-bottom dropdown-end'>
+					<div tabIndex={0} role='button' className='btn btn-primary btn-outline btn-round mr-2'>
+						<GoKebabHorizontal className='w-4 h-4' />
 					</div>
-					<ul tabIndex={0} className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-primary rounded-box w-52">
-						<li onClick={() => setIsEditing({ ...isEditing, title: true, dueDate: true })}>
+					<ul tabIndex={0} className='dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg w-52'>
+						<li onClick={() => setIsEditing({ title: true, dueDate: true })}>
 							<p>edit</p>
 						</li>
 						<li onClick={() => setIsEditing({ ...isEditing, dueDate: true })}>
@@ -134,9 +134,11 @@ function ToDo({ toDoData }) {
 				</div>
 
 				{/* delete to-do button */}
-				<button className="btn btn-outline btn-primary" onClick={() => onDelete(toDoData)}>
-					<GoTrash className="w-5 h-5" />
+				<div>
+				<button className='btn btn-outline btn-primary' onClick={console.log} onDoubleClick={() => onDelete(toDoData)}>
+					<GoTrash className='w-5 h-5' />
 				</button>
+				</div>
 			</div>
 		</div>
 	)
@@ -158,7 +160,7 @@ function DueDate({ dueDate, completed }) {
 
 	return (
 		<>
-			<GoCalendar className="mr-2" />
+			<GoCalendar className='mr-2 flex-none' />
 			<p className={textColor}>{formattedDate}</p>
 		</>
 	)

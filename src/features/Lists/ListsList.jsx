@@ -4,7 +4,7 @@ import List from './List'
 import NoListMessage from './NoListsMessage'
 
 export default function ToDoListsList({ orderedLists }) {
-	const { isFetching, isSuccess } = useGetListsQuery()
+	const { data, isFetching, isSuccess } = useGetListsQuery()
 
 	let content
 	if (orderedLists?.length) {
@@ -13,7 +13,7 @@ export default function ToDoListsList({ orderedLists }) {
 				<List listData={list} />
 			</div>
 		))
-	} else if (!isFetching && isSuccess) {
+	} else if (!isFetching && isSuccess && !data) {
 		content = <NoListMessage />
 	} else content = null
 

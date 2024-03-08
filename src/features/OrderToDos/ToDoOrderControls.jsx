@@ -9,7 +9,7 @@ function ToDoOrderControls({ setOrderedToDos }) {
 	const [sort, setSort] = useState({ by: 'title', order: 'ASC' })
 	const activeList = useSelector(selectActiveList)
 
-	const {data} = useGetToDosQuery()
+	const { data } = useGetToDosQuery()
 
 	// sort options are to-do parameters for sorting
 	const sortOptions = [
@@ -38,9 +38,9 @@ function ToDoOrderControls({ setOrderedToDos }) {
 	}, [])
 	useEffect(() => {
 		let toDos
-		if (data?.data) {
-			if (activeList) toDos = data.data.filter(toDo => toDo.membership === activeList.id)
-			else toDos = data.data.filter(toDo => toDo.membership === null )
+		if (data) {
+			if (activeList) toDos = data.filter(toDo => toDo.membership === activeList.id)
+			else toDos = data.filter(toDo => toDo.membership === null )
 		}
 		sortToDos(toDos, sort.by, sort.order)
 	}, [activeList, data, sort])
@@ -50,6 +50,7 @@ function ToDoOrderControls({ setOrderedToDos }) {
 	}
 
 	return (
+
 		<div>
 			<div className="flex items-center max-w-[15rem]">
 				{/* select for order.by */}
