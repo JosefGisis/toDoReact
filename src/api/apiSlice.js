@@ -42,7 +42,7 @@ export const apiSlice = createApi({
 		/**
 		 * Lists queries and mutations
 		 */
-		getLists: builder.query({
+		getLtypeists: builder.query({
 			query: () => '/lists',
 			providesTags: ['Lists'],
 		}),
