@@ -1,43 +1,31 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
+import { useRegisterMutation } from '../../api/apiSlice'
 
-import { useSignUp } from '../hooks/useSignUp'
-import { useAuth } from '../../../hooks/useAuth'
-
-import Spinner from '../../../components/Spinner'
-import EmailIcon from '../../../components/EmailIcon'
-import ProfileIcon from '../../../components/ProfileIcon'
-import PasswordIcon from '../../../components/PasswordIcon'
+import Spinner from '../../components/Spinner'
+import EmailIcon from '../../components/EmailIcon'
+import ProfileIcon from '../../components/ProfileIcon'
+import PasswordIcon from '../../components/PasswordIcon'
 
 function SignUpForm() {
-	const [isLoggingIn, setIsLoggingIn] = useState(false)
 	const [_errors, setErrors] = useState(null)
-
-	const { signUp } = useSignUp()
-	const { setToken } = useAuth()
-
-	const navigate = useNavigate()
+	const [isLoggingIn, setIsLogginIn] = useState(false)
+	const [register] = useRegisterMutation()
+	const { login } = useAuth()
 
 	const {
-		register,
+		register: registerField,
 		handleSubmit,
 		formState: { errors, isValid },
 	} = useForm()
 
 	async function onSubmit(values) {
 		try {
-			const [error, token] = await signUp(values)
-			if (error) {
-				setErrors({ message: error })
-				return
-			}
-			setToken(token)
-			navigate('/')
+			const token = await register(values).unwrap()
+			login(token)
 		} catch (error) {
 			setErrors({ message: error.message })
-		} finally {
-			setIsLoggingIn(false)
 		}
 	}
 
@@ -54,7 +42,7 @@ function SignUpForm() {
 						<label className="input input-bordered input-secondary rounded-md flex items-center gap-2">
 							<ProfileIcon />
 							<input
-								{...register('username', {
+								{...registerField('username', {
 									required: 'username required*',
 									minLength: {
 										value: 8,
@@ -80,7 +68,7 @@ function SignUpForm() {
 						<label className="input input-bordered input-secondary rounded-md flex items-center gap-2">
 							<EmailIcon />
 							<input
-								{...register('email', {
+								{...registerField('email', {
 									required: 'email required*',
 									pattern: {
 										value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
@@ -99,7 +87,7 @@ function SignUpForm() {
 						<label className="input input-bordered input-secondary rounded-md flex items-center gap-2">
 							<PasswordIcon />
 							<input
-								{...register('password', {
+								{...registerField('password', {
 									required: 'password required*',
 									minLength: {
 										value: 8,

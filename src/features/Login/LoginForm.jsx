@@ -1,21 +1,22 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
+import { useLoginMutation } from '../../api/apiSlice'
 
-import { useLogin } from '../hooks/useLogin'
-import { useAuth } from '../../../hooks/useAuth'
-
-import Spinner from '../../../components/Spinner'
-import ProfileIcon from '../../../components/ProfileIcon'
-import PasswordIcon from '../../../components/PasswordIcon'
+import Spinner from '../../components/Spinner'
+import ProfileIcon from '../../components/ProfileIcon'
+import PasswordIcon from '../../components/PasswordIcon'
 
 function LoginForm() {
 	const [_errors, setErrors] = useState(null)
 	const [isLoggingIn, setIsLoggingIn] = useState(false)
 
-	const navigate = useNavigate()
-	const { setToken } = useAuth()
-	const { login } = useLogin()
+	const { login: authLogin } = useAuth()
+	const [login, { error: loginErrors }] = useLoginMutation()
+
+	useEffect(() => {
+		console.log(loginErrors)
+	}, [loginErrors])
 
 	const {
 		register,
@@ -27,15 +28,10 @@ function LoginForm() {
 	async function onSubmit(data) {
 		try {
 			setIsLoggingIn(true)
-			const [error, token] = await login(data)
-			if (error) {
-				resetField('password')
-				setErrors({ message: error })
-				return
-			}
-			setToken(token)
-			navigate('/')
+			const token = await login(data).unwrap()
+			authLogin(token)
 		} catch (error) {
+			resetField('password')
 			setErrors({ message: error.message })
 		} finally {
 			setIsLoggingIn(false)

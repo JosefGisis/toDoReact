@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { BASE_URL } from '../../../constants/url'
+import { BASE_URL } from '../constants/url'
 
 export function useSignUp() {
 	const [meta, setMeta] = useState({ loading: false, errors: null })
