@@ -1,10 +1,10 @@
-import { useGetListsQuery } from '../../api/apiSlice'
+import { useGetListsQuery } from '../../api/listsSlice'
 
 import List from './List'
 import NoListMessage from './NoListsMessage'
 
 export default function ToDoListsList({ orderedLists }) {
-	const { data, isFetching, isSuccess } = useGetListsQuery()
+	const { isFetching, isSuccess } = useGetListsQuery()
 
 	let content
 	if (orderedLists?.length) {
@@ -13,7 +13,7 @@ export default function ToDoListsList({ orderedLists }) {
 				<List listData={list} />
 			</div>
 		))
-	} else if (!isFetching && isSuccess && !data) {
+	} else if (!isFetching && isSuccess ) {
 		content = <NoListMessage />
 	} else content = null
 

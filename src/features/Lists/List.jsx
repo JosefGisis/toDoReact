@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form'
 import { GoKebabHorizontal } from 'react-icons/go'
 
 import ListIcon from '../../components/ListIcon'
-import { useDeleteListMutation, useDeleteToDosByListMutation, useUpdateListMutation } from '../../api/apiSlice'
+import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
+import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
 function List({ listData }) {
 	const [dropdownOpen, setDropdownOpen] = useState(false)

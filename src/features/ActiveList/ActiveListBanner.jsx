@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
-import { useDeleteListMutation, useDeleteToDosByListMutation, useUpdateListMutation } from '../../api/apiSlice'
+import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
+import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 import { useForm } from 'react-hook-form'
 
 import { GoKebabHorizontal } from 'react-icons/go'

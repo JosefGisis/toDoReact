@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/apiSlice'
+import { useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/toDosSlice'
 
 import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
 

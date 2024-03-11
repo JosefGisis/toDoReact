@@ -1,4 +1,4 @@
-import { useGetUserQuery } from "../api/apiSlice"
+import { useGetUserQuery } from "../api/userSlice"
 
 function ProfilePage() {
 	const { data } = useGetUserQuery()

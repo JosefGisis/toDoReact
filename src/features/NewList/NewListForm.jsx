@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { setActiveList } from '../../app/activeListSlice'
-import { useCreateListMutation } from '../../api/apiSlice'
+import { useCreateListMutation } from '../../api/listsSlice'
 
 import { useForm } from 'react-hook-form'
 import { GoPlus } from 'react-icons/go'

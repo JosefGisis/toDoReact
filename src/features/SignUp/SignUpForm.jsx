@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../../hooks/useAuth'
-import { useRegisterMutation } from '../../api/apiSlice'
+import { useRegisterMutation } from '../../api/userSlice'
 
 import Spinner from '../../components/Spinner'
 import EmailIcon from '../../components/EmailIcon'

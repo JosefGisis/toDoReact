@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../../hooks/useAuth'
-import { useLoginMutation } from '../../api/apiSlice'
+import { useLoginMutation } from '../../api/userSlice.js'
 
 import Spinner from '../../components/Spinner'
 import ProfileIcon from '../../components/ProfileIcon'

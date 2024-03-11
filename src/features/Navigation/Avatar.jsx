@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useGetUserQuery } from '../../api/apiSlice'
+import { useGetUserQuery } from '../../api/userSlice'
 import { useAuth } from '../../hooks/useAuth'
 
 export default function Avatar() {

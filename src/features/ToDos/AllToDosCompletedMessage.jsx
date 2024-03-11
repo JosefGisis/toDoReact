@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
-import { useDeleteListMutation, useDeleteToDosByListMutation } from '../../api/apiSlice'
+import { useDeleteListMutation } from '../../api/listsSlice'
+import { useDeleteToDosByListMutation } from '../../api/toDosSlice'
 
 export default function AllToDosCompletedMessage({ orderedToDos }) {
 	const activeList = useSelector(selectActiveList)
