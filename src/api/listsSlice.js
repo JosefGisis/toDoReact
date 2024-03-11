@@ -4,27 +4,29 @@ export const listsSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getLists: builder.query({
 			query: () => '/lists',
-			transformResponse: responseData => responseData.data,
+			transformResponse: (responseData) => responseData.data,
 			providesTags: ['Lists'],
 		}),
-		
+
 		getList: builder.query({
 			query: (listId) => ({
 				url: `/lists/${listId}`,
 			}),
-			transformResponse: responseData => responseData.data,
+			transformResponse: (responseData) => responseData.data,
 		}),
-		
+
 		createList: builder.mutation({
 			query: (list) => ({
 				url: '/lists',
 				method: 'POST',
 				body: list,
 			}),
-			transformResponse: responseData => responseData.data,
+			invalidatesTags: (result) => {
+				if (result)
+			}
 			invalidatesTags: ['Lists'],
 		}),
-		
+
 		updateList: builder.mutation({
 			query: (payload) => ({
 				// payload contains listId and update values
@@ -32,16 +34,15 @@ export const listsSlice = apiSlice.injectEndpoints({
 				method: 'PUT',
 				body: payload.update,
 			}),
-			transformResponse: responseData => responseData.data,
+			transformResponse: (responseData) => responseData.data,
 			invalidatesTags: ['Lists'],
 		}),
-		
+
 		deleteList: builder.mutation({
 			query: (listId) => ({
 				url: `/lists/${listId}`,
 				method: 'DELETE',
 			}),
-			transformResponse: responseData => responseData.data,
 			invalidatesTags: ['Lists'],
 		}),
 	}),

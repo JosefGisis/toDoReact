@@ -19,8 +19,8 @@ function NewListForm() {
 	const onSubmit = async (newListData) => {
 		reset()
 		try {
-			const { data } = await createList(newListData).unwrap()
-			dispatch(setActiveList(data))
+			const newList = await createList(newListData).unwrap()
+			dispatch(setActiveList(newList))
 		} catch (error) {
 			console.error(error)
 		}
