@@ -7,7 +7,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				url: '/to-dos',
 			}),
 			transformResponse: (responseData) => responseData.data,
-			providesTags: ['ToDos'],
+			providesTags: (result) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
 		}),
 
 		getToDo: builder.query({
@@ -15,6 +15,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				url: `/to-dos/${toDoId}`,
 			}),
 			transformResponse: (responseData) => responseData.data,
+			providesTags: (result) => [{ type: 'ToDos', id: result.id }],
 		}),
 
 		getToDosByList: builder.query({
@@ -24,6 +25,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			transformResponse: (responseData) => responseData.data,
+			providesTags: (result) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
 		}),
 
 		deleteToDosByList: builder.mutation({
@@ -43,6 +45,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				body: toDo,
 			}),
 			transformResponse: (responseData) => responseData.data,
+			// invalidatesTags: (result) => [{ type: 'ToDos', id: result.id }],
 			invalidatesTags: ['ToDos'],
 		}),
 
@@ -51,7 +54,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				url: `/to-dos/${toDoId}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['ToDos'],
+			invalidatesTags: (result, error, args) => [{ type: 'ToDos', id: args }],
 		}),
 
 		updateToDo: builder.mutation({
@@ -61,7 +64,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				body: payload.update,
 			}),
 			transformResponse: (responseData) => responseData.data,
-			invalidatesTags: ['ToDos'],
+			invalidatesTags: (result) => [{ type: 'ToDos', id: result.id }],
 		}),
 	}),
 })

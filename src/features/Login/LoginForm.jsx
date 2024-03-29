@@ -28,7 +28,7 @@ function LoginForm() {
 	async function onSubmit(data) {
 		try {
 			setIsLoggingIn(true)
-			const token = await login(data).unwrap()
+			const { token } = await login(data).unwrap()
 			authLogin(token)
 		} catch (error) {
 			resetField('password')
