@@ -11,17 +11,15 @@ import ProtectedRoute from './components/ProtectedRoute'
 export default function App() {
 	return (
 		<Router>
-
-				<Routes>
-					<Route path="/" element={<ProtectedRoute />}>
-						<Route path="" element={<DashboardPage />} />
-						<Route path="profile" element={<ProfilePage />} />
-					</Route>
-					<Route path="/login" element={<LoginPage />} />
-					<Route path="/signup" element={<SignUpPage />} />
-					<Route path="*" element={<FourOFourPage />} />
-				</Routes>
-			
+			<Routes>
+				<Route path="/" element={<ProtectedRoute />}>
+					<Route path="" element={<DashboardPage />} />
+					<Route path="profile" element={<ProfilePage />} />
+				</Route>
+				<Route path="/login" element={<LoginPage />} />
+				<Route path="/signup" element={<SignUpPage />} />
+				<Route path="*" element={<FourOFourPage />} />
+			</Routes>
 		</Router>
 	)
 }
