@@ -10,6 +10,19 @@ export interface List {
 	lastModified: string
 }
 
+export interface UpdateListPayload {
+	listId: number
+	update: UpdateList
+}
+
+export interface UpdateList {
+	title?: string
+}
+
+export interface CreateList {
+	title: string
+}
+
 export const listsSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getLists: builder.query<List[], any>({
@@ -19,7 +32,7 @@ export const listsSlice = apiSlice.injectEndpoints({
 		}),
 
 		getList: builder.query({
-			query: (listId) => ({
+			query: (listId: number) => ({
 				url: `/lists/${listId}`,
 			}),
 			transformResponse: (responseData: SingleResponse<List>) => responseData.data,
@@ -27,7 +40,8 @@ export const listsSlice = apiSlice.injectEndpoints({
 		}),
 
 		createList: builder.mutation({
-			query: (list) => ({
+			// what is list?
+			query: (list: CreateList) => ({
 				url: '/lists',
 				method: 'POST',
 				body: list,
@@ -39,7 +53,8 @@ export const listsSlice = apiSlice.injectEndpoints({
 		}),
 
 		updateList: builder.mutation({
-			query: (payload) => ({
+			// what is payload?
+			query: (payload: UpdateListPayload) => ({
 				// payload contains listId and update values
 				url: `/lists/${payload.listId}`,
 				method: 'PUT',
@@ -50,7 +65,7 @@ export const listsSlice = apiSlice.injectEndpoints({
 		}),
 
 		deleteList: builder.mutation({
-			query: (listId) => ({
+			query: (listId: number) => ({
 				url: `/lists/${listId}`,
 				method: 'DELETE',
 			}),

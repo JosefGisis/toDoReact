@@ -23,7 +23,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 		}),
 
 		getToDo: builder.query({
-			query: (toDoId) => ({
+			query: (toDoId: number) => ({
 				url: `/to-dos/${toDoId}`,
 			}),
 			transformResponse: (responseData: SingleResponse<ToDo>) => responseData.data,
@@ -63,7 +63,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 		}),
 
 		deleteToDo: builder.mutation({
-			query: (toDoId) => ({
+			query: (toDoId: number) => ({
 				url: `/to-dos/${toDoId}`,
 				method: 'DELETE',
 			}),
@@ -71,6 +71,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 		}),
 
 		updateToDo: builder.mutation({
+			// what is payload?
 			query: (payload) => ({
 				url: `/to-dos/${payload.toDoId}`,
 				method: 'PUT',

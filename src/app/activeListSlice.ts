@@ -13,7 +13,7 @@ export const activeListSlice = createSlice({
 	},
 })
 
-export const selectActiveList = state => state.activeList.data
+export const selectActiveList = (state) => state.activeList.data
 
 export const { setActiveList, removeActiveList } = activeListSlice.actions
 

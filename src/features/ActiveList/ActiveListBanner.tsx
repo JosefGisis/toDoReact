@@ -1,16 +1,19 @@
 import { useState, useCallback } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
-import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
-import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 import { useForm } from 'react-hook-form'
+import { useSelector, useDispatch } from 'react-redux'
+
+import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
+
+import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
+import type { List, UpdateList } from '../../api/listsSlice.js'
+import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
 import { GoKebabHorizontal } from 'react-icons/go'
 
 function ActiveListBanner() {
 	const [isEditing, setIsEditing] = useState(false)
 
-	const activeList = useSelector(selectActiveList)
+	const activeList: List | null = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
 	const [deleteToDosByList] = useDeleteToDosByListMutation()
@@ -24,7 +27,7 @@ function ActiveListBanner() {
 		formState: { errors },
 	} = useForm()
 
-	const onDelete = useCallback(async (listId) => {
+	const onDelete = useCallback(async (listId: number) => {
 		try {
 			await deleteToDosByList({ membership: listId }).unwrap()
 			await deleteList(listId).unwrap()
@@ -34,7 +37,7 @@ function ActiveListBanner() {
 		}
 	}, [])
 
-	const handleUpdate = useCallback(async (list, update) => {
+	const handleUpdate = useCallback(async (list: List, update: UpdateList) => {
 		setIsEditing(false)
 		reset()
 		// Do not update list if nothing changes because it causes lists to re-sort.
@@ -46,7 +49,7 @@ function ActiveListBanner() {
 		}
 	}, [])
 
-	let content
+	let content: any
 	if (activeList && !isEditing) {
 		content = <div onDoubleClick={() => setIsEditing(true)}>{activeList?.title}</div>
 	}
@@ -67,13 +70,13 @@ function ActiveListBanner() {
 					className={'input rounded-sm input-md w-full max-w-xs p-1 text-2xl ' + (errors?.title ? 'input-error' : 'input-secondary')}
 					type="text"
 					defaultValue={activeList.title}
-					placeholder={errors?.title && errors?.title?.message}
+					placeholder={errors?.title && typeof errors?.title?.message === 'string' ? errors?.title?.message : undefined}
 				/>
 			</form>
 		)
 	}
 	if (!activeList) {
-		content = <div className='my-2'>To-dos</div>
+		content = <div className="my-2">To-dos</div>
 	}
 
 	return (
