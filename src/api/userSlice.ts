@@ -1,4 +1,13 @@
 import { apiSlice } from './apiSlice'
+import { SingleResponse } from './types'
+
+export type User = {
+	id: number
+	username: string
+	email: string
+	password: string
+	creationDate: string
+}
 
 export const userSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
@@ -20,12 +29,10 @@ export const userSlice = apiSlice.injectEndpoints({
 
 		getUser: builder.query({
 			query: () => `/profile`,
-            transformResponse: responseData => responseData.data,
-			providesTags: 'User',
+            transformResponse: (responseData: SingleResponse<User>) => responseData.data,
+			providesTags: ['User'],
 		}),
 	}),
 })
 
 export const { useLoginMutation, useRegisterMutation, useGetUserQuery } = userSlice
-
-// export const selectUsersResult = userSlice.endpoints.getUsers.select()

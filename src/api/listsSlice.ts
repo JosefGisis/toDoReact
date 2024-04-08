@@ -1,7 +1,6 @@
 import { apiSlice } from './apiSlice'
 import { SingleResponse, ListResponse } from './types'
 
-// ClientList changes to camel case for client
 export interface List {
 	id: number
 	title: string
@@ -15,16 +14,16 @@ export const listsSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getLists: builder.query<List[], any>({
 			query: () => '/lists',
-			transformResponse: (responseData: ListResponse<List>) => responseData?.data,
-			providesTags: (result = []) => result?.map((list) => ({ type: 'Lists', id: list.id })),
+			transformResponse: (responseData: ListResponse<List>) => responseData.data,
+			providesTags: (result = []) => result.map((list) => ({ type: 'Lists', id: list.id })),
 		}),
 
 		getList: builder.query({
 			query: (listId) => ({
 				url: `/lists/${listId}`,
 			}),
-			transformResponse: (responseData: SingleResponse<List>) => responseData?.data,
-			providesTags: (result) => [{ type: 'Lists', id: result.id }],
+			transformResponse: (responseData: SingleResponse<List>) => responseData.data,
+			providesTags: (result) => [{ type: 'Lists', id: result?.id }],
 		}),
 
 		createList: builder.mutation({
@@ -33,8 +32,9 @@ export const listsSlice = apiSlice.injectEndpoints({
 				method: 'POST',
 				body: list,
 			}),
-			transformResponse: (responseData) => responseData.data,
+			transformResponse: (responseData: SingleResponse<List>) => responseData.data,
 			invalidatesTags: ['Lists'],
+			// This is not currently updating lists.
 			// invalidatesTags: (result) => [{ type: 'Lists', id: result.id }],
 		}),
 
@@ -45,8 +45,8 @@ export const listsSlice = apiSlice.injectEndpoints({
 				method: 'PUT',
 				body: payload.update,
 			}),
-			transformResponse: (responseData) => responseData.data,
-			invalidatesTags: (result) => [{ type: 'Lists', id: result.id }],
+			transformResponse: (responseData: SingleResponse<List>) => responseData.data,
+			invalidatesTags: (result) => [{ type: 'Lists', id: result?.id }],
 		}),
 
 		deleteList: builder.mutation({
@@ -60,5 +60,3 @@ export const listsSlice = apiSlice.injectEndpoints({
 })
 
 export const { useGetListQuery, useGetListsQuery, useCreateListMutation, useUpdateListMutation, useDeleteListMutation } = listsSlice
-
-// export const selectUsersResult = listsSlice.endpoints.getUsers.select()

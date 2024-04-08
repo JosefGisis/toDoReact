@@ -1,4 +1,16 @@
 import { apiSlice } from './apiSlice'
+import { ListResponse, SingleResponse } from './types'
+
+export type ToDo = {
+	id: number,
+	title: string,
+	completed: boolean, 
+	creationDate: string,
+	lastModified: string, 
+	userId: number | null,
+	dueDate: string | null,
+	membership: number | null
+}
 
 export const toDosSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
@@ -6,16 +18,16 @@ export const toDosSlice = apiSlice.injectEndpoints({
 			query: () => ({
 				url: '/to-dos',
 			}),
-			transformResponse: (responseData) => responseData.data,
-			providesTags: (result) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
+			transformResponse: (responseData: ListResponse<ToDo>) => responseData.data,
+			providesTags: (result = []) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
 		}),
 
 		getToDo: builder.query({
 			query: (toDoId) => ({
 				url: `/to-dos/${toDoId}`,
 			}),
-			transformResponse: (responseData) => responseData.data,
-			providesTags: (result) => [{ type: 'ToDos', id: result.id }],
+			transformResponse: (responseData: SingleResponse<ToDo>) => responseData.data,
+			providesTags: (result) => [{ type: 'ToDos', id: result?.id }],
 		}),
 
 		getToDosByList: builder.query({
@@ -24,8 +36,8 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				url: '/to-dos/by-list',
 				body: payload,
 			}),
-			transformResponse: (responseData) => responseData.data,
-			providesTags: (result) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
+			transformResponse: (responseData: ListResponse<ToDo>) => responseData.data,
+			providesTags: (result = []) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
 		}),
 
 		deleteToDosByList: builder.mutation({
@@ -44,7 +56,8 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				method: 'POST',
 				body: toDo,
 			}),
-			transformResponse: (responseData) => responseData.data,
+			transformResponse: (responseData: SingleResponse<ToDo>) => responseData.data,
+			// optimized invalidates tags is not working currently
 			// invalidatesTags: (result) => [{ type: 'ToDos', id: result.id }],
 			invalidatesTags: ['ToDos'],
 		}),
@@ -63,8 +76,8 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				method: 'PUT',
 				body: payload.update,
 			}),
-			transformResponse: (responseData) => responseData.data,
-			invalidatesTags: (result) => [{ type: 'ToDos', id: result.id }],
+			transformResponse: (responseData: SingleResponse<ToDo>) => responseData.data,
+			invalidatesTags: (result) => [{ type: 'ToDos', id: result?.id }],
 		}),
 	}),
 })
@@ -78,5 +91,3 @@ export const {
 	useCreateToDoMutation,
 	useUpdateToDoMutation,
 } = toDosSlice
-
-// export const selectUsersResult = toDosSlice.endpoints.getUsers.select()
