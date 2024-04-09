@@ -2,9 +2,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
 
 import { GoHome } from 'react-icons/go'
+import { List } from '../../api/listsSlice'
 
 export default function DefaultListButton() {
-	const activeList = useSelector(selectActiveList)
+	const activeList: List | null = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
 	return (

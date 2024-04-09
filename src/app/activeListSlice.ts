@@ -1,10 +1,20 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import type { List } from '../api/listsSlice'
+import { RootState } from './store'
+
+export type ActiveListState = {
+	data: null | List
+}
+
+const initialState: ActiveListState = {
+	data: null
+}
 
 export const activeListSlice = createSlice({
 	name: 'activeList',
-	initialState: { data: null },
+	initialState,
 	reducers: {
-		setActiveList: (state, action) => {
+		setActiveList: (state, action: PayloadAction<List>) => {
 			state.data = action.payload
 		},
 		removeActiveList: (state) => {
@@ -13,7 +23,7 @@ export const activeListSlice = createSlice({
 	},
 })
 
-export const selectActiveList = (state) => state.activeList.data
+export const selectActiveList = (state: RootState) => state.activeList.data
 
 export const { setActiveList, removeActiveList } = activeListSlice.actions
 

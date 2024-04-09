@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { setActiveList, selectActiveList, removeActiveList } from '../../app/activeListSlice'
 import { useForm } from 'react-hook-form'
-import { GoKebabHorizontal } from 'react-icons/go'
 
-import ListIcon from '../../components/ListIcon'
+import { setActiveList, selectActiveList, removeActiveList } from '../../app/activeListSlice'
+import type { List, UpdateList } from '../../api/listsSlice.js'
 import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
-function List({ listData }) {
+import ListIcon from '../../components/ListIcon'
+import { GoKebabHorizontal } from 'react-icons/go'
+
+function List({ listData }: { listData: List}) {
 	const [dropdownOpen, setDropdownOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
 	const dropdownRef = useRef(null)
 
-	const activeList = useSelector(selectActiveList)
+	const activeList: List | null = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
 	const [deleteList] = useDeleteListMutation()
@@ -29,12 +31,12 @@ function List({ listData }) {
 
 	// onSelect cannot be handled by handleUpdate because dispatch and other states need to be handled differently
 	const onSelect = useCallback(
-		async (list) => {
+		async (list: List) => {
 			if (list.id === activeList?.id) return
 			setIsEditing(false)
 			reset()
 			try {
-				await updateList({ listId: list.id }).unwrap()
+				await updateList({ listId: list.id, update: { title: undefined } }).unwrap()
 				dispatch(setActiveList(list))
 			} catch (error) {
 				console.log(error)
@@ -43,7 +45,7 @@ function List({ listData }) {
 		[activeList]
 	)
 
-	const onDelete = useCallback(async (listId) => {
+	const onDelete = useCallback(async (listId: number) => {
 		try {
 			await deleteToDosByList({ membership: listId }).unwrap()
 			await deleteList(listId).unwrap()
@@ -53,13 +55,13 @@ function List({ listData }) {
 		}
 	}, [])
 
-	const handleUpdate = useCallback(async (list, values) => {
+	const handleUpdate = useCallback(async (list: List, update: UpdateList) => {
 		setIsEditing(false)
 		reset()
 		// Do not update list if nothing changes because it causes lists to re-sort.
-		if (values.title === list.title) return
+		if (update.title === list.title) return
 		try {
-			await updateList({ listId: list.id, update: { ...values } }).unwrap()
+			await updateList({ listId: list.id, update }).unwrap()
 		} catch (error) {
 			console.log(error)
 		}
@@ -70,7 +72,7 @@ function List({ listData }) {
 	}, [listData])
 
 	useEffect(() => {
-		const handleClickOutside = (event) => {
+		const handleClickOutside = (event: MouseEvent) => {
 			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setDropdownOpen(false)
 		}
 		document.addEventListener('mousedown', handleClickOutside)
@@ -88,8 +90,8 @@ function List({ listData }) {
 			}
 			onClick={() => onSelect(listData)}
 		>
-			<div className='flex flex-row items-center'>
-				<div className='mr-2'>
+			<div className="flex flex-row items-center">
+				<div className="mr-2">
 					<ListIcon />
 				</div>
 				<div>
@@ -109,9 +111,11 @@ function List({ listData }) {
 								className={
 									'input rounded-sm input-sm w-full max-w-xs p-1 m-0 ' + (formErrors?.title ? 'input-error' : 'input-secondary')
 								}
-								type='text'
+								type="text"
 								defaultValue={listData.title}
-								placeholder={formErrors?.title && formErrors?.title?.message}
+								placeholder={
+									formErrors?.title && typeof formErrors?.title?.message === 'string' ? formErrors?.title?.message : undefined
+								}
 							/>
 						</form>
 					) : (
@@ -121,7 +125,7 @@ function List({ listData }) {
 			</div>
 
 			<div className={' ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')} ref={dropdownRef}>
-				<button className='btn btn-ghost btn-round btn-sm m-1' onClick={() => setDropdownOpen(!dropdownOpen)} type='button'>
+				<button className="btn btn-ghost btn-round btn-sm m-1" onClick={() => setDropdownOpen(!dropdownOpen)} type="button">
 					<GoKebabHorizontal />
 				</button>
 				<ul
@@ -144,7 +148,7 @@ function List({ listData }) {
 							setDropdownOpen(false)
 						}}
 					>
-						<p className='text-error'>delete!</p>
+						<p className="text-error">delete!</p>
 					</li>
 				</ul>
 			</div>
