@@ -25,7 +25,7 @@ export interface CreateList {
 
 export const listsSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getLists: builder.query<List[], any>({
+		getLists: builder.query({
 			query: () => '/lists',
 			transformResponse: (responseData: ListResponse<List>) => responseData.data,
 			providesTags: (result = []) => result.map((list) => ({ type: 'Lists', id: list.id })),

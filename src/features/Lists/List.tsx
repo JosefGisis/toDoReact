@@ -3,19 +3,19 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 
 import { setActiveList, selectActiveList, removeActiveList } from '../../app/activeListSlice'
-import type { List, UpdateList } from '../../api/listsSlice.js'
+import type { List as ListType, UpdateList } from '../../api/listsSlice.js'
 import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
 import ListIcon from '../../components/ListIcon'
 import { GoKebabHorizontal } from 'react-icons/go'
 
-function List({ listData }: { listData: List}) {
+function List({ listData }: { listData: ListType}) {
 	const [dropdownOpen, setDropdownOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
 	const dropdownRef = useRef(null)
 
-	const activeList: List | null = useSelector(selectActiveList)
+	const activeList = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
 	const [deleteList] = useDeleteListMutation()
@@ -31,7 +31,7 @@ function List({ listData }: { listData: List}) {
 
 	// onSelect cannot be handled by handleUpdate because dispatch and other states need to be handled differently
 	const onSelect = useCallback(
-		async (list: List) => {
+		async (list: ListType) => {
 			if (list.id === activeList?.id) return
 			setIsEditing(false)
 			reset()
@@ -55,7 +55,7 @@ function List({ listData }: { listData: List}) {
 		}
 	}, [])
 
-	const handleUpdate = useCallback(async (list: List, update: UpdateList) => {
+	const handleUpdate = useCallback(async (list: ListType, update: UpdateList) => {
 		setIsEditing(false)
 		reset()
 		// Do not update list if nothing changes because it causes lists to re-sort.
@@ -71,6 +71,7 @@ function List({ listData }: { listData: List}) {
 		if (listData.id === activeList?.id) dispatch(setActiveList(listData))
 	}, [listData])
 
+	// not currently working need to correct
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setDropdownOpen(false)

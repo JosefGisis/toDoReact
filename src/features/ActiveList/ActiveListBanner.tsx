@@ -13,7 +13,7 @@ import { GoKebabHorizontal } from 'react-icons/go'
 function ActiveListBanner() {
 	const [isEditing, setIsEditing] = useState(false)
 
-	const activeList: List | null = useSelector(selectActiveList)
+	const activeList = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
 	const [deleteToDosByList] = useDeleteToDosByListMutation()

@@ -1,9 +1,12 @@
 import { useGetListsQuery } from '../../api/listsSlice'
 
+import type { List as ListType } from '../../api/listsSlice'
+
 import List from './List'
 import NoListMessage from './NoListsMessage'
 
-export default function ToDoListsList({ orderedLists }) {
+export default function ToDoListsList({ orderedLists }: { orderedLists: ListType[]}) {
+	// Not sure how to remove ts error yet. Why does it require args?
 	const { isFetching, isSuccess } = useGetListsQuery()
 
 	let content
