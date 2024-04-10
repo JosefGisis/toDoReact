@@ -1,14 +1,25 @@
 import { useState, useCallback, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
 import { useGetListsQuery } from '../../api/listsSlice'
 
-export default function ListOrderControls({ setOrderedLists }) {
-	const [sort, setSort] = useState({ by: 'creationDate', order: 'DESC' })
-	const navigate = useNavigate()
-	
-	const { data: lists, error } = useGetListsQuery()
+import type { List as ListType } from '../../api/listsSlice'
+
+export type ListSortByType = 'title' | 'creationDate' | 'lastModified'
+
+export type ListSortOrderType = 'ASC' | 'DESC'
+
+export type ListSortType = {
+	by: ListSortByType
+	order: ListSortOrderType
+}
+
+export default function ListOrderControls({ setOrderedLists }: { setOrderedLists: React.Dispatch<React.SetStateAction<ListType[] | []>> }) {
+	const [sort, setSort] = useState({ by: 'creationDate', order: 'DESC' } as ListSortType)
+	// const navigate = useNavigate()
+
+	const { data: listsList, error } = useGetListsQuery()
 
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
@@ -16,7 +27,7 @@ export default function ListOrderControls({ setOrderedLists }) {
 		{ value: 'lastModified', label: 'Updated' },
 	]
 
-	const sortLists = useCallback((lists, criterion, order) => {
+	const sortLists = useCallback((lists: ListType[], criterion: ListSortByType, order: ListSortOrderType) => {
 		// If lists are not of type array (e.g. null, object, undefined, etc.), orderedLists defaults to an empty list
 		if (!Array.isArray(lists)) {
 			setOrderedLists([])
@@ -34,9 +45,13 @@ export default function ListOrderControls({ setOrderedLists }) {
 		setOrderedLists([...sortedLists])
 	}, [])
 	useEffect(() => {
-			if (error?.originalStatus === 401) navigate('/login')
-			sortLists(lists, sort.by, sort.order)
-	}, [lists, error, sortLists, sort])
+		// if (error?.originalStatus === 401) {
+		// 	navigate('/login')
+		// 	return
+		// }
+		if (listsList) sortLists(listsList, sort.by, sort.order)
+		else setOrderedLists([])
+	}, [listsList, error, sortLists, sort])
 
 	function toggleSortOrder() {
 		setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))
@@ -47,7 +62,7 @@ export default function ListOrderControls({ setOrderedLists }) {
 			{/* select for order.by */}
 			<select
 				value={sort.by}
-				onChange={(e) => setSort({ ...sort, by: e.target.value })}
+				onChange={(e) => setSort({ ...sort, by: e.target.value as ListSortByType })}
 				className="select select-secondary text-secondary w-40 mr-3"
 			>
 				{sortOptions.map(({ value, label }, index) => (

@@ -3,13 +3,24 @@ import { useSelector } from 'react-redux'
 import { selectActiveList } from '../../app/activeListSlice'
 import { useGetToDosQuery } from '../../api/toDosSlice'
 
+import { ToDo as ToDoType } from '../../api/toDosSlice'
+
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
-function ToDoOrderControls({ setOrderedToDos }) {
-	const [sort, setSort] = useState({ by: 'title', order: 'ASC' })
+export type ToDoSortByType = 'title' | 'creationDate' | 'lastModified'
+
+export type ToDoSortOrderType = 'ASC' | 'DESC'
+
+export type ToDoSortType = {
+	by: ToDoSortByType
+	order: ToDoSortOrderType
+}
+
+function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: React.Dispatch<React.SetStateAction<ToDoType[] | []>> }) {
+	const [sort, setSort] = useState({ by: 'title', order: 'ASC' } as ToDoSortType)
 	const activeList = useSelector(selectActiveList)
 
-	const { data } = useGetToDosQuery()
+	const { data: toDosList } = useGetToDosQuery()
 
 	// sort options are to-do parameters for sorting
 	const sortOptions = [
@@ -19,7 +30,7 @@ function ToDoOrderControls({ setOrderedToDos }) {
 		{ value: 'lastModified', label: 'Updated' },
 	]
 
-	const sortToDos = useCallback((toDos, criterion = 'title', order = 'ASC') => {
+	const sortToDos = useCallback((toDos: ToDoType[], criterion: ToDoSortByType = 'title', order: ToDoSortOrderType = 'ASC') => {
 		// If to-dos are not of type array (e.g. null, object, undefined, etc.), orderedToDos defaults to an empty list
 		if (!Array.isArray(toDos)) {
 			setOrderedToDos([])
@@ -38,12 +49,13 @@ function ToDoOrderControls({ setOrderedToDos }) {
 	}, [])
 	useEffect(() => {
 		let toDos
-		if (data) {
-			if (activeList) toDos = data.filter(toDo => toDo.membership === activeList.id)
-			else toDos = data.filter(toDo => toDo.membership === null )
+		if (toDosList) {
+			if (activeList) toDos = toDosList.filter(toDo => toDo.membership === activeList.id)
+			else toDos = toDosList.filter(toDo => toDo.membership === null )
 		}
-		sortToDos(toDos, sort.by, sort.order)
-	}, [activeList, data, sort])
+		 if (toDos) sortToDos(toDos, sort.by, sort.order)
+		 else setOrderedToDos([])
+	}, [activeList, toDosList, sort])
 
 	function toggleSortOrder() {
 		setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))
@@ -56,7 +68,7 @@ function ToDoOrderControls({ setOrderedToDos }) {
 				{/* select for order.by */}
 				<select
 					value={sort.by}
-					onChange={(e) => setSort((prevSort) => ({ ...prevSort, by: e.target.value }))}
+					onChange={(e) => setSort((prevSort) => ({ ...prevSort, by: e.target.value as ToDoSortByType}))}
 					className="select select-secondary text-secondary w-40 mr-3"
 				>
 					{sortOptions.map(({ value, label }, index) => (
