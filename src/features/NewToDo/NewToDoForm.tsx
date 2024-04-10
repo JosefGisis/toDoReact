@@ -1,9 +1,11 @@
 import { useSelector } from 'react-redux'
-import { CreateToDo, useCreateToDoMutation } from '../../api/toDosSlice'
+import { useCreateToDoMutation } from '../../api/toDosSlice'
 import { selectActiveList } from '../../app/activeListSlice'
 
 import { useForm } from 'react-hook-form'
 import { GoPlus } from 'react-icons/go'
+
+import type { CreateToDo } from '../../api/toDosSlice'
 
 function NewToDoForm() {
 	const activeList = useSelector(selectActiveList)
@@ -27,11 +29,7 @@ function NewToDoForm() {
 
 	return (
 		<form onSubmit={handleSubmit((values) => onSubmit({ membership: activeList?.id, title: values.title, dueDate: values.date }))}>
-			{errors?.title && (
-				<p className="text-error mb-1 text-sm">
-					{errors?.title?.message && typeof errors?.title?.message === 'string' ? errors.title.message : null}
-				</p>
-			)}
+			{errors?.title && <p className="text-error mb-1 text-sm">{errors?.title?.message as string}</p>}
 			<div className="flex items-center sm:flex-row">
 				<div className="mr-2">
 					<input
@@ -60,7 +58,7 @@ function NewToDoForm() {
 						type="date"
 					></input>
 					{/* commented out because this warning message affects styling */}
-					{/* {errors?.date && <p className="text-error text-sm absolute">{errors?.date?.message && typeof errors?.date?.message === 'string' ? errors.date.message : null}</p>} */}
+					{/* {errors?.date && <p className="text-error text-sm absolute">{errors?.date?.message as string}</p>} */}
 				</div>
 
 				<button className={'btn ' + (isValid ? 'btn-info' : 'bg-neutral')} type="submit">
