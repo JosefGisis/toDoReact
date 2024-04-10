@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../../hooks/useAuth'
-import { RegisterPayload, useRegisterMutation } from '../../api/userSlice'
+import { useRegisterMutation } from '../../api/userSlice'
 
 import Spinner from '../../components/Spinner'
 import EmailIcon from '../../components/EmailIcon'
 import ProfileIcon from '../../components/ProfileIcon'
 import PasswordIcon from '../../components/PasswordIcon'
 
+import type { RegisterPayload } from '../../api/userSlice'
+
 function SignUpForm() {
 	const [_errors, setErrors] = useState<null | string>(null)
-	const [isLoggingIn, setIsLogginIn] = useState(false)
+	const [isLoggingIn, setIsLoggingIn] = useState(false)
 	const [register] = useRegisterMutation()
 	const { login } = useAuth()
 
@@ -22,16 +24,20 @@ function SignUpForm() {
 
 	async function onSubmit(values: RegisterPayload) {
 		try {
+			setIsLoggingIn(true)
 			const token = await register(values).unwrap()
 			login(token)
 		} catch (error) {
-			setErrors(error?.message)
+			console.log(error)
+			console.log(setErrors)
+		} finally {
+			setIsLoggingIn(false)
 		}
 	}
 
 	return (
 		<div className="flex items-center m-auto bg-neutral w-[30rem] px-[6.5rem] py-6 rounded-xl">
-			<form onSubmit={handleSubmit((values) => onSubmit({ username: values.username, email: values.email, password: values.password }))}>
+			<form onSubmit={handleSubmit((values) => onSubmit(values as RegisterPayload))}>
 				<fieldset disabled={isLoggingIn}>
 					<h3 className="text-2xl mb-5 text-center">Sign-up</h3>
 					<p className="mb-5 text-center">
@@ -63,7 +69,7 @@ function SignUpForm() {
 						</label>
 						{errors?.username && (
 							<p className="text-error text-sm absolute">
-								{errors.username?.message && typeof errors.username?.message === 'string' ? errors.username.message : null}
+								{errors.username?.message as string}
 							</p>
 						)}
 					</div>
@@ -86,7 +92,7 @@ function SignUpForm() {
 						</label>
 						{errors?.email && (
 							<p className="text-error text-sm absolute">
-								{errors?.email?.message && typeof errors?.email?.message === 'string' ? errors.email.message : null}
+								{errors?.email?.message as string}
 							</p>
 						)}
 					</div>
@@ -118,7 +124,7 @@ function SignUpForm() {
 						</label>
 						{errors?.password && (
 							<p className="text-error text-sm absolute">
-								{errors?.password?.message && typeof errors?.password?.message === 'string' ? errors.password.message : null}
+								{errors?.password?.message as string}
 							</p>
 						)}
 					</div>
