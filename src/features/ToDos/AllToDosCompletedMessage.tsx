@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
 import { useDeleteListMutation } from '../../api/listsSlice'
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice'
+
 import type { ToDo as ToDoType } from '../../api/toDosSlice'
 
 export default function AllToDosCompletedMessage({ orderedToDos }: { orderedToDos: ToDoType[] }) {

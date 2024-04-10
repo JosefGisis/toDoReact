@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { UpdateToDo, useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/toDosSlice'
-import type { ToDo as ToDoType } from '../../api/toDosSlice'
+import { useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/toDosSlice'
 
 import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
+
+import type { ToDo as ToDoType, UpdateToDo } from '../../api/toDosSlice'
 
 function ToDo({ toDoData }: { toDoData: ToDoType }) {
 	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
@@ -77,7 +78,7 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 								type="text"
 								defaultValue={toDoData?.title}
 								className={'input input-outline ' + (errors?.title ? 'input-error' : 'input-secondary')}
-								placeholder={errors?.title?.message && typeof errors?.title?.message === 'string' ? errors.title.message : undefined}
+								placeholder={errors?.title?.message as string}
 							/>
 						</form>
 					) : (
@@ -106,7 +107,7 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 								},
 							})}
 							type="date"
-							defaultValue={toDoData.dueDate ? toDoData.dueDate : undefined}
+							defaultValue={toDoData.dueDate as string}
 							className={'input input-outline mr-6 ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
 						/>
 					</form>

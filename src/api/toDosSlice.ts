@@ -19,7 +19,7 @@ export interface UpdateToDoPayload {
 
 export interface UpdateToDo {
 	title?: string
-	dueDate?: string
+	dueDate?: string | null
 	completed?: boolean
 	membership?: number
 }
