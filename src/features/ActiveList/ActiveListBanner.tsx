@@ -3,12 +3,12 @@ import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
-
 import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
-import type { List, UpdateList } from '../../api/listsSlice.js'
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
 import { GoKebabHorizontal } from 'react-icons/go'
+
+import type { List, UpdateList } from '../../api/listsSlice.js'
 
 function ActiveListBanner() {
 	const [isEditing, setIsEditing] = useState(false)

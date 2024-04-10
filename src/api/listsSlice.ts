@@ -25,23 +25,22 @@ export interface CreateList {
 
 export const listsSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getLists: builder.query({
+		getLists: builder.query<List[], void>({
 			query: () => '/lists',
-			transformResponse: (responseData: ListResponse<List>) => responseData.data,
 			providesTags: (result = []) => result.map((list) => ({ type: 'Lists', id: list.id })),
+			transformResponse: (responseData: ListResponse<List>) => responseData.data,
 		}),
-
-		getList: builder.query({
-			query: (listId: number) => ({
+		
+		getList: builder.query<List, number>({
+			query: (listId) => ({
 				url: `/lists/${listId}`,
 			}),
 			transformResponse: (responseData: SingleResponse<List>) => responseData.data,
 			providesTags: (result) => [{ type: 'Lists', id: result?.id }],
 		}),
 
-		createList: builder.mutation({
-			// what is list?
-			query: (list: CreateList) => ({
+		createList: builder.mutation<List, CreateList>({
+			query: (list) => ({
 				url: '/lists',
 				method: 'POST',
 				body: list,
@@ -52,9 +51,8 @@ export const listsSlice = apiSlice.injectEndpoints({
 			// invalidatesTags: (result) => [{ type: 'Lists', id: result.id }],
 		}),
 
-		updateList: builder.mutation({
-			// what is payload?
-			query: (payload: UpdateListPayload) => ({
+		updateList: builder.mutation<List, UpdateListPayload>({
+			query: (payload) => ({
 				// payload contains listId and update values
 				url: `/lists/${payload.listId}`,
 				method: 'PUT',
@@ -64,8 +62,8 @@ export const listsSlice = apiSlice.injectEndpoints({
 			invalidatesTags: (result) => [{ type: 'Lists', id: result?.id }],
 		}),
 
-		deleteList: builder.mutation({
-			query: (listId: number) => ({
+		deleteList: builder.mutation<unknown, number>({
+			query: (listId) => ({
 				url: `/lists/${listId}`,
 				method: 'DELETE',
 			}),

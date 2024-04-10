@@ -3,17 +3,18 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 
 import { setActiveList, selectActiveList, removeActiveList } from '../../app/activeListSlice'
-import type { List as ListType, UpdateList } from '../../api/listsSlice.js'
 import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
 import ListIcon from '../../components/ListIcon'
 import { GoKebabHorizontal } from 'react-icons/go'
 
-function List({ listData }: { listData: ListType}) {
+import type { List as ListType, UpdateList } from '../../api/listsSlice.js'
+
+function List({ listData }: { listData: ListType }) {
 	const [dropdownOpen, setDropdownOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
-	const dropdownRef = useRef(null)
+	const dropdownRef = useRef<HTMLDivElement | null>(null)
 
 	const activeList = useSelector(selectActiveList)
 	const dispatch = useDispatch()
@@ -74,7 +75,7 @@ function List({ listData }: { listData: ListType}) {
 	// not currently working need to correct
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setDropdownOpen(false)
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setDropdownOpen(false)
 		}
 		document.addEventListener('mousedown', handleClickOutside)
 		return () => document.removeEventListener('mousedown', handleClickOutside)

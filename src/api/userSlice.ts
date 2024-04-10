@@ -1,7 +1,7 @@
 import { apiSlice } from './apiSlice'
-import { SingleResponse } from './types'
+import type { SingleResponse, TokenResponse } from './types'
 
-export type User = {
+export interface User {
 	id: number
 	username: string
 	email: string
@@ -9,36 +9,38 @@ export type User = {
 	creationDate: string
 }
 
-export type LoginPayload = {
+export interface LoginPayload {
 	username: string
 	password: string
 }
 
-export type RegisterPayload = {
+export interface RegisterPayload {
 	username: string
 	email: string
 	password: string
 }
 
 export const userSlice = apiSlice.injectEndpoints({
-	endpoints: (builder) => ({
-		login: builder.mutation({
-			query: (payload: LoginPayload) => ({
+	endpoints: (builder) => ({ 
+		login: builder.mutation<string, LoginPayload>({
+			query: (payload) => ({
 				url: '/auth/login',
 				method: 'POST',
 				body: payload,
 			}),
+			transformResponse: (responseData: TokenResponse) => responseData.token
 		}),
 
-		register: builder.mutation({
-			query: (payload: RegisterPayload) => ({
+		register: builder.mutation<string, RegisterPayload>({
+			query: (payload) => ({
 				url: '/auth/register',
 				method: 'POST',
 				body: payload,
 			}),
+			transformResponse: (responseData: TokenResponse) => responseData.token
 		}),
 
-		getUser: builder.query({
+		getUser: builder.query<User, void>({
 			query: () => `/profile`,
 			transformResponse: (responseData: SingleResponse<User>) => responseData.data,
 			providesTags: ['User'],

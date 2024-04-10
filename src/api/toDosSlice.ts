@@ -30,9 +30,14 @@ export interface CreateToDo {
 	membership?: number
 }
 
+// interface for mutations that work with all of a lists to-dos
+export interface ToDoMembershipType {
+	membership: number
+}
+
 export const toDosSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getToDos: builder.query({
+		getToDos: builder.query<ToDo[], void>({
 			query: () => ({
 				url: '/to-dos',
 			}),
@@ -40,15 +45,15 @@ export const toDosSlice = apiSlice.injectEndpoints({
 			providesTags: (result = []) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
 		}),
 
-		getToDo: builder.query({
-			query: (toDoId: number) => ({
+		getToDo: builder.query<ToDo, number>({
+			query: (toDoId) => ({
 				url: `/to-dos/${toDoId}`,
 			}),
 			transformResponse: (responseData: SingleResponse<ToDo>) => responseData.data,
 			providesTags: (result) => [{ type: 'ToDos', id: result?.id }],
 		}),
 
-		getToDosByList: builder.query({
+		getToDosByList: builder.query<ToDo[], ToDoMembershipType>({
 			query: (payload) => ({
 				url: '/to-dos/by-list',
 				body: payload,
@@ -57,7 +62,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 			providesTags: (result = []) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
 		}),
 
-		deleteToDosByList: builder.mutation({
+		deleteToDosByList: builder.mutation<unknown, ToDoMembershipType>({
 			query: (payload) => ({
 				url: '/to-dos/by-list',
 				method: 'DELETE',
@@ -66,8 +71,8 @@ export const toDosSlice = apiSlice.injectEndpoints({
 			invalidatesTags: ['ToDos'],
 		}),
 
-		createToDo: builder.mutation({
-			query: (toDo: CreateToDo) => ({
+		createToDo: builder.mutation<ToDo, CreateToDo>({
+			query: (toDo) => ({
 				url: `/to-dos`,
 				method: 'POST',
 				body: toDo,
@@ -78,17 +83,16 @@ export const toDosSlice = apiSlice.injectEndpoints({
 			invalidatesTags: ['ToDos'],
 		}),
 
-		deleteToDo: builder.mutation({
-			query: (toDoId: number) => ({
+		deleteToDo: builder.mutation<unknown, number>({
+			query: (toDoId) => ({
 				url: `/to-dos/${toDoId}`,
 				method: 'DELETE',
 			}),
 			invalidatesTags: (result, error, args) => [{ type: 'ToDos', id: args }],
 		}),
 
-		updateToDo: builder.mutation({
-			// what is payload?
-			query: (payload: UpdateToDoPayload) => ({
+		updateToDo: builder.mutation<ToDo, UpdateToDoPayload>({
+			query: (payload) => ({
 				url: `/to-dos/${payload.toDoId}`,
 				method: 'PUT',
 				body: payload.update,

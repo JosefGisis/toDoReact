@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { List } from '../api/listsSlice'
 import { RootState } from './store'
+
+import type { List } from '../api/listsSlice'
 
 export type ActiveListState = {
 	data: null | List
