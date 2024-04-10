@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/toDosSlice'
+import { UpdateToDo, useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/toDosSlice'
+import type { ToDo as ToDoType } from '../../api/toDosSlice'
 
 import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
 
-function ToDo({ toDoData }) {
+function ToDo({ toDoData }: { toDoData: ToDoType }) {
 	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
 
 	const [deleteToDo] = useDeleteToDoMutation()
@@ -18,7 +19,7 @@ function ToDo({ toDoData }) {
 	} = useForm()
 
 	// onDelete takes toDo object instead of id to determine if toDo has membership
-	const onDelete = useCallback(async (toDo) => {
+	const onDelete = useCallback(async (toDo: ToDoType) => {
 		try {
 			await deleteToDo(toDo.id).unwrap()
 		} catch (error) {
@@ -26,7 +27,7 @@ function ToDo({ toDoData }) {
 		}
 	}, [])
 
-	const handleUpdate = useCallback(async (toDoId, update) => {
+	const handleUpdate = useCallback(async (toDoId: number, update: UpdateToDo) => {
 		setIsEditing({ ...isEditing, title: false, dueDate: false })
 		reset()
 		try {
@@ -43,17 +44,17 @@ function ToDo({ toDoData }) {
 				(toDoData?.completed ? 'bg-base-200' : 'bg-neutral')
 			}
 		>
-			<div className='flex items-center'>
+			<div className="flex items-center">
 				{/* to-do check to complete and un-complete */}
 				<input
-					type='checkbox'
+					type="checkbox"
 					checked={toDoData?.completed}
 					onChange={() => handleUpdate(toDoData.id, { completed: !toDoData.completed })}
-					className='checkbox checkbox-primary mr-3'
+					className="checkbox checkbox-primary mr-3"
 				/>
 
 				{/* to-do title and title editing form */}
-				<div className='mr-2'>
+				<div className="mr-2">
 					{isEditing?.title ? (
 						<form
 							onBlur={() => {
@@ -73,10 +74,10 @@ function ToDo({ toDoData }) {
 										message: 'maximum one-hundred characters',
 									},
 								})}
-								type='text'
+								type="text"
 								defaultValue={toDoData?.title}
 								className={'input input-outline ' + (errors?.title ? 'input-error' : 'input-secondary')}
-								placeholder={errors?.title && errors?.title?.message}
+								placeholder={errors?.title?.message && typeof errors?.title?.message === 'string' ? errors.title.message : undefined}
 							/>
 						</form>
 					) : (
@@ -91,7 +92,7 @@ function ToDo({ toDoData }) {
 			</div>
 
 			{/* to-do due-date and editing form */}
-			<div className='flex items-center'>
+			<div className="flex items-center">
 				{isEditing?.dueDate ? (
 					<form
 						onBlur={handleSubmit((values) => handleUpdate(toDoData.id, { dueDate: values.date }))}
@@ -104,23 +105,26 @@ function ToDo({ toDoData }) {
 									message: 'date format mm/dd/yyyy required',
 								},
 							})}
-							type='date'
-							defaultValue={toDoData.dueDate}
+							type="date"
+							defaultValue={toDoData.dueDate ? toDoData.dueDate : undefined}
 							className={'input input-outline mr-6 ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
 						/>
 					</form>
 				) : toDoData?.dueDate ? (
-					<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className='flex items-center mr-6'>
+					<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className="flex items-center mr-6">
 						<DueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
 					</div>
 				) : null}
 
 				{/* dropdown button for to-do */}
-				<div className='dropdown dropdown-bottom dropdown-end'>
-					<div tabIndex={0} role='button' className='btn btn-primary btn-outline btn-round mr-2'>
-						<GoKebabHorizontal className='w-4 h-4' />
+				<div className="dropdown dropdown-bottom dropdown-end">
+					<div tabIndex={0} role="button" className="btn btn-primary btn-outline btn-round mr-2">
+						<GoKebabHorizontal className="w-4 h-4" />
 					</div>
-					<ul tabIndex={0} className='dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg w-52'>
+					<ul
+						tabIndex={0}
+						className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg w-52"
+					>
 						<li onClick={() => setIsEditing({ title: true, dueDate: true })}>
 							<p>edit</p>
 						</li>
@@ -135,16 +139,16 @@ function ToDo({ toDoData }) {
 
 				{/* delete to-do button */}
 				<div>
-				<button className='btn btn-outline btn-primary' onClick={console.log} onDoubleClick={() => onDelete(toDoData)}>
-					<GoTrash className='w-5 h-5' />
-				</button>
+					<button className="btn btn-outline btn-primary" onClick={console.log} onDoubleClick={() => onDelete(toDoData)}>
+						<GoTrash className="w-5 h-5" />
+					</button>
 				</div>
 			</div>
 		</div>
 	)
 }
 
-function DueDate({ dueDate, completed }) {
+function DueDate({ dueDate, completed }: { dueDate: string; completed: boolean }) {
 	// need to remove UTC and get local date
 	const localDate = dueDate?.split('Z')[0]
 
@@ -160,7 +164,7 @@ function DueDate({ dueDate, completed }) {
 
 	return (
 		<>
-			<GoCalendar className='mr-2 flex-none' />
+			<GoCalendar className="mr-2 flex-none" />
 			<p className={textColor}>{formattedDate}</p>
 		</>
 	)

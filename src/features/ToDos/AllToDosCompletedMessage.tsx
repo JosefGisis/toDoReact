@@ -3,15 +3,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
 import { useDeleteListMutation } from '../../api/listsSlice'
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice'
+import type { ToDo as ToDoType } from '../../api/toDosSlice'
 
-export default function AllToDosCompletedMessage({ orderedToDos }) {
+export default function AllToDosCompletedMessage({ orderedToDos }: { orderedToDos: ToDoType[] }) {
 	const activeList = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
 	const [deleteList] = useDeleteListMutation()
 	const [deleteToDosByList] = useDeleteToDosByListMutation()
-	
-	const onDelete = useCallback(async (activeListId) => {
+
+	const onDelete = useCallback(async (activeListId: number) => {
 		try {
 			await deleteToDosByList({ membership: activeListId }).unwrap()
 			await deleteList(activeListId).unwrap()

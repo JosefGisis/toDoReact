@@ -18,8 +18,3 @@ export default {
 		themeRoot: ':root',
 	},
 }
-
-export const daisyThemes = {
-	dark: 'dracula',
-	light: 'nord',
-}

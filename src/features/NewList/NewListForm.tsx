@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { setActiveList } from '../../app/activeListSlice'
-import { useCreateListMutation } from '../../api/listsSlice'
+import { CreateList, useCreateListMutation } from '../../api/listsSlice'
 
 import { useForm } from 'react-hook-form'
 import { GoPlus } from 'react-icons/go'
@@ -16,7 +16,7 @@ function NewListForm() {
 		formState: { errors, isValid },
 	} = useForm()
 
-	const onSubmit = async (newListData) => {
+	const onSubmit = async (newListData: CreateList) => {
 		reset()
 		try {
 			const newList = await createList(newListData).unwrap()
@@ -27,8 +27,12 @@ function NewListForm() {
 	}
 
 	return (
-		<form onSubmit={handleSubmit((values) => onSubmit(values))}>
-			{errors?.title && <p className="text-error text-sm mb-1">{errors?.title?.message}</p>}
+		<form onSubmit={handleSubmit((values) => onSubmit({ title: values.title }))}>
+			{errors?.title && (
+				<p className="text-error text-sm mb-1">
+					{errors?.title?.message && typeof errors.title.message === 'string' ? errors.title.message : null}
+				</p>
+			)}
 			<div className="flex items-center align-items">
 				<input
 					{...register('title', {
@@ -36,7 +40,7 @@ function NewListForm() {
 						maxLength: {
 							value: 35,
 							message: 'maximum thirty-five characters',
-						}
+						},
 					})}
 					className="input input-bordered input-secondary w-full max-w-xs mr-2"
 					type="text"

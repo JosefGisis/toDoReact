@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../../hooks/useAuth'
 import { useLoginMutation } from '../../api/userSlice.js'
+import type { LoginPayload } from '../../api/userSlice.js'
 
 import Spinner from '../../components/Spinner'
 import ProfileIcon from '../../components/ProfileIcon'
 import PasswordIcon from '../../components/PasswordIcon'
 
 function LoginForm() {
-	const [_errors, setErrors] = useState(null)
+	const [_errors, setErrors] = useState<null | string>(null)
 	const [isLoggingIn, setIsLoggingIn] = useState(false)
 
 	const { login: authLogin } = useAuth()
@@ -25,14 +26,15 @@ function LoginForm() {
 		formState: { errors, isValid },
 	} = useForm()
 
-	async function onSubmit(data) {
+	async function onSubmit(data: LoginPayload) {
 		try {
 			setIsLoggingIn(true)
 			const { token } = await login(data).unwrap()
 			authLogin(token)
 		} catch (error) {
 			resetField('password')
-			setErrors({ message: error.message })
+			// I do not know the error format currently
+			setErrors(error?.message)
 		} finally {
 			setIsLoggingIn(false)
 		}
@@ -55,7 +57,7 @@ function LoginForm() {
 								placeholder="username"
 							/>
 						</label>
-						{errors?.username && <p className="text-error text-sm absolute">{errors.username.message}</p>}
+						{errors?.username && <p className="text-error text-sm absolute">{errors?.username?.message}</p>}
 					</div>
 
 					{isLoggingIn && <Spinner />}
@@ -76,12 +78,16 @@ function LoginForm() {
 					<div className="mb-6">
 						<button
 							id="new-list-submit"
-							className={'btn w-[100%] py-2 mb-3 rounded-none transition ' + (isValid && !isLoggingIn ? 'btn-secondary hover:underline' : '')}
+							className={
+								'btn w-[100%] py-2 mb-3 rounded-none transition ' + (isValid && !isLoggingIn ? 'btn-secondary hover:underline' : '')
+							}
 							type="submit"
 						>
 							login
 						</button>
-						{_errors && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors.message}</div>}
+						{_errors && (
+							<div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors.message}</div>
+						)}
 					</div>
 
 					<hr className="border-secondary"></hr>

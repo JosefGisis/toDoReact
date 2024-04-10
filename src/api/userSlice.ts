@@ -9,10 +9,21 @@ export type User = {
 	creationDate: string
 }
 
+export type LoginPayload = {
+	username: string
+	password: string
+}
+
+export type RegisterPayload = {
+	username: string
+	email: string
+	password: string
+}
+
 export const userSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		login: builder.mutation({
-			query: (payload) => ({
+			query: (payload: LoginPayload) => ({
 				url: '/auth/login',
 				method: 'POST',
 				body: payload,
@@ -20,7 +31,7 @@ export const userSlice = apiSlice.injectEndpoints({
 		}),
 
 		register: builder.mutation({
-			query: (payload) => ({
+			query: (payload: RegisterPayload) => ({
 				url: '/auth/register',
 				method: 'POST',
 				body: payload,
@@ -29,7 +40,7 @@ export const userSlice = apiSlice.injectEndpoints({
 
 		getUser: builder.query({
 			query: () => `/profile`,
-            transformResponse: (responseData: SingleResponse<User>) => responseData.data,
+			transformResponse: (responseData: SingleResponse<User>) => responseData.data,
 			providesTags: ['User'],
 		}),
 	}),

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../../hooks/useAuth'
-import { useRegisterMutation } from '../../api/userSlice'
+import { RegisterPayload, useRegisterMutation } from '../../api/userSlice'
 
 import Spinner from '../../components/Spinner'
 import EmailIcon from '../../components/EmailIcon'
@@ -9,7 +9,7 @@ import ProfileIcon from '../../components/ProfileIcon'
 import PasswordIcon from '../../components/PasswordIcon'
 
 function SignUpForm() {
-	const [_errors, setErrors] = useState(null)
+	const [_errors, setErrors] = useState<null | string>(null)
 	const [isLoggingIn, setIsLogginIn] = useState(false)
 	const [register] = useRegisterMutation()
 	const { login } = useAuth()
@@ -20,18 +20,18 @@ function SignUpForm() {
 		formState: { errors, isValid },
 	} = useForm()
 
-	async function onSubmit(values) {
+	async function onSubmit(values: RegisterPayload) {
 		try {
 			const token = await register(values).unwrap()
 			login(token)
 		} catch (error) {
-			setErrors({ message: error.message })
+			setErrors(error?.message)
 		}
 	}
 
 	return (
 		<div className="flex items-center m-auto bg-neutral w-[30rem] px-[6.5rem] py-6 rounded-xl">
-			<form onSubmit={handleSubmit(onSubmit)}>
+			<form onSubmit={handleSubmit((values) => onSubmit({ username: values.username, email: values.email, password: values.password }))}>
 				<fieldset disabled={isLoggingIn}>
 					<h3 className="text-2xl mb-5 text-center">Sign-up</h3>
 					<p className="mb-5 text-center">
@@ -61,7 +61,11 @@ function SignUpForm() {
 								placeholder="Username"
 							/>
 						</label>
-						{errors?.username && <p className="text-error text-sm absolute">{errors.username?.message}</p>}
+						{errors?.username && (
+							<p className="text-error text-sm absolute">
+								{errors.username?.message && typeof errors.username?.message === 'string' ? errors.username.message : null}
+							</p>
+						)}
 					</div>
 
 					<div className="mb-8">
@@ -80,7 +84,11 @@ function SignUpForm() {
 								placeholder="Email"
 							/>
 						</label>
-						{errors?.email && <p className="text-error text-sm absolute">{errors.email.message}</p>}
+						{errors?.email && (
+							<p className="text-error text-sm absolute">
+								{errors?.email?.message && typeof errors?.email?.message === 'string' ? errors.email.message : null}
+							</p>
+						)}
 					</div>
 
 					<div className="mb-8">
@@ -108,7 +116,11 @@ function SignUpForm() {
 								placeholder="Password"
 							/>
 						</label>
-						{errors?.password && <p className="text-error text-sm absolute">{errors.password.message}</p>}
+						{errors?.password && (
+							<p className="text-error text-sm absolute">
+								{errors?.password?.message && typeof errors?.password?.message === 'string' ? errors.password.message : null}
+							</p>
+						)}
 					</div>
 
 					{isLoggingIn && <Spinner />}
@@ -128,9 +140,7 @@ function SignUpForm() {
 						>
 							create account
 						</button>
-						{_errors?.message && (
-							<div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors.message}</div>
-						)}
+						{_errors && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors}</div>}
 					</div>
 				</fieldset>
 			</form>

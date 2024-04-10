@@ -12,6 +12,24 @@ export type ToDo = {
 	membership: number | null
 }
 
+export interface UpdateToDoPayload {
+	toDoId: number
+	update: UpdateToDo
+}
+
+export interface UpdateToDo {
+	title?: string
+	dueDate?: string
+	completed?: boolean
+	membership?: number
+}
+
+export interface CreateToDo {
+	title: string
+	dueDate?: string
+	membership?: number
+}
+
 export const toDosSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getToDos: builder.query({
@@ -31,7 +49,6 @@ export const toDosSlice = apiSlice.injectEndpoints({
 		}),
 
 		getToDosByList: builder.query({
-			// payload contains membership param with listId
 			query: (payload) => ({
 				url: '/to-dos/by-list',
 				body: payload,
@@ -41,7 +58,6 @@ export const toDosSlice = apiSlice.injectEndpoints({
 		}),
 
 		deleteToDosByList: builder.mutation({
-			// payload contains membership param with listId
 			query: (payload) => ({
 				url: '/to-dos/by-list',
 				method: 'DELETE',
@@ -51,7 +67,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 		}),
 
 		createToDo: builder.mutation({
-			query: (toDo) => ({
+			query: (toDo: CreateToDo) => ({
 				url: `/to-dos`,
 				method: 'POST',
 				body: toDo,
@@ -72,7 +88,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 
 		updateToDo: builder.mutation({
 			// what is payload?
-			query: (payload) => ({
+			query: (payload: UpdateToDoPayload) => ({
 				url: `/to-dos/${payload.toDoId}`,
 				method: 'PUT',
 				body: payload.update,

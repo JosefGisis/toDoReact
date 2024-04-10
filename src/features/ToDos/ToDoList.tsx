@@ -4,8 +4,9 @@ import { GoChevronRight, GoChevronDown } from 'react-icons/go'
 import ToDo from './ToDo'
 import EmptyListMessage from './EmptyListMessage'
 import AllToDosCompletedMessage from './AllToDosCompletedMessage'
+import type { ToDo as ToDoType } from '../../api/toDosSlice'
 
-function ToDoList({ orderedToDos }) {
+function ToDoList({ orderedToDos }: {orderedToDos: ToDoType[]}) {
 	const [showCompleted, setShowCompleted] = useState(true)
 
 	return (
