@@ -1,8 +1,6 @@
-import Footer from '../components/Footer'
-
-export default function MainLayout({ children }) {
+export default function MainLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<div className='md'>
+		<div className="md">
 			<div className="navbar">
 				<div className="flex-1">
 					<a className="btn btn-ghost text-xl">UNTITLED TO-DO APP</a>
@@ -23,12 +21,10 @@ export default function MainLayout({ children }) {
 							></path>
 						</svg>
 					</button>
-
 				</div>
 			</div>
 			{/* <div className="bg-sky-950 text-slate-50 font-sans px-2.5 py-4 flex flex-col justify-between min-h-screen"> */}
 			<main>{children}</main>
-			<Footer />
 			{/* </div> */}
 		</div>
 	)
