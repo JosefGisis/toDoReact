@@ -29,12 +29,12 @@ function LoginForm() {
 	async function onSubmit(data: LoginPayload) {
 		try {
 			setIsLoggingIn(true)
-			const { token } = await login(data).unwrap()
+			const token = await login(data).unwrap()
 			authLogin(token)
 		} catch (error) {
 			resetField('password')
-			// I do not know the error format currently
-			setErrors(error?.message)
+			console.log(error)
+			console.log(setErrors)
 		} finally {
 			setIsLoggingIn(false)
 		}
@@ -42,7 +42,7 @@ function LoginForm() {
 
 	return (
 		<div className="flex flex-col items-center bg-neutral w-[25rem] px-[5rem] pt-6 pb-8 rounded-xl">
-			<form onSubmit={handleSubmit(onSubmit)}>
+			<form onSubmit={handleSubmit((values) => onSubmit(values as LoginPayload))}>
 				<fieldset disabled={isLoggingIn}>
 					<h3 className="text-2xl mb-5 text-center">Login</h3>
 					<p className="mb-5 text-center">Welcome back! Sign-in to see your to-dos.</p>
@@ -57,7 +57,7 @@ function LoginForm() {
 								placeholder="username"
 							/>
 						</label>
-						{errors?.username && <p className="text-error text-sm absolute">{errors?.username?.message}</p>}
+						{errors?.username && <p className="text-error text-sm absolute">{errors?.username?.message as string}</p>}
 					</div>
 
 					{isLoggingIn && <Spinner />}
@@ -72,7 +72,7 @@ function LoginForm() {
 								placeholder="password"
 							/>
 						</label>
-						{errors?.password && <p className="text-error text-sm absolute">{errors.password.message}</p>}
+						{errors?.password && <p className="text-error text-sm absolute">{errors.password.message as string}</p>}
 					</div>
 
 					<div className="mb-6">
@@ -86,7 +86,7 @@ function LoginForm() {
 							login
 						</button>
 						{_errors && (
-							<div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors.message}</div>
+							<div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors}</div>
 						)}
 					</div>
 
