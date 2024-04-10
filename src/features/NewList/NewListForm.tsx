@@ -1,9 +1,11 @@
 import { useDispatch } from 'react-redux'
 import { setActiveList } from '../../app/activeListSlice'
-import { CreateList, useCreateListMutation } from '../../api/listsSlice'
+import { useCreateListMutation } from '../../api/listsSlice'
 
 import { useForm } from 'react-hook-form'
 import { GoPlus } from 'react-icons/go'
+
+import type { CreateList } from '../../api/listsSlice'
 
 function NewListForm() {
 	const dispatch = useDispatch()
@@ -28,11 +30,7 @@ function NewListForm() {
 
 	return (
 		<form onSubmit={handleSubmit((values) => onSubmit({ title: values.title }))}>
-			{errors?.title && (
-				<p className="text-error text-sm mb-1">
-					{errors?.title?.message && typeof errors.title.message === 'string' ? errors.title.message : null}
-				</p>
-			)}
+			{errors?.title && <p className="text-error text-sm mb-1">{errors?.title?.message as string}</p>}
 			<div className="flex items-center align-items">
 				<input
 					{...register('title', {
