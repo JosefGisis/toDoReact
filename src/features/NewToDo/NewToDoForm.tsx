@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useCreateToDoMutation } from '../../api/toDosSlice'
 import { selectActiveList } from '../../app/activeListSlice'
+import { useAuth } from '../../hooks/useAuth'
 
 import { useForm } from 'react-hook-form'
 import { GoPlus } from 'react-icons/go'
@@ -8,8 +10,11 @@ import { GoPlus } from 'react-icons/go'
 import type { CreateToDo } from '../../api/toDosSlice'
 
 function NewToDoForm() {
+	const [_errors, setErrors] = useState<null | string>(null)
 	const activeList = useSelector(selectActiveList)
 	const [createToDo] = useCreateToDoMutation()
+
+	const { logout } = useAuth()
 
 	const {
 		register,
@@ -22,8 +27,10 @@ function NewToDoForm() {
 		try {
 			reset()
 			await createToDo(values).unwrap()
-		} catch (error) {
-			console.error(error)
+		} catch (error: any) {
+			if (error?.status === 401 || error?.originalStatus === 401) logout()
+			else if (error?.status === 400 && typeof error?.status === 'string') setErrors(error?.message)
+			else setErrors('Error creating list')
 		}
 	}
 

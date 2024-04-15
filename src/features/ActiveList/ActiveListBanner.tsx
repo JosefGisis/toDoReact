@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
+import { useAuth } from '../../hooks/useAuth'
 
 import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
 import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
@@ -16,6 +17,7 @@ function ActiveListBanner() {
 	const activeList = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
+	const { logout } = useAuth()
 	const [deleteToDosByList] = useDeleteToDosByListMutation()
 	const [deleteList] = useDeleteListMutation()
 	const [updateList] = useUpdateListMutation()
@@ -32,8 +34,8 @@ function ActiveListBanner() {
 			await deleteToDosByList({ membership: listId }).unwrap()
 			await deleteList(listId).unwrap()
 			dispatch(removeActiveList())
-		} catch (error) {
-			console.log(error)
+		} catch (error: any) {
+			if (error?.status === 401) logout()
 		}
 	}, [])
 
@@ -44,8 +46,8 @@ function ActiveListBanner() {
 		if (update.title === list.title) return
 		try {
 			await updateList({ listId: list.id, update })
-		} catch (error) {
-			console.log(error)
+		} catch (error: any) {
+			if (error?.status === 401) logout()
 		}
 	}, [])
 

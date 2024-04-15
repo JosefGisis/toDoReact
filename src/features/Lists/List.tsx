@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
+import { useAuth } from '../../hooks/useAuth'
 
 import { setActiveList, selectActiveList, removeActiveList } from '../../app/activeListSlice'
 import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
@@ -19,6 +20,7 @@ function List({ listData }: { listData: ListType }) {
 	const activeList = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
+	const { logout } = useAuth()
 	const [deleteList] = useDeleteListMutation()
 	const [deleteToDosByList] = useDeleteToDosByListMutation()
 	const [updateList] = useUpdateListMutation()
@@ -39,8 +41,8 @@ function List({ listData }: { listData: ListType }) {
 			try {
 				await updateList({ listId: list.id, update: { title: undefined } }).unwrap()
 				dispatch(setActiveList(list))
-			} catch (error) {
-				console.log(error)
+			} catch (error: any) {
+				if (error?.status === 401) logout()
 			}
 		},
 		[activeList]
@@ -48,11 +50,11 @@ function List({ listData }: { listData: ListType }) {
 
 	const onDelete = useCallback(async (listId: number) => {
 		try {
-			// await deleteToDosByList({ membership: listId }).unwrap()
+			await deleteToDosByList({ membership: listId }).unwrap()
 			await deleteList(listId).unwrap()
 			dispatch(removeActiveList())
-		} catch (error) {
-			console.log(error)
+		} catch (error: any) {
+			if (error?.status === 401) logout()
 		}
 	}, [])
 
@@ -63,8 +65,8 @@ function List({ listData }: { listData: ListType }) {
 		if (update.title === list.title) return
 		try {
 			await updateList({ listId: list.id, update }).unwrap()
-		} catch (error) {
-			console.log(error)
+		} catch (error: any) {
+			if (error?.status === 401) logout()
 		}
 	}, [])
 
@@ -115,7 +117,7 @@ function List({ listData }: { listData: ListType }) {
 								}
 								type="text"
 								defaultValue={listData.title}
-								placeholder={String(formErrors?.title?.message || "")}
+								placeholder={String(formErrors?.title?.message || '')}
 							/>
 						</form>
 					) : (

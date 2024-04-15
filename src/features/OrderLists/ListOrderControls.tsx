@@ -1,8 +1,9 @@
 import { useState, useCallback, useEffect, Dispatch, SetStateAction } from 'react'
-// import { useNavigate } from 'react-router-dom'
-import { GoSortAsc, GoSortDesc } from 'react-icons/go'
+import { useAuth } from '../../hooks/useAuth'
 
 import { useGetListsQuery } from '../../api/listsSlice'
+
+import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
 import type { List as ListType } from '../../api/listsSlice'
 
@@ -21,11 +22,12 @@ interface ListOrderControlsProps {
 
 export default function ListOrderControls({ setOrderedLists }: ListOrderControlsProps) {
 	const [sort, setSort] = useState<ListSortType>({ by: 'creationDate', order: 'DESC' })
-	// const navigate = useNavigate()
+	const { logout } = useAuth()
 
-	const { data: listsList, error } = useGetListsQuery()
-
-	console.log(error)
+	const { data: listsList, error } = useGetListsQuery() as {
+		data: ListType[]
+		error: any	
+	}
 
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
@@ -51,10 +53,11 @@ export default function ListOrderControls({ setOrderedLists }: ListOrderControls
 		setOrderedLists([...sortedLists])
 	}, [])
 	useEffect(() => {
-		// if (error?.originalStatus === 401) {
-		// 	navigate('/login')
-		// 	return
-		// }
+		if (error?.status === 401) {
+			logout()
+			return
+		}
+
 		if (listsList) sortLists(listsList, sort.by, sort.order)
 		else setOrderedLists([])
 	}, [listsList, error, sortLists, sort])

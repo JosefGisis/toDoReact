@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../../hooks/useAuth'
 import { useLoginMutation } from '../../api/userSlice.js'
@@ -7,18 +7,13 @@ import type { LoginPayload } from '../../api/userSlice.js'
 import Spinner from '../../components/Spinner'
 import ProfileIcon from '../../components/ProfileIcon'
 import PasswordIcon from '../../components/PasswordIcon'
-import { instanceOf } from 'prop-types'
 
 function LoginForm() {
 	const [_errors, setErrors] = useState<null | string>(null)
 	const [isLoggingIn, setIsLoggingIn] = useState(false)
 
 	const { login: authLogin } = useAuth()
-	const [login, { error: loginErrors }] = useLoginMutation()
-
-	useEffect(() => {
-		console.log(loginErrors)
-	}, [loginErrors])
+	const [login] = useLoginMutation()
 
 	const {
 		register,
@@ -32,11 +27,9 @@ function LoginForm() {
 			setIsLoggingIn(true)
 			const token = await login(data).unwrap()
 			authLogin(token)
-		} catch (error) {
+		} catch (error: any) {
 			resetField('password')
-			console.log(error)
-			console.log(setErrors)
-			if(error instanceof Error) setErrors(error.message)
+			setErrors(error?.message && typeof error?.message === 'string' ? error.message : 'error logging in')
 		} finally {
 			setIsLoggingIn(false)
 		}
@@ -87,9 +80,7 @@ function LoginForm() {
 						>
 							login
 						</button>
-						{_errors && (
-							<div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors}</div>
-						)}
+						{_errors && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors}</div>}
 					</div>
 
 					<hr className="border-secondary"></hr>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectActiveList } from '../../app/activeListSlice'
 import { useGetToDosQuery } from '../../api/toDosSlice'
+import { useAuth } from '../../hooks/useAuth'
 
 import { ToDo as ToDoType } from '../../api/toDosSlice'
 
@@ -20,7 +21,11 @@ function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: React.Dispatc
 	const [sort, setSort] = useState<ToDoSortType>({ by: 'title', order: 'ASC' })
 	const activeList = useSelector(selectActiveList)
 
-	const { data: toDosList } = useGetToDosQuery()
+	const { logout } = useAuth()
+	const { data: toDosList, error } = useGetToDosQuery() as {
+		data: ToDoType[]
+		error: any
+	}
 
 	// sort options are to-do parameters for sorting
 	const sortOptions = [
@@ -39,7 +44,7 @@ function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: React.Dispatc
 		const isDesc = order === 'DESC'
 		let greaterThanDir = isDesc ? -1 : 1
 		let lessThanDir = isDesc ? 1 : -1
-		const toDosCopy = [ ...toDos ]
+		const toDosCopy = [...toDos]
 		const sortedToDos = toDosCopy.sort((toDo1, toDo2) => {
 			const prop1 = toDo1[criterion]?.toUpperCase()
 			const prop2 = toDo2[criterion]?.toUpperCase()
@@ -48,13 +53,18 @@ function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: React.Dispatc
 		setOrderedToDos([...sortedToDos])
 	}, [])
 	useEffect(() => {
-		let toDos
-		if (toDosList) {
-			if (activeList) toDos = toDosList.filter(toDo => toDo.membership === activeList.id)
-			else toDos = toDosList.filter(toDo => toDo.membership === null )
+		if (error?.status === 401) {
+			logout()
+			return
 		}
-		 if (toDos) sortToDos(toDos, sort.by, sort.order)
-		 else setOrderedToDos([])
+
+		let toDos: ToDoType[] | []
+		if (toDosList) {
+			if (activeList) toDos = toDosList.filter((toDo) => toDo.membership === activeList.id)
+			else toDos = toDosList.filter((toDo) => toDo.membership === null)
+		}
+		if (toDos) sortToDos(toDos, sort.by, sort.order)
+		else setOrderedToDos([])
 	}, [activeList, toDosList, sort])
 
 	function toggleSortOrder() {
@@ -62,13 +72,12 @@ function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: React.Dispatc
 	}
 
 	return (
-
 		<div>
 			<div className="flex items-center max-w-[15rem]">
 				{/* select for order.by */}
 				<select
 					value={sort.by}
-					onChange={(e) => setSort((prevSort) => ({ ...prevSort, by: e.target.value as ToDoSortByType}))}
+					onChange={(e) => setSort((prevSort) => ({ ...prevSort, by: e.target.value as ToDoSortByType }))}
 					className="select select-secondary text-secondary w-40 mr-3"
 				>
 					{sortOptions.map(({ value, label }, index) => (
