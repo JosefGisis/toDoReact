@@ -1,5 +1,7 @@
-import { apiSlice } from './apiSlice'
-import { SingleResponse, ListResponse, ErrorResponse } from './types'
+import { apiSlice, transformErrorResponse } from './apiSlice'
+import type { SingleResponse, ListResponse } from './types'
+
+
 
 export interface List {
 	id: number
@@ -29,18 +31,18 @@ export const listsSlice = apiSlice.injectEndpoints({
 			query: () => '/lists',
 			providesTags: (result = []) => result.map((list) => ({ type: 'Lists', id: list.id })),
 			transformResponse: (responseData: ListResponse<List>) => responseData.data,
-			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
+			transformErrorResponse,
 		}),
-		
+
 		getList: builder.query<List, number>({
 			query: (listId) => ({
 				url: `/lists/${listId}`,
 			}),
 			transformResponse: (responseData: SingleResponse<List>) => responseData.data,
 			providesTags: (result) => [{ type: 'Lists', id: result?.id }],
-			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
+			transformErrorResponse,
 		}),
-		
+
 		createList: builder.mutation<List, CreateList>({
 			query: (list) => ({
 				url: '/lists',
@@ -51,9 +53,9 @@ export const listsSlice = apiSlice.injectEndpoints({
 			invalidatesTags: ['Lists'],
 			// This is not currently updating lists.
 			// invalidatesTags: (result) => [{ type: 'Lists', id: result.id }],
-			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
+			transformErrorResponse,
 		}),
-		
+
 		updateList: builder.mutation<List, UpdateListPayload>({
 			query: (payload) => ({
 				// payload contains listId and update values
@@ -63,16 +65,16 @@ export const listsSlice = apiSlice.injectEndpoints({
 			}),
 			transformResponse: (responseData: SingleResponse<List>) => responseData.data,
 			invalidatesTags: (result) => [{ type: 'Lists', id: result?.id }],
-			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
+			transformErrorResponse,
 		}),
-		
+
 		deleteList: builder.mutation<unknown, number>({
 			query: (listId) => ({
 				url: `/lists/${listId}`,
 				method: 'DELETE',
 			}),
 			invalidatesTags: (result, error, args) => [{ type: 'Lists', id: args }],
-			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
+			transformErrorResponse,
 		}),
 	}),
 })

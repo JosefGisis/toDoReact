@@ -14,3 +14,13 @@ export interface ErrorResponse {
 	data: { message: string}
 	status: number
 }
+
+export interface UnauthorizedErrorResponse {
+	data: string
+	originalStatus: number
+}
+
+export interface CustomErrorType {
+	message: string
+	status: number
+}

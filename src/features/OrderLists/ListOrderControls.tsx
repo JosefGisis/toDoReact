@@ -25,6 +25,8 @@ export default function ListOrderControls({ setOrderedLists }: ListOrderControls
 
 	const { data: listsList, error } = useGetListsQuery()
 
+	console.log(error)
+
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
 		{ value: 'creationDate', label: 'Created' },

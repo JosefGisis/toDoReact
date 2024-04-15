@@ -48,7 +48,7 @@ function List({ listData }: { listData: ListType }) {
 
 	const onDelete = useCallback(async (listId: number) => {
 		try {
-			await deleteToDosByList({ membership: listId }).unwrap()
+			// await deleteToDosByList({ membership: listId }).unwrap()
 			await deleteList(listId).unwrap()
 			dispatch(removeActiveList())
 		} catch (error) {
