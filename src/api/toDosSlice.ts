@@ -1,5 +1,5 @@
 import { apiSlice } from './apiSlice'
-import { ListResponse, SingleResponse } from './types'
+import { ErrorResponse, ListResponse, SingleResponse } from './types'
 
 export type ToDo = {
 	id: number,
@@ -43,16 +43,18 @@ export const toDosSlice = apiSlice.injectEndpoints({
 			}),
 			transformResponse: (responseData: ListResponse<ToDo>) => responseData.data,
 			providesTags: (result = []) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
+			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
 		}),
-
+		
 		getToDo: builder.query<ToDo, number>({
 			query: (toDoId) => ({
 				url: `/to-dos/${toDoId}`,
 			}),
 			transformResponse: (responseData: SingleResponse<ToDo>) => responseData.data,
 			providesTags: (result) => [{ type: 'ToDos', id: result?.id }],
+			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
 		}),
-
+		
 		getToDosByList: builder.query<ToDo[], ToDoMembershipType>({
 			query: (payload) => ({
 				url: '/to-dos/by-list',
@@ -60,8 +62,9 @@ export const toDosSlice = apiSlice.injectEndpoints({
 			}),
 			transformResponse: (responseData: ListResponse<ToDo>) => responseData.data,
 			providesTags: (result = []) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
+			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
 		}),
-
+		
 		deleteToDosByList: builder.mutation<unknown, ToDoMembershipType>({
 			query: (payload) => ({
 				url: '/to-dos/by-list',
@@ -69,8 +72,9 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: ['ToDos'],
+			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
 		}),
-
+		
 		createToDo: builder.mutation<ToDo, CreateToDo>({
 			query: (toDo) => ({
 				url: `/to-dos`,
@@ -81,16 +85,18 @@ export const toDosSlice = apiSlice.injectEndpoints({
 			// optimized invalidates tags is not working currently
 			// invalidatesTags: (result) => [{ type: 'ToDos', id: result.id }],
 			invalidatesTags: ['ToDos'],
+			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
 		}),
-
+		
 		deleteToDo: builder.mutation<unknown, number>({
 			query: (toDoId) => ({
 				url: `/to-dos/${toDoId}`,
 				method: 'DELETE',
 			}),
 			invalidatesTags: (result, error, args) => [{ type: 'ToDos', id: args }],
+			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
 		}),
-
+		
 		updateToDo: builder.mutation<ToDo, UpdateToDoPayload>({
 			query: (payload) => ({
 				url: `/to-dos/${payload.toDoId}`,
@@ -99,6 +105,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 			}),
 			transformResponse: (responseData: SingleResponse<ToDo>) => responseData.data,
 			invalidatesTags: (result) => [{ type: 'ToDos', id: result?.id }],
+			transformErrorResponse: (errorResponse: ErrorResponse) => errorResponse.data.message
 		}),
 	}),
 })
