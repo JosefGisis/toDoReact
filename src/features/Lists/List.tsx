@@ -115,7 +115,7 @@ function List({ listData }: { listData: ListType }) {
 								}
 								type="text"
 								defaultValue={listData.title}
-								placeholder={formErrors?.title?.message as string}
+								placeholder={String(formErrors?.title?.message || "")}
 							/>
 						</form>
 					) : (

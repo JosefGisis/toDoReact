@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, Dispatch, SetStateAction } from 'react'
 // import { useNavigate } from 'react-router-dom'
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
@@ -15,8 +15,12 @@ export type ListSortType = {
 	order: ListSortOrderType
 }
 
-export default function ListOrderControls({ setOrderedLists }: { setOrderedLists: React.Dispatch<React.SetStateAction<ListType[] | []>> }) {
-	const [sort, setSort] = useState({ by: 'creationDate', order: 'DESC' } as ListSortType)
+interface ListOrderControlsProps {
+	setOrderedLists: Dispatch<SetStateAction<ListType[] | []>>
+}
+
+export default function ListOrderControls({ setOrderedLists }: ListOrderControlsProps) {
+	const [sort, setSort] = useState<ListSortType>({ by: 'creationDate', order: 'DESC' })
 	// const navigate = useNavigate()
 
 	const { data: listsList, error } = useGetListsQuery()

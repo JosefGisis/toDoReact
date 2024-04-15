@@ -17,7 +17,7 @@ export type ToDoSortType = {
 }
 
 function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: React.Dispatch<React.SetStateAction<ToDoType[] | []>> }) {
-	const [sort, setSort] = useState({ by: 'title', order: 'ASC' } as ToDoSortType)
+	const [sort, setSort] = useState<ToDoSortType>({ by: 'title', order: 'ASC' })
 	const activeList = useSelector(selectActiveList)
 
 	const { data: toDosList } = useGetToDosQuery()

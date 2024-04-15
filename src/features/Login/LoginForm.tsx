@@ -7,6 +7,7 @@ import type { LoginPayload } from '../../api/userSlice.js'
 import Spinner from '../../components/Spinner'
 import ProfileIcon from '../../components/ProfileIcon'
 import PasswordIcon from '../../components/PasswordIcon'
+import { instanceOf } from 'prop-types'
 
 function LoginForm() {
 	const [_errors, setErrors] = useState<null | string>(null)
@@ -35,6 +36,7 @@ function LoginForm() {
 			resetField('password')
 			console.log(error)
 			console.log(setErrors)
+			if(error instanceof Error) setErrors(error.message)
 		} finally {
 			setIsLoggingIn(false)
 		}

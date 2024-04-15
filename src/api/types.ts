@@ -9,3 +9,8 @@ export interface SingleResponse<T> {
 export interface TokenResponse {
 	token: string
 }
+
+export interface ErrorResponse {
+	data: { message: string}
+	status: number
+}
