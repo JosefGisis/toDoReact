@@ -19,7 +19,7 @@ export const apiSlice = createApi({
 
 // checks if errorResponse is in unauthorized error form
 function isUnauthorizedErrorResponse(errorResponse: ErrorResponse | UnauthorizedErrorResponse): errorResponse is UnauthorizedErrorResponse {
-	return (typeof errorResponse.data === 'string')
+	return typeof errorResponse.data === 'string'
 }
 
 // transformErrorResponse formats errorResponse and provides consistent interface
