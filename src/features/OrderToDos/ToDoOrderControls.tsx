@@ -58,7 +58,7 @@ function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: React.Dispatc
 			return
 		}
 
-		let toDos: ToDoType[] | []
+		let toDos
 		if (toDosList) {
 			if (activeList) toDos = toDosList.filter((toDo) => toDo.membership === activeList.id)
 			else toDos = toDosList.filter((toDo) => toDo.membership === null)

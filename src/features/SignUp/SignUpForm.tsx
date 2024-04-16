@@ -27,9 +27,8 @@ function SignUpForm() {
 			setIsLoggingIn(true)
 			const token = await register(values).unwrap()
 			login(token)
-		} catch (error) {
-			console.log(error)
-			console.log(setErrors)
+		} catch (error: any) {
+			setErrors(error?.message && typeof error?.message === 'string' ? error.message : 'error creating account')
 		} finally {
 			setIsLoggingIn(false)
 		}

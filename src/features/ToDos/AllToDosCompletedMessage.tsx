@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
 import { useDeleteListMutation } from '../../api/listsSlice'
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice'
+import { useAuth } from '../../hooks/useAuth'
 
 import type { ToDo as ToDoType } from '../../api/toDosSlice'
 
@@ -10,6 +11,7 @@ export default function AllToDosCompletedMessage({ orderedToDos }: { orderedToDo
 	const activeList = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
+	const { logout } = useAuth()
 	const [deleteList] = useDeleteListMutation()
 	const [deleteToDosByList] = useDeleteToDosByListMutation()
 
@@ -18,8 +20,8 @@ export default function AllToDosCompletedMessage({ orderedToDos }: { orderedToDo
 			await deleteToDosByList({ membership: activeListId }).unwrap()
 			await deleteList(activeListId).unwrap()
 			dispatch(removeActiveList())
-		} catch (error) {
-			console.log(error)
+		} catch (error: any) {
+			if (error?.status === 401) logout()
 		}
 	}, [])
 

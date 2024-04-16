@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/toDosSlice'
+import { useAuth } from '../../hooks/useAuth'
 
 import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
 
@@ -9,6 +10,7 @@ import type { ToDo as ToDoType, UpdateToDo } from '../../api/toDosSlice'
 function ToDo({ toDoData }: { toDoData: ToDoType }) {
 	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
 
+	const { logout } = useAuth()
 	const [deleteToDo] = useDeleteToDoMutation()
 	const [updateToDo] = useUpdateToDoMutation()
 
@@ -23,8 +25,8 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 	const onDelete = useCallback(async (toDo: ToDoType) => {
 		try {
 			await deleteToDo(toDo.id).unwrap()
-		} catch (error) {
-			console.log(error)
+		} catch (error: any) {
+			if (error?.status === 401) logout()
 		}
 	}, [])
 
@@ -33,8 +35,8 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 		reset()
 		try {
 			await updateToDo({ toDoId, update })
-		} catch (error) {
-			console.log(error)
+		} catch (error: any) {
+			if (error?.status === 401) logout()
 		}
 	}, [])
 
