@@ -4,20 +4,24 @@ import { selectActiveList } from '../../app/activeListSlice'
 import { useGetToDosQuery } from '../../api/toDosSlice'
 import { useAuth } from '../../hooks/useAuth'
 
-import { ToDo as ToDoType } from '../../api/toDosSlice'
-
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
+import type { ToDo as ToDoType } from '../../api/toDosSlice'
+import type { Dispatch, SetStateAction } from 'react'
+
+// to-do sort parameter options
 export type ToDoSortByType = 'title' | 'creationDate' | 'lastModified'
 
+// to-do sort order options
 export type ToDoSortOrderType = 'ASC' | 'DESC'
 
+// sort by and sort order type
 export type ToDoSortType = {
 	by: ToDoSortByType
 	order: ToDoSortOrderType
 }
 
-function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: React.Dispatch<React.SetStateAction<ToDoType[] | []>> }) {
+function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: Dispatch<SetStateAction<ToDoType[]>> }) {
 	const [sort, setSort] = useState<ToDoSortType>({ by: 'title', order: 'ASC' })
 	const activeList = useSelector(selectActiveList)
 
@@ -58,12 +62,13 @@ function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: React.Dispatc
 			return
 		}
 
+		// need to select to-dos based on activeList or no activeList
 		let toDos
 		if (toDosList) {
 			if (activeList) toDos = toDosList.filter((toDo) => toDo.membership === activeList.id)
 			else toDos = toDosList.filter((toDo) => toDo.membership === null)
 		}
-		
+
 		if (toDos) sortToDos(toDos, sort.by, sort.order)
 		else setOrderedToDos([])
 	}, [activeList, toDosList, sort])

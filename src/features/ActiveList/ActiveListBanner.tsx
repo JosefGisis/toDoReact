@@ -74,7 +74,7 @@ function ActiveListBanner() {
 					className={'input rounded-sm input-md w-full max-w-xs p-1 text-2xl ' + (errors?.title ? 'input-error' : 'input-secondary')}
 					type="text"
 					defaultValue={activeList.title}
-					placeholder={errors?.title && typeof errors?.title?.message === 'string' ? errors?.title?.message : undefined}
+					placeholder={String(errors?.title?.message)}
 					autoFocus
 				/>
 			</form>

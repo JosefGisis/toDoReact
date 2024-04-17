@@ -14,6 +14,7 @@ function SignUpForm() {
 	const [_errors, setErrors] = useState<null | string>(null)
 	const [isLoggingIn, setIsLoggingIn] = useState(false)
 	const [register] = useRegisterMutation()
+
 	const { login } = useAuth()
 
 	const {
@@ -37,12 +38,14 @@ function SignUpForm() {
 	return (
 		<div className="flex items-center m-auto bg-neutral w-[30rem] px-[6.5rem] py-6 rounded-xl">
 			<form onSubmit={handleSubmit((values) => onSubmit(values as RegisterPayload))}>
+				{/* fieldset checks if user is logging in and disables the form while loading. */}
 				<fieldset disabled={isLoggingIn}>
 					<h3 className="text-2xl mb-5 text-center">Sign-up</h3>
 					<p className="mb-5 text-center">
 						Join <i>Have You?</i> to start creating and storing your personal tasks.
 					</p>
 
+					{/* username field */}
 					<div className="mb-8">
 						<label className="input input-bordered input-secondary rounded-md flex items-center gap-2">
 							<ProfileIcon />
@@ -64,15 +67,13 @@ function SignUpForm() {
 								type="text"
 								className="grow bg-base-100"
 								placeholder="Username"
+								autoFocus
 							/>
 						</label>
-						{errors?.username && (
-							<p className="text-error text-sm absolute">
-								{errors.username?.message as string}
-							</p>
-						)}
+						<p className="text-error text-sm absolute">{String(errors.username?.message)}</p>
 					</div>
 
+					{/* email field */}
 					<div className="mb-8">
 						<label className="input input-bordered input-secondary rounded-md flex items-center gap-2">
 							<EmailIcon />
@@ -89,13 +90,10 @@ function SignUpForm() {
 								placeholder="Email"
 							/>
 						</label>
-						{errors?.email && (
-							<p className="text-error text-sm absolute">
-								{errors?.email?.message as string}
-							</p>
-						)}
+						<p className="text-error text-sm absolute">{String(errors?.email?.message)}</p>
 					</div>
 
+					{/* password field */}
 					<div className="mb-8">
 						<label className="input input-bordered input-secondary rounded-md flex items-center gap-2">
 							<PasswordIcon />
@@ -121,11 +119,7 @@ function SignUpForm() {
 								placeholder="Password"
 							/>
 						</label>
-						{errors?.password && (
-							<p className="text-error text-sm absolute">
-								{errors?.password?.message as string}
-							</p>
-						)}
+						<p className="text-error text-sm absolute">{String(errors?.password?.message)}</p>
 					</div>
 
 					{isLoggingIn && <Spinner />}

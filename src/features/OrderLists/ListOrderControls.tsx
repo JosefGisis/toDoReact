@@ -1,33 +1,34 @@
-import { useState, useCallback, useEffect, Dispatch, SetStateAction } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { useGetListsQuery } from '../../api/listsSlice'
 
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
 import type { List as ListType } from '../../api/listsSlice'
+import type { Dispatch, SetStateAction } from 'react'
 
+// List sort parameter options
 export type ListSortByType = 'title' | 'creationDate' | 'lastModified'
 
+// List sort order options
 export type ListSortOrderType = 'ASC' | 'DESC'
 
+// sort by and sort order type
 export type ListSortType = {
 	by: ListSortByType
 	order: ListSortOrderType
 }
 
-interface ListOrderControlsProps {
-	setOrderedLists: Dispatch<SetStateAction<ListType[] | []>>
-}
-
-export default function ListOrderControls({ setOrderedLists }: ListOrderControlsProps) {
+export default function ListOrderControls({ setOrderedLists }: { setOrderedLists: Dispatch<SetStateAction<ListType[]>> }) {
 	const [sort, setSort] = useState<ListSortType>({ by: 'creationDate', order: 'DESC' })
 	const { logout } = useAuth()
 
 	const { data: listsList, error } = useGetListsQuery() as {
 		data: ListType[]
-		error: any	
+		error: any
 	}
 
+	// sort options for dropdown options menu
 	const sortOptions = [
 		{ value: 'title', label: 'Title' },
 		{ value: 'creationDate', label: 'Created' },
