@@ -17,6 +17,8 @@ export interface TokenResponse {
 export interface CustomErrorType {
 	message: string
 	status: number
+	// If the error format is not identified, the originalError will contain the original error object.
+	originalError?: any
 }
 
 // StringErrorResponse and JsonErrorResponse are based on RTKQ's FetchBaseQueryError.

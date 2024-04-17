@@ -53,6 +53,7 @@ export default function ListOrderControls({ setOrderedLists }: ListOrderControls
 		setOrderedLists([...sortedLists])
 	}, [])
 	useEffect(() => {
+		console.log(listsList)
 		if (error?.status === 401) {
 			logout()
 			return

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setActiveList } from '../../app/activeListSlice'
-import { useCreateListMutation } from '../../api/listsSlice'
+import { useCreateListMutation, useGetListsQuery } from '../../api/listsSlice'
 import { useAuth } from '../../hooks/useAuth'
 
 import { useForm } from 'react-hook-form'
@@ -28,8 +28,9 @@ function NewListForm() {
 		try {
 			const newList = await createList(newListData).unwrap()
 			dispatch(setActiveList(newList))
+			useGetListsQuery()
 		} catch (error: any) {
-			if (error?.status === 401 || error?.originalStatus === 401) logout()
+			if (error?.status === 401) logout()
 			else if (error?.status === 400 && typeof error?.status === 'string') setErrors(error?.message)
 			else setErrors('Error creating list')
 		}
