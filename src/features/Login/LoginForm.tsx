@@ -28,6 +28,7 @@ function LoginForm() {
 			const token = await login(data).unwrap()
 			authLogin(token)
 		} catch (error: any) {
+			console.log(error)
 			resetField('password')
 			setErrors(error?.message && typeof error?.message === 'string' ? error.message : 'error logging in')
 		} finally {
@@ -38,10 +39,12 @@ function LoginForm() {
 	return (
 		<div className="flex flex-col items-center bg-neutral w-[25rem] px-[5rem] pt-6 pb-8 rounded-xl">
 			<form onSubmit={handleSubmit((values) => onSubmit(values as LoginPayload))}>
+				{/* fieldset checks if user is logging in and disables the form while loading */}
 				<fieldset disabled={isLoggingIn}>
 					<h3 className="text-2xl mb-5 text-center">Login</h3>
 					<p className="mb-5 text-center">Welcome back! Sign-in to see your to-dos.</p>
 
+					{/* username field */}
 					<div className="mb-8">
 						<label className="input input-bordered input-secondary rounded-md flex items-center gap-2">
 							<ProfileIcon />
@@ -50,13 +53,16 @@ function LoginForm() {
 								type="text"
 								className="grow bg-base-100"
 								placeholder="username"
+								autoFocus
 							/>
 						</label>
 						{errors?.username && <p className="text-error text-sm absolute">{errors?.username?.message as string}</p>}
 					</div>
 
+					{/* logging in spinner component */}
 					{isLoggingIn && <Spinner />}
 
+					{/* password field */}
 					<div className="mb-8">
 						<label className="input input-bordered input-secondary rounded-md flex items-center gap-2">
 							<PasswordIcon />
@@ -70,6 +76,7 @@ function LoginForm() {
 						{errors?.password && <p className="text-error text-sm absolute">{errors.password.message as string}</p>}
 					</div>
 
+					{/* submit button */}
 					<div className="mb-6">
 						<button
 							id="new-list-submit"
@@ -83,6 +90,7 @@ function LoginForm() {
 						{_errors && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors}</div>}
 					</div>
 
+					{/* section to go to create account page */}
 					<hr className="border-secondary"></hr>
 
 					<p className="mt-4 text-sm text-center">
