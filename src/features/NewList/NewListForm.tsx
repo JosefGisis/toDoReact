@@ -11,10 +11,11 @@ import type { CreateList } from '../../api/listsSlice'
 
 function NewListForm() {
 	const [_errors, setErrors] = useState<null | string>(null)
+	
 	const dispatch = useDispatch()
-	const [createList] = useCreateListMutation()
-
+	
 	const { logout } = useAuth()
+	const [createList] = useCreateListMutation()
 
 	const {
 		register,
@@ -30,6 +31,7 @@ function NewListForm() {
 			dispatch(setActiveList(newList))
 			useGetListsQuery()
 		} catch (error: any) {
+			console.log(error)
 			if (error?.status === 401) logout()
 			else if (error?.status === 400 && typeof error?.status === 'string') setErrors(error?.message)
 			else setErrors('Error creating list')
@@ -37,8 +39,8 @@ function NewListForm() {
 	}
 
 	return (
-		<form onSubmit={handleSubmit((values) => onSubmit({ title: values.title }))}>
-			{errors?.title && <p className="text-error text-sm mb-1">{errors?.title?.message as string}</p>}
+		<form onSubmit={handleSubmit((values) => onSubmit(values as CreateList))}>
+			<p className="text-error text-sm mb-1">{String(errors?.title?.message)}</p>
 			<div className="flex items-center align-items">
 				<input
 					{...register('title', {
