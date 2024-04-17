@@ -35,6 +35,7 @@ function ActiveListBanner() {
 			await deleteList(listId).unwrap()
 			dispatch(removeActiveList())
 		} catch (error: any) {
+			console.log(error)
 			if (error?.status === 401) logout()
 		}
 	}, [])
@@ -47,6 +48,7 @@ function ActiveListBanner() {
 		try {
 			await updateList({ listId: list.id, update })
 		} catch (error: any) {
+			console.log(error)
 			if (error?.status === 401) logout()
 		}
 	}, [])
@@ -58,8 +60,8 @@ function ActiveListBanner() {
 	if (activeList && isEditing) {
 		content = (
 			<form
-				onBlur={handleSubmit((values) => handleUpdate(activeList, { title: values.title }))}
-				onSubmit={handleSubmit((values) => handleUpdate(activeList, { title: values.title }))}
+				onBlur={handleSubmit((values) => handleUpdate(activeList, values))}
+				onSubmit={handleSubmit((values) => handleUpdate(activeList, values))}
 			>
 				<input
 					{...register('title', {
@@ -73,10 +75,12 @@ function ActiveListBanner() {
 					type="text"
 					defaultValue={activeList.title}
 					placeholder={errors?.title && typeof errors?.title?.message === 'string' ? errors?.title?.message : undefined}
+					autoFocus
 				/>
 			</form>
 		)
 	}
+	// default list title (to-dos)
 	if (!activeList) {
 		content = <div className="my-2">To-dos</div>
 	}
@@ -84,9 +88,13 @@ function ActiveListBanner() {
 	return (
 		<div className="flex items-center justify-between">
 			{/* render title content */}
-			<div className="text-4xl font-bold">{content}</div>
+			<div className="text-4xl font-bold">
+				{/* title or title input field */}
+				{content}
+			</div>
 
-			{/* conditional button for created lists */}
+			{/* dropdown button for created lists */}
+			{/* only appears if it is a list created by the user and not default list */}
 			{activeList && (
 				<div className="menu-btn dropdown dropdown-bottom dropdown-end">
 					<div tabIndex={0} role="button" className="btn btn-ghost btn-info btn-round btn-md m-1">
