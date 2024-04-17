@@ -14,8 +14,8 @@ import type { List as ListType } from '../api/listsSlice'
 import type { ToDo as ToDoType } from '../api/toDosSlice'
 
 function DashboardPage() {
-	const [orderedLists, setOrderedLists] = useState<ListType[] | []>([])
-	const [orderedToDos, setOrderedToDos] = useState<ToDoType[] | []>([])
+	const [orderedLists, setOrderedLists] = useState<ListType[]>([])
+	const [orderedToDos, setOrderedToDos] = useState<ToDoType[]>([])
 
 	return (
 		<div className="w-screen h-screen overflow-hidden">

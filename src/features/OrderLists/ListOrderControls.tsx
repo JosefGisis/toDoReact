@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect, Dispatch, SetStateAction } from 'react'
 import { useAuth } from '../../hooks/useAuth'
-
 import { useGetListsQuery } from '../../api/listsSlice'
 
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
@@ -53,7 +52,6 @@ export default function ListOrderControls({ setOrderedLists }: ListOrderControls
 		setOrderedLists([...sortedLists])
 	}, [])
 	useEffect(() => {
-		console.log(listsList)
 		if (error?.status === 401) {
 			logout()
 			return
