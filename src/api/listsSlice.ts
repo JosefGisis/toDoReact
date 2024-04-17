@@ -1,8 +1,6 @@
 import { apiSlice, transformErrorResponse } from './apiSlice'
 import type { SingleResponse, ListResponse } from './types'
 
-
-
 export interface List {
 	id: number
 	title: string
@@ -29,7 +27,11 @@ export const listsSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getLists: builder.query<List[], void>({
 			query: () => '/lists',
-			providesTags: (result = []) => result.map((list) => ({ type: 'Lists', id: list.id })),
+			// Provides tags is based on RTKQ documentation.
+			// This method is used to solve an error where createList invalidatesTag does not
+			// update cache when no lists have been create yet. I suspect it solves the issue by
+			// providing the generic Lists tag to this endpoint.
+			providesTags: (result) => (result?.length ? [...result.map((list) => ({ type: 'Lists' as const, id: list.id })), 'Lists'] : ['Lists']),
 			transformResponse: (responseData: ListResponse<List>) => responseData.data,
 			transformErrorResponse,
 		}),
@@ -51,14 +53,11 @@ export const listsSlice = apiSlice.injectEndpoints({
 			}),
 			transformResponse: (responseData: SingleResponse<List>) => responseData.data,
 			invalidatesTags: ['Lists'],
-			// This is not currently updating lists.
-			// invalidatesTags: (result) => [{ type: 'Lists', id: result.id }],
 			transformErrorResponse,
 		}),
 
 		updateList: builder.mutation<List, UpdateListPayload>({
 			query: (payload) => ({
-				// payload contains listId and update values
 				url: `/lists/${payload.listId}`,
 				method: 'PUT',
 				body: payload.update,
@@ -73,7 +72,7 @@ export const listsSlice = apiSlice.injectEndpoints({
 				url: `/lists/${listId}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: (result, error, args) => [{ type: 'Lists', id: args }],
+			invalidatesTags: (_, __, args) => [{ type: 'Lists', id: args }],
 			transformErrorResponse,
 		}),
 	}),

@@ -42,7 +42,11 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				url: '/to-dos',
 			}),
 			transformResponse: (responseData: ListResponse<ToDo>) => responseData.data,
-			providesTags: (result = []) => result.map((toDo) => ({ type: 'ToDos', id: toDo.id })),
+			// Provides tags is based on RTKQ documentation.
+			// This method is used to solve an error where createToDo invalidatesTag does not
+			// update cache when no to-dos have been created yet. I suspect it solves the issue by
+			// providing the generic to-dos tag to this endpoint.
+			providesTags: (result) => result?.length ? [...result.map((toDo) => ({ type: 'ToDos' as const, id: toDo.id })), 'ToDos'] : ['ToDos'],
 			transformErrorResponse,
 		}),
 
@@ -82,8 +86,6 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				body: toDo,
 			}),
 			transformResponse: (responseData: SingleResponse<ToDo>) => responseData.data,
-			// optimized invalidates tags is not working currently
-			// invalidatesTags: (result) => [{ type: 'ToDos', id: result.id }],
 			invalidatesTags: ['ToDos'],
 			transformErrorResponse,
 		}),
@@ -93,7 +95,7 @@ export const toDosSlice = apiSlice.injectEndpoints({
 				url: `/to-dos/${toDoId}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: (result, error, args) => [{ type: 'ToDos', id: args }],
+			invalidatesTags: (_, __, args) => [{ type: 'ToDos', id: args }],
 			transformErrorResponse,
 		}),
 
