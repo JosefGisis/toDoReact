@@ -21,6 +21,7 @@ export default function AllToDosCompletedMessage({ orderedToDos }: { orderedToDo
 			await deleteList(activeListId).unwrap()
 			dispatch(removeActiveList())
 		} catch (error: any) {
+			console.log(error)
 			if (error?.status === 401) logout()
 		}
 	}, [])

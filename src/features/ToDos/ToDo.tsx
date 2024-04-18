@@ -26,16 +26,20 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 		try {
 			await deleteToDo(toDo.id).unwrap()
 		} catch (error: any) {
+			console.log(error)
 			if (error?.status === 401) logout()
 		}
 	}, [])
 
-	const handleUpdate = useCallback(async (toDoId: number, update: UpdateToDo) => {
-		setIsEditing({ ...isEditing, title: false, dueDate: false })
+	const handleUpdate = useCallback(async (toDo: ToDoType, update: UpdateToDo) => {
+		setIsEditing({ title: false, dueDate: false })
 		reset()
+
 		try {
+			const toDoId = toDo.id
 			await updateToDo({ toDoId, update })
 		} catch (error: any) {
+			console.log(error)
 			if (error?.status === 401) logout()
 		}
 	}, [])
@@ -52,22 +56,16 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 				<input
 					type="checkbox"
 					checked={toDoData?.completed}
-					onChange={() => handleUpdate(toDoData.id, { completed: !toDoData.completed })}
+					onChange={() => handleUpdate(toDoData, { completed: !toDoData.completed })}
 					className="checkbox checkbox-primary mr-3"
 				/>
 
 				{/* to-do title and title editing form */}
 				<div className="mr-2">
-					{isEditing?.title ? (
+					{isEditing.title ? (
 						<form
-							onBlur={() => {
-								setIsEditing({ ...isEditing, title: false, dueDate: false })
-								reset()
-								handleSubmit((values) => {
-									handleUpdate(toDoData.id, { title: values ? values.title : toDoData.title })
-								})
-							}}
-							onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { title: values.title }))}
+							onBlur={(e) => handleUpdate(toDoData, { title: e.target.value })}
+							onSubmit={handleSubmit((values) => handleUpdate(toDoData, values))}
 						>
 							<input
 								{...register('title', {
@@ -80,12 +78,13 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 								type="text"
 								defaultValue={toDoData?.title}
 								className={'input input-outline ' + (errors?.title ? 'input-error' : 'input-secondary')}
-								placeholder={errors?.title?.message as string}
+								placeholder={String(errors?.title?.message || '')}
+								autoFocus
 							/>
 						</form>
 					) : (
 						<h3
-							onDoubleClick={() => setIsEditing({ ...isEditing, title: true })}
+							onDoubleClick={() => setIsEditing((prevEditing) => ({ ...prevEditing, title: true }))}
 							className={'rounded-lg text-2xl font-bold my-2 ' + (toDoData.completed && 'line-through text-rose-400')}
 						>
 							{toDoData.title}
@@ -96,10 +95,10 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 
 			{/* to-do due-date and editing form */}
 			<div className="flex items-center">
-				{isEditing?.dueDate ? (
+				{isEditing.dueDate ? (
 					<form
-						onBlur={handleSubmit((values) => handleUpdate(toDoData.id, { dueDate: values.date }))}
-						onSubmit={handleSubmit((values) => handleUpdate(toDoData.id, { dueDate: values.date }))}
+						onBlur={(e) => handleUpdate(toDoData, { dueDate: e.target.value })}
+						onSubmit={handleSubmit((values) => handleUpdate(toDoData, values))}
 					>
 						<input
 							{...register('date', {
@@ -109,12 +108,12 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 								},
 							})}
 							type="date"
-							defaultValue={toDoData.dueDate as string}
 							className={'input input-outline mr-6 ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
 						/>
 					</form>
 				) : toDoData?.dueDate ? (
-					<div onDoubleClick={() => setIsEditing({ ...isEditing, dueDate: true })} className="flex items-center mr-6">
+					<div onDoubleClick={() => setIsEditing((prevEditing) => ({ ...prevEditing, dueDate: true }))} className="flex items-center mr-6">
+						{/* due-date component  */}
 						<DueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
 					</div>
 				) : null}
@@ -131,10 +130,10 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 						<li onClick={() => setIsEditing({ title: true, dueDate: true })}>
 							<p>edit</p>
 						</li>
-						<li onClick={() => setIsEditing({ ...isEditing, dueDate: true })}>
+						<li onClick={() => setIsEditing((prevEditing) => ({ ...prevEditing, dueDate: true }))}>
 							<p>add due-date</p>
 						</li>
-						<li onClick={() => handleUpdate(toDoData.id, { dueDate: null })}>
+						<li onClick={() => handleUpdate(toDoData, { dueDate: null })}>
 							<p>remove due-date</p>
 						</li>
 					</ul>
@@ -151,16 +150,21 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 	)
 }
 
+// Renders the due date of a todo item.
 function DueDate({ dueDate, completed }: { dueDate: string; completed: boolean }) {
-	// need to remove UTC and get local date
+	// need to remove UTC and get local date (UTC is 4 hours ahead of EST)
 	const localDate = dueDate?.split('Z')[0]
 
+	// prepare currentDate and dueDateComparison for comparison by removing hours
 	const currentDate = new Date().setHours(0, 0, 0, 0)
 	const dueDateComparison = new Date(localDate).setHours(0, 0, 0, 0)
 
+	// Check is to-do is due today
 	const due = dueDateComparison === currentDate
+	// Check if to-do is overdue
 	const overDue = dueDateComparison < currentDate
 
+	// formatting date to add to to-do component
 	const formattedDate = new Date(localDate).toDateString()
 
 	const textColor = completed ? 'text-success' : due ? 'text-warning' : overDue ? 'text-error' : 'text-success'
