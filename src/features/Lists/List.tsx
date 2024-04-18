@@ -129,7 +129,7 @@ function List({ listData }: { listData: ListType }) {
 								}
 								type="text"
 								defaultValue={listData.title}
-								placeholder={String(formErrors?.title?.message)}
+								placeholder={String(formErrors?.title?.message || '')}
 								autoFocus
 							/>
 						</form>

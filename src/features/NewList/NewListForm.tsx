@@ -40,7 +40,7 @@ function NewListForm() {
 
 	return (
 		<form onSubmit={handleSubmit((values) => onSubmit(values as CreateList))}>
-			<p className="text-error text-sm mb-1">{String(errors?.title?.message)}</p>
+			<p className="text-error text-sm mb-1">{String(errors?.title?.message || '')}</p>
 			<div className="flex items-center align-items">
 				<input
 					{...register('title', {

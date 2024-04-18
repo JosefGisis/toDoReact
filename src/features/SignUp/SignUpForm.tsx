@@ -70,7 +70,7 @@ function SignUpForm() {
 								autoFocus
 							/>
 						</label>
-						<p className="text-error text-sm absolute">{String(errors.username?.message)}</p>
+						<p className="text-error text-sm absolute">{String(errors.username?.message || '')}</p>
 					</div>
 
 					{/* email field */}
@@ -90,7 +90,7 @@ function SignUpForm() {
 								placeholder="Email"
 							/>
 						</label>
-						<p className="text-error text-sm absolute">{String(errors?.email?.message)}</p>
+						<p className="text-error text-sm absolute">{String(errors?.email?.message || '')}</p>
 					</div>
 
 					{/* password field */}
@@ -119,7 +119,7 @@ function SignUpForm() {
 								placeholder="Password"
 							/>
 						</label>
-						<p className="text-error text-sm absolute">{String(errors?.password?.message)}</p>
+						<p className="text-error text-sm absolute">{String(errors?.password?.message || '')}</p>
 					</div>
 
 					{isLoggingIn && <Spinner />}

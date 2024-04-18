@@ -56,7 +56,7 @@ function LoginForm() {
 								autoFocus
 							/>
 						</label>
-						<p className="text-error text-sm absolute">{String(errors?.username?.message)}</p>
+						<p className="text-error text-sm absolute">{String(errors?.username?.message || '')}</p>
 					</div>
 
 					{/* logging in spinner component */}
@@ -73,7 +73,7 @@ function LoginForm() {
 								placeholder="password"
 							/>
 						</label>
-						<p className="text-error text-sm absolute">{String(errors?.password?.message)}</p>
+						<p className="text-error text-sm absolute">{String(errors?.password?.message || '')}</p>
 					</div>
 
 					{/* submit button */}
