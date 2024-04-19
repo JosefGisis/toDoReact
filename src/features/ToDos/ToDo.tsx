@@ -1,14 +1,18 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/toDosSlice'
 import { useAuth } from '../../hooks/useAuth'
 
-import { GoKebabHorizontal, GoTrash, GoCalendar } from 'react-icons/go'
+import ToDoDueDate from './toDoDueDate'
+import { GoKebabHorizontal, GoTrash } from 'react-icons/go'
 
 import type { ToDo as ToDoType, UpdateToDo } from '../../api/toDosSlice'
+import type { KeyboardEvent } from 'react'
 
 function ToDo({ toDoData }: { toDoData: ToDoType }) {
 	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
+	const titleRef = useRef<HTMLInputElement | null>(null)
+	const dueDateRef = useRef<HTMLInputElement | null>(null)
 
 	const { logout } = useAuth()
 	const [deleteToDo] = useDeleteToDoMutation()
@@ -16,7 +20,6 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 
 	const {
 		register,
-		handleSubmit,
 		reset,
 		formState: { errors },
 	} = useForm()
@@ -44,6 +47,62 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 		}
 	}, [])
 
+	// handleKeyDown provides more control over the key events for editing fields
+	const handleKeyDown = useCallback(
+		(event: KeyboardEvent<HTMLInputElement>) => {
+			if (event.key === 'Enter') {
+				event.preventDefault()
+				handleUpdate(toDoData, { title: titleRef.current?.value, dueDate: dueDateRef.current?.value })
+			}
+			if (event.key === 'Escape') setIsEditing({ title: false, dueDate: false })
+		},
+		[handleUpdate, toDoData, titleRef, dueDateRef]
+	)
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (titleRef.current)
+				if (dueDateRef.current) {
+					if (!titleRef.current.contains(event.target as Node) && !dueDateRef.current.contains(event.target as Node))
+						handleUpdate(toDoData, { title: titleRef.current?.value, dueDate: dueDateRef.current?.value })
+					else return
+				} else {
+					if (!titleRef.current.contains(event.target as Node)) handleUpdate(toDoData, { title: titleRef.current?.value })
+					else return
+				}
+			else {
+				if (dueDateRef.current) {
+					if (!dueDateRef.current.contains(event.target as Node)) handleUpdate(toDoData, { dueDate: dueDateRef.current?.value })
+					else return
+				} else return
+			}
+		}
+
+		const handleTabOutside = (event: globalThis.KeyboardEvent) => {
+			if (event.key === 'Tab') {
+				if (titleRef.current)
+					if (dueDateRef.current) {
+						if (!titleRef.current.contains(event.target as Node) && !dueDateRef.current.contains(event.target as Node))
+							handleUpdate(toDoData, { title: titleRef.current?.value, dueDate: dueDateRef.current?.value })
+						else return
+					} else {
+						if (!titleRef.current.contains(event.target as Node)) handleUpdate(toDoData, { title: titleRef.current?.value })
+						else return
+					}
+				else {
+					if (dueDateRef.current) {
+						if (!dueDateRef.current.contains(event.target as Node)) handleUpdate(toDoData, { dueDate: dueDateRef.current?.value })
+						else return
+					} else return
+				}
+			}
+		}
+
+		document.addEventListener('mousedown', handleClickOutside)
+		document.addEventListener('keydown', handleTabOutside)
+		return () => document.removeEventListener('mousedown', handleClickOutside)
+	}, [handleUpdate, toDoData, titleRef, dueDateRef])
+
 	return (
 		<div
 			className={
@@ -63,10 +122,7 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 				{/* to-do title and title editing form */}
 				<div className="mr-2">
 					{isEditing.title ? (
-						<form
-							onBlur={(e) => handleUpdate(toDoData, { title: e.target.value })}
-							onSubmit={handleSubmit((values) => handleUpdate(toDoData, values))}
-						>
+						<form>
 							<input
 								{...register('title', {
 									required: 'title required*',
@@ -76,6 +132,9 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 									},
 								})}
 								type="text"
+								name="title"
+								ref={titleRef}
+								onKeyDown={handleKeyDown}
 								defaultValue={toDoData?.title}
 								className={'input input-outline ' + (errors?.title ? 'input-error' : 'input-secondary')}
 								placeholder={String(errors?.title?.message || '')}
@@ -96,10 +155,7 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 			{/* to-do due-date and editing form */}
 			<div className="flex items-center">
 				{isEditing.dueDate ? (
-					<form
-						onBlur={(e) => handleUpdate(toDoData, { dueDate: e.target.value })}
-						onSubmit={handleSubmit((values) => handleUpdate(toDoData, values))}
-					>
+					<form>
 						<input
 							{...register('date', {
 								pattern: {
@@ -108,13 +164,16 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 								},
 							})}
 							type="date"
+							name="date"
+							ref={dueDateRef}
+							onKeyDown={handleKeyDown}
 							className={'input input-outline mr-6 ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
 						/>
 					</form>
 				) : toDoData?.dueDate ? (
 					<div onDoubleClick={() => setIsEditing((prevEditing) => ({ ...prevEditing, dueDate: true }))} className="flex items-center mr-6">
 						{/* due-date component  */}
-						<DueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
+						<ToDoDueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
 					</div>
 				) : null}
 
@@ -147,33 +206,6 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 				</div>
 			</div>
 		</div>
-	)
-}
-
-// Renders the due date of a todo item.
-function DueDate({ dueDate, completed }: { dueDate: string; completed: boolean }) {
-	// need to remove UTC and get local date (UTC is 4 hours ahead of EST)
-	const localDate = dueDate?.split('Z')[0]
-
-	// prepare currentDate and dueDateComparison for comparison by removing hours
-	const currentDate = new Date().setHours(0, 0, 0, 0)
-	const dueDateComparison = new Date(localDate).setHours(0, 0, 0, 0)
-
-	// Check is to-do is due today
-	const due = dueDateComparison === currentDate
-	// Check if to-do is overdue
-	const overDue = dueDateComparison < currentDate
-
-	// formatting date to add to to-do component
-	const formattedDate = new Date(localDate).toDateString()
-
-	const textColor = completed ? 'text-success' : due ? 'text-warning' : overDue ? 'text-error' : 'text-success'
-
-	return (
-		<>
-			<GoCalendar className="mr-2 flex-none" />
-			<p className={textColor}>{formattedDate}</p>
-		</>
 	)
 }
 
