@@ -76,6 +76,10 @@ function List({ listData }: { listData: ListType }) {
 		}
 	}, [])
 
+	useEffect(() => {
+		if (listData.id === activeList?.id && listData.title !== activeList.title) dispatch(setActiveList(listData))
+	}, [listData])
+
 	// Sets up event handler for clicks outside of the dropdown menu and toggles the dropdown menu.
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
