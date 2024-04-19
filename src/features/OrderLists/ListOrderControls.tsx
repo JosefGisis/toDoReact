@@ -19,7 +19,13 @@ export type ListSortType = {
 	order: ListSortOrderType
 }
 
-export default function ListOrderControls({ setOrderedLists }: { setOrderedLists: Dispatch<SetStateAction<ListType[]>> }) {
+export default function ListOrderControls({
+	setOrderedLists,
+	setListsStatus,
+}: {
+	setOrderedLists: Dispatch<SetStateAction<ListType[]>>
+	setListsStatus: Dispatch<SetStateAction<'loading' | 'hasLists' | 'noLists'>>
+}) {
 	const [sort, setSort] = useState<ListSortType>({ by: 'creationDate', order: 'DESC' })
 	const { logout } = useAuth()
 
@@ -51,15 +57,24 @@ export default function ListOrderControls({ setOrderedLists }: { setOrderedLists
 			return prop1 === prop2 ? 0 : prop1 > prop2 ? greaterThanDir : lessThanDir
 		})
 		setOrderedLists([...sortedLists])
+		setListsStatus('hasLists')
 	}, [])
 	useEffect(() => {
+		console.log(listsList)
 		if (error?.status === 401) {
 			logout()
 			return
 		}
 
-		if (listsList) sortLists(listsList, sort.by, sort.order)
-		else setOrderedLists([])
+		if (listsList?.length) sortLists(listsList, sort.by, sort.order)
+		else if (listsList) {
+			setOrderedLists([])
+			setListsStatus('noLists')
+		}
+		else {
+			setOrderedLists([])
+			setListsStatus('loading')
+		}
 	}, [listsList, error, sortLists, sort])
 
 	function toggleSortOrder() {

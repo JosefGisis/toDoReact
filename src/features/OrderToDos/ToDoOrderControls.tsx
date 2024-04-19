@@ -21,7 +21,13 @@ export type ToDoSortType = {
 	order: ToDoSortOrderType
 }
 
-function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: Dispatch<SetStateAction<ToDoType[]>> }) {
+function ToDoOrderControls({
+	setOrderedToDos,
+	setToDosStatus,
+}: {
+	setOrderedToDos: Dispatch<SetStateAction<ToDoType[]>>
+	setToDosStatus: Dispatch<SetStateAction<'loading' | 'hasToDos' | 'noToDos'>>
+}) {
 	const [sort, setSort] = useState<ToDoSortType>({ by: 'title', order: 'ASC' })
 	const activeList = useSelector(selectActiveList)
 
@@ -55,6 +61,7 @@ function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: Dispatch<SetS
 			return prop1 === prop2 ? 0 : prop1 > prop2 ? greaterThanDir : lessThanDir
 		})
 		setOrderedToDos([...sortedToDos])
+		setToDosStatus('hasToDos')
 	}, [])
 	useEffect(() => {
 		if (error?.status === 401) {
@@ -69,8 +76,14 @@ function ToDoOrderControls({ setOrderedToDos }: { setOrderedToDos: Dispatch<SetS
 			else toDos = toDosList.filter((toDo) => toDo.membership === null)
 		}
 
-		if (toDos) sortToDos(toDos, sort.by, sort.order)
-		else setOrderedToDos([])
+		if (!toDos) setToDosStatus('loading')
+		else {
+			if (toDos.length) sortToDos(toDos, sort.by, sort.order)
+			else {
+				setOrderedToDos([])
+				setToDosStatus('noToDos')
+			}
+		}
 	}, [activeList, toDosList, sort])
 
 	function toggleSortOrder() {

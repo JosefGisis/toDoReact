@@ -76,11 +76,6 @@ function List({ listData }: { listData: ListType }) {
 		}
 	}, [])
 
-	// Checks if the list is active and updates the active list if it is not.
-	useEffect(() => {
-		if (listData.id !== activeList?.id) dispatch(setActiveList(listData))
-	}, [listData])
-
 	// Sets up event handler for clicks outside of the dropdown menu and toggles the dropdown menu.
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {

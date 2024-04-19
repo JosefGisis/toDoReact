@@ -15,7 +15,9 @@ import type { ToDo as ToDoType } from '../api/toDosSlice'
 
 function DashboardPage() {
 	const [orderedLists, setOrderedLists] = useState<ListType[]>([])
+	const [listsStatus, setListsStatus] = useState<'loading' | 'hasLists' | 'noLists'>('loading')
 	const [orderedToDos, setOrderedToDos] = useState<ToDoType[]>([])
+	const [toDosStatus, setToDosStatus] = useState<'loading' | 'hasToDos' | 'noToDos'>('loading')
 
 	return (
 		<div className="w-screen h-screen overflow-hidden">
@@ -40,12 +42,12 @@ function DashboardPage() {
 
 						{/* list sort controls */}
 						<div className="flex-none mt-4">
-							<OrderLists setOrderedLists={setOrderedLists} />
+							<OrderLists setOrderedLists={setOrderedLists} setListsStatus={setListsStatus}/>
 						</div>
 
 						{/* lists list */}
 						<div className="flex-auto overflow-y-auto pr-1 mt-4">
-							<Lists orderedLists={orderedLists} />
+							<Lists orderedLists={orderedLists} listsStatus={listsStatus}/>
 						</div>
 
 						{/* new list form */}
@@ -63,12 +65,12 @@ function DashboardPage() {
 
 						{/* to-do sort controls */}
 						<div className="flex-none mb-6">
-							<OrderToDos setOrderedToDos={setOrderedToDos} />
+							<OrderToDos setOrderedToDos={setOrderedToDos} setToDosStatus={setToDosStatus} />
 						</div>
 
 						{/* to-do list */}
 						<div className="overflow-y-auto flex-auto pr-1">
-							<ToDos orderedToDos={orderedToDos} />
+							<ToDos orderedToDos={orderedToDos} toDosStatus={toDosStatus} />
 						</div>
 
 						{/* new to-do form */}

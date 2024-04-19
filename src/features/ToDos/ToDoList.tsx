@@ -4,17 +4,12 @@ import { GoChevronRight, GoChevronDown } from 'react-icons/go'
 import ToDo from './ToDo'
 import EmptyListMessage from './EmptyListMessage'
 import AllToDosCompletedMessage from './AllToDosCompletedMessage'
-import { useGetToDosQuery, type ToDo as ToDoType } from '../../api/toDosSlice'
 import ToDoSkeleton from './ToDoSkeleton'
 
-function ToDoList({ orderedToDos }: { orderedToDos: ToDoType[] }) {
+import type { ToDo as ToDoType } from '../../api/toDosSlice'
+
+function ToDoList({ orderedToDos, toDosStatus }: { orderedToDos: ToDoType[], toDosStatus: 'loading' | 'hasToDos' | 'noToDos'}) {
 	const [showCompleted, setShowCompleted] = useState(true)
-
-	const { status, data } = useGetToDosQuery()
-
-	// check to-dos status
-	// need to use data.length rather than orderedToDos.length because orderedToDos is slightly delayed causing rendering issues
-	const toDosStatus = status === 'fulfilled' ? (data?.length ? 'hasToDos' : 'noToDos') : 'loading'
 
 	// conditional rendering for to-do list
 	let content
