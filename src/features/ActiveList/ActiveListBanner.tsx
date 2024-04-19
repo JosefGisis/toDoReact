@@ -53,45 +53,41 @@ function ActiveListBanner() {
 		}
 	}, [])
 
-	let content: any
-	if (activeList && !isEditing) {
-		content = <div onDoubleClick={() => setIsEditing(true)}>{activeList?.title}</div>
-	}
-	if (activeList && isEditing) {
-		content = (
-			<form
-				onBlur={handleSubmit((values) => handleUpdate(activeList, values))}
-				onSubmit={handleSubmit((values) => handleUpdate(activeList, values))}
-			>
-				<input
-					{...register('title', {
-						required: 'title required*',
-						maxLength: {
-							value: 35,
-							message: 'maximum thirty-five characters',
-						},
-					})}
-					className={'input rounded-sm input-md w-full max-w-xs p-1 text-2xl ' + (errors?.title ? 'input-error' : 'input-secondary')}
-					type="text"
-					defaultValue={activeList.title}
-					placeholder={String(errors?.title?.message || '')}
-					autoFocus
-				/>
-			</form>
-		)
-	}
-	// default list title (to-dos)
-	if (!activeList) {
-		content = <div className="my-2">To-dos</div>
-	}
-
 	return (
 		<div className="flex items-center justify-between">
-			{/* render title content */}
-			<div className="text-4xl font-bold">
-				{/* title or title input field */}
-				{content}
-			</div>
+			{/* title or title input field. Defaults to to-dos if not active list */}
+			{activeList ? (
+				isEditing ? (
+					// title for active list
+					<div onDoubleClick={() => setIsEditing(true)}>{activeList?.title}</div>
+				) : (
+					// input field when active list and isEditing
+					<form
+						onBlur={handleSubmit((values) => handleUpdate(activeList, values))}
+						onSubmit={handleSubmit((values) => handleUpdate(activeList, values))}
+					>
+						<input
+							{...register('title', {
+								required: 'title required*',
+								maxLength: {
+									value: 35,
+									message: 'maximum thirty-five characters',
+								},
+							})}
+							className={
+								'input rounded-sm input-md w-full max-w-xs p-1 text-2xl ' + (errors?.title ? 'input-error' : 'input-secondary')
+							}
+							type="text"
+							defaultValue={activeList.title}
+							placeholder={String(errors?.title?.message || '')}
+							autoFocus
+						/>
+					</form>
+				)
+			) : (
+				// default list title (to-dos)
+				<div className="my-2">To-dos</div>
+			)}
 
 			{/* dropdown button for created lists */}
 			{/* only appears if it is a list created by the user and not default list */}
