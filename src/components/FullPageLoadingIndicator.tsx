@@ -1,4 +1,4 @@
-function FullLoadingPageIndicator() {
+export default function FullPageLoadingIndicator() {
 	return (
 		<div className="w-screen h-screen absolute bg-white bg-opacity-5 top-0 left-0 items-center justify-center flex">
 			<div className=" flex flex-col items-center">
@@ -8,5 +8,3 @@ function FullLoadingPageIndicator() {
 		</div>
 	)
 }
-
-export default FullLoadingPageIndicator

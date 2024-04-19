@@ -4,7 +4,7 @@ import { GoChevronRight, GoChevronDown } from 'react-icons/go'
 import ToDo from './ToDo'
 import EmptyListMessage from './EmptyListMessage'
 import AllToDosCompletedMessage from './AllToDosCompletedMessage'
-import FullLoadingPageIndicator from '../../components/FullLoadingPageIndicator'
+import FullPageLoadingIndicator from '../../components/FullPageLoadingIndicator'
 
 import type { ToDosProps } from '.'
 
@@ -14,7 +14,7 @@ function ToDoList({ orderedToDos, toDosStatus }: ToDosProps) {
 	// conditional rendering for to-do list
 	let content
 	if (toDosStatus === 'loading') {
-		content = ( <FullLoadingPageIndicator /> )
+		content = <FullPageLoadingIndicator />
 	} else if (toDosStatus === 'hasToDos') {
 		content = (
 			<div>
