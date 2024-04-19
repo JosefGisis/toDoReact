@@ -5,7 +5,9 @@ import { useGetListsQuery } from '../../api/listsSlice'
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
 import type { List as ListType } from '../../api/listsSlice'
-import type { Dispatch, SetStateAction } from 'react'
+
+import type { OrderListsProps } from '.'
+import { CustomErrorType } from 'api/types'
 
 // List sort parameter options
 export type ListSortByType = 'title' | 'creationDate' | 'lastModified'
@@ -19,20 +21,15 @@ export type ListSortType = {
 	order: ListSortOrderType
 }
 
-export default function ListOrderControls({
-	setOrderedLists,
-	setListsStatus,
-}: {
-	setOrderedLists: Dispatch<SetStateAction<ListType[]>>
-	setListsStatus: Dispatch<SetStateAction<'loading' | 'hasLists' | 'noLists'>>
-}) {
+export default function ListOrderControls({ setOrderedLists, setListsStatus }: OrderListsProps) {
 	const [sort, setSort] = useState<ListSortType>({ by: 'creationDate', order: 'DESC' })
 	const { logout } = useAuth()
 
-	const { data: listsList, error } = useGetListsQuery() as {
-		data: ListType[]
-		error: any
-	}
+	const {
+		data: listsList,
+		error,
+		isLoading,
+	} = useGetListsQuery()
 
 	// sort options for dropdown options menu
 	const sortOptions = [
@@ -43,43 +40,48 @@ export default function ListOrderControls({
 
 	const sortLists = useCallback((lists: ListType[], criterion: ListSortByType, order: ListSortOrderType) => {
 		// If lists are not of type array (e.g. null, object, undefined, etc.), orderedLists defaults to an empty list
-		if (!Array.isArray(lists)) {
-			setOrderedLists([])
-			return
-		}
+		if (!Array.isArray(lists)) return []
+
 		const isDesc = order === 'DESC'
 		let greaterThanDir = isDesc ? -1 : 1
 		let lessThanDir = isDesc ? 1 : -1
+
+		// Copy the lists array to avoid mutating the original array
 		const listCopy = [...lists]
+
 		const sortedLists = listCopy.sort((list1, list2) => {
 			const prop1 = list1[criterion].toUpperCase()
 			const prop2 = list2[criterion].toUpperCase()
 			return prop1 === prop2 ? 0 : prop1 > prop2 ? greaterThanDir : lessThanDir
 		})
-		setOrderedLists([...sortedLists])
-		setListsStatus('hasLists')
+
+		return sortedLists
 	}, [])
+
+	// handle changes in listsList and sets orderedLists and listsStatus
 	useEffect(() => {
-		console.log(listsList)
-		if (error?.status === 401) {
-			logout()
+		if (isLoading || !Array.isArray(listsList)) {
+			setListsStatus('loading')
+			setOrderedLists([])
 			return
 		}
 
-		if (listsList?.length) sortLists(listsList, sort.by, sort.order)
-		else if (listsList) {
+		const sortedLists = sortLists(listsList, sort.by, sort.order)
+
+		if (sortedLists?.length) {
+			setOrderedLists([...sortedLists])
+			setListsStatus('hasLists')
+		} else {
 			setOrderedLists([])
 			setListsStatus('noLists')
 		}
-		else {
-			setOrderedLists([])
-			setListsStatus('loading')
-		}
 	}, [listsList, error, sortLists, sort])
 
-	function toggleSortOrder() {
-		setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))
-	}
+	// Logout user if error status is 401
+	useEffect(() => {
+		const anyError = error as CustomErrorType
+		if (anyError?.status === 401) return logout()
+	}, [error])
 
 	return (
 		<div className="flex items-center">
@@ -97,7 +99,10 @@ export default function ListOrderControls({
 			</select>
 
 			{/* swap button for order.by */}
-			<button className="btn btn-primary btn-outline grow-0" onClick={toggleSortOrder}>
+			<button
+				className="btn btn-primary btn-outline grow-0"
+				onClick={() => setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))}
+			>
 				<div className="swap-off flex items-center justify-between grow-0 shrink-1">
 					{sort.order === 'ASC' ? <GoSortAsc className="w-5 h-5" /> : <GoSortDesc className="w-5 h-5" />}
 				</div>

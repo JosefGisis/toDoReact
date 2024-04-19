@@ -7,7 +7,8 @@ import { useAuth } from '../../hooks/useAuth'
 import { GoSortAsc, GoSortDesc } from 'react-icons/go'
 
 import type { ToDo as ToDoType } from '../../api/toDosSlice'
-import type { Dispatch, SetStateAction } from 'react'
+import type { OrderToDosProps } from '.'
+import type { CustomErrorType } from 'api/types'
 
 // to-do sort parameter options
 export type ToDoSortByType = 'title' | 'creationDate' | 'lastModified'
@@ -21,21 +22,16 @@ export type ToDoSortType = {
 	order: ToDoSortOrderType
 }
 
-function ToDoOrderControls({
-	setOrderedToDos,
-	setToDosStatus,
-}: {
-	setOrderedToDos: Dispatch<SetStateAction<ToDoType[]>>
-	setToDosStatus: Dispatch<SetStateAction<'loading' | 'hasToDos' | 'noToDos'>>
-}) {
+function ToDoOrderControls({ setOrderedToDos, setToDosStatus }: OrderToDosProps) {
 	const [sort, setSort] = useState<ToDoSortType>({ by: 'title', order: 'ASC' })
 	const activeList = useSelector(selectActiveList)
 
 	const { logout } = useAuth()
-	const { data: toDosList, error } = useGetToDosQuery() as {
-		data: ToDoType[]
-		error: any
-	}
+	const {
+		data: toDosList,
+		error,
+		isLoading,
+	} = useGetToDosQuery()
 
 	// sort options are to-do parameters for sorting
 	const sortOptions = [
@@ -45,50 +41,67 @@ function ToDoOrderControls({
 		{ value: 'lastModified', label: 'Updated' },
 	]
 
+	const filterToDos = useCallback((toDosList: ToDoType[], activeListId?: number) => {
+		if (activeListId) return toDosList.filter((toDo) => toDo.membership === activeListId)
+		else return toDosList.filter((toDo) => toDo.membership === null)
+	}, [])
+
 	const sortToDos = useCallback((toDos: ToDoType[], criterion: ToDoSortByType = 'title', order: ToDoSortOrderType = 'ASC') => {
 		// If to-dos are not of type array (e.g. null, object, undefined, etc.), orderedToDos defaults to an empty list
-		if (!Array.isArray(toDos)) {
-			setOrderedToDos([])
-			return
-		}
+		if (!Array.isArray(toDos)) return []
+
 		const isDesc = order === 'DESC'
 		let greaterThanDir = isDesc ? -1 : 1
 		let lessThanDir = isDesc ? 1 : -1
+
+		// need to create a copy of toDos to avoid mutating the original array
 		const toDosCopy = [...toDos]
+
 		const sortedToDos = toDosCopy.sort((toDo1, toDo2) => {
 			const prop1 = toDo1[criterion]?.toUpperCase()
 			const prop2 = toDo2[criterion]?.toUpperCase()
 			return prop1 === prop2 ? 0 : prop1 > prop2 ? greaterThanDir : lessThanDir
 		})
-		setOrderedToDos([...sortedToDos])
-		setToDosStatus('hasToDos')
+
+		return sortedToDos
 	}, [])
 	useEffect(() => {
-		if (error?.status === 401) {
-			logout()
+		// if isLoading or no to-dos, set orderedToDos to empty array
+		if (isLoading || !Array.isArray(toDosList)) {
+			setToDosStatus('loading')
+			setOrderedToDos([])
 			return
 		}
 
 		// need to select to-dos based on activeList or no activeList
-		let toDos
-		if (toDosList) {
-			if (activeList) toDos = toDosList.filter((toDo) => toDo.membership === activeList.id)
-			else toDos = toDosList.filter((toDo) => toDo.membership === null)
+		let toDos: ToDoType[] | undefined = undefined
+		if (toDosList) toDos = filterToDos(toDosList, activeList?.id)
+
+		// If nothing is set to toDos, set orderedToDos to empty array
+		if (!toDos) {
+			setToDosStatus('loading')
+			setOrderedToDos([])
+			return
 		}
 
-		if (!toDos) setToDosStatus('loading')
-		else {
-			if (toDos.length) sortToDos(toDos, sort.by, sort.order)
-			else {
-				setOrderedToDos([])
-				setToDosStatus('noToDos')
-			}
-		}
-	}, [activeList, toDosList, sort])
+		// sort to-dos based on sort.by and sort.order
+		const sortedToDos = sortToDos(toDos, sort.by, sort.order)
 
-	function toggleSortOrder() {
-		setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))
-	}
+		// if sortedToDos has length, set orderedToDos to sortedToDos, else set orderedToDos to empty array
+		if (sortedToDos?.length) {
+			setOrderedToDos([...sortedToDos])
+			setToDosStatus('hasToDos')
+		} else {
+			setOrderedToDos([])
+			setToDosStatus('noToDos')
+		}
+	}, [activeList, toDosList, sort, isLoading])
+
+	// handle error
+	useEffect(() => {
+		const anyError = error as CustomErrorType
+		if (anyError?.status === 401) return logout()
+	}, [error])
 
 	return (
 		<div>
@@ -107,7 +120,10 @@ function ToDoOrderControls({
 				</select>
 
 				{/* swap button for order.by */}
-				<button className="btn btn-primary btn-outline" onClick={toggleSortOrder}>
+				<button
+					className="btn btn-primary btn-outline"
+					onClick={() => setSort((prevSort) => ({ ...prevSort, order: prevSort.order === 'ASC' ? 'DESC' : 'ASC' }))}
+				>
 					<div className="swap-off flex items-center justify-between">
 						{sort.order === 'ASC' ? <GoSortAsc className="w-5 h-5" /> : <GoSortDesc className="w-5 h-5" />}
 					</div>
