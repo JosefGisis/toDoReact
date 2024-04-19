@@ -9,7 +9,7 @@ import ProfileIcon from '../../components/ProfileIcon'
 import PasswordIcon from '../../components/PasswordIcon'
 
 function LoginForm() {
-	const [_errors, setErrors] = useState<null | string>(null)
+	const [errors, setErrors] = useState<null | string>(null)
 	const [isLoggingIn, setIsLoggingIn] = useState(false)
 
 	const { login: authLogin } = useAuth()
@@ -19,7 +19,7 @@ function LoginForm() {
 		register,
 		handleSubmit,
 		resetField,
-		formState: { errors, isValid },
+		formState: { errors: formErrors, isValid },
 	} = useForm()
 
 	async function onSubmit(data: LoginPayload) {
@@ -56,7 +56,7 @@ function LoginForm() {
 								autoFocus
 							/>
 						</label>
-						<p className="text-error text-sm absolute">{String(errors?.username?.message || '')}</p>
+						<p className="text-error text-sm absolute">{String(formErrors?.username?.message || '')}</p>
 					</div>
 
 					{/* logging in spinner component */}
@@ -73,7 +73,7 @@ function LoginForm() {
 								placeholder="password"
 							/>
 						</label>
-						<p className="text-error text-sm absolute">{String(errors?.password?.message || '')}</p>
+						<p className="text-error text-sm absolute">{String(formErrors?.password?.message || '')}</p>
 					</div>
 
 					{/* submit button */}
@@ -87,7 +87,7 @@ function LoginForm() {
 						>
 							login
 						</button>
-						{_errors && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{_errors}</div>}
+						{errors && <div className="bg-rose-600 mb-5 px-1 py-0.5 w-[95%] m-auto text-sm text-center font-semibold">{errors}</div>}
 					</div>
 
 					{/* section to go to create account page */}
