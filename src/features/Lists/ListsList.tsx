@@ -1,10 +1,10 @@
-import type { List as ListType } from '../../api/listsSlice'
-
 import List from './List'
 import ListSkeleton from './ListSkeleton'
 import NoListMessage from './NoListsMessage'
 
-export default function ToDoListsList({ orderedLists, listsStatus }: { orderedLists: ListType[], listsStatus: 'loading' | 'hasLists' | 'noLists'}) {
+import type { ListsProps } from '.'
+
+export default function ToDoListsList({ orderedLists, listsStatus }: ListsProps) {
 	// conditional content rendering determines if lists are loading and if user has any lists
 	let content
 	if (listsStatus === 'loading') {

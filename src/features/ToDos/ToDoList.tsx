@@ -6,9 +6,9 @@ import EmptyListMessage from './EmptyListMessage'
 import AllToDosCompletedMessage from './AllToDosCompletedMessage'
 import ToDoSkeleton from './ToDoSkeleton'
 
-import type { ToDo as ToDoType } from '../../api/toDosSlice'
+import type { ToDosProps } from '.'
 
-function ToDoList({ orderedToDos, toDosStatus }: { orderedToDos: ToDoType[], toDosStatus: 'loading' | 'hasToDos' | 'noToDos'}) {
+function ToDoList({ orderedToDos, toDosStatus }: ToDosProps) {
 	const [showCompleted, setShowCompleted] = useState(true)
 
 	// conditional rendering for to-do list
