@@ -4,9 +4,10 @@ import NoListMessage from './NoListsMessage'
 import type { ListsProps } from '.'
 
 export default function ToDoListsList({ orderedLists, listsStatus }: ListsProps) {
-	// conditional content rendering determines if lists are loading and if user has any lists
+	// lists status determines if lists should display
 	let content
 	if (listsStatus === 'loading') {
+		// listsList does not display a loading spinner because that is handled by the toDosList
 		content = null
 	} else if (listsStatus === 'hasLists') {
 		content = orderedLists.map((list, index) => (
