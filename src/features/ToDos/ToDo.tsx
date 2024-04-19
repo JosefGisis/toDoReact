@@ -184,7 +184,7 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 					</div>
 					<ul
 						tabIndex={0}
-						className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg w-52"
+						className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg z-[10] absolute w-52"
 					>
 						<li onClick={() => setIsEditing({ title: true, dueDate: true })}>
 							<p>edit</p>
