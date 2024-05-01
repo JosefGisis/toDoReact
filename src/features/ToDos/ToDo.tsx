@@ -1,19 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/toDosSlice'
 import { useAuth } from '../../hooks/useAuth'
 
-import ToDoDueDate from './toDoDueDate'
-import { GoKebabHorizontal, GoTrash } from 'react-icons/go'
+import ToDoDueDate from './ToDoDueDate'
+import { GoKebabHorizontal, GoTrash, GoCheck, GoX } from 'react-icons/go'
 
 import type { ToDo as ToDoType, UpdateToDo } from '../../api/toDosSlice'
-import type { KeyboardEvent } from 'react'
 
-// Pre-refactor of to-do and editing functionality
 function ToDo({ toDoData }: { toDoData: ToDoType }) {
-	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
-	const titleRef = useRef<HTMLInputElement | null>(null)
-	const dueDateRef = useRef<HTMLInputElement | null>(null)
+	const [isEditing, setIsEditing] = useState(false)
 
 	const { logout } = useAuth()
 	const [deleteToDo] = useDeleteToDoMutation()
@@ -22,6 +18,7 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 	const {
 		register,
 		reset,
+		handleSubmit,
 		formState: { errors },
 	} = useForm()
 
@@ -36,7 +33,8 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 	}, [])
 
 	const handleUpdate = useCallback(async (toDo: ToDoType, update: UpdateToDo) => {
-		setIsEditing({ title: false, dueDate: false })
+		console.log(update)
+		setIsEditing(false)
 		reset()
 
 		try {
@@ -48,62 +46,6 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 		}
 	}, [])
 
-	// handleKeyDown provides more control over the key events for editing fields
-	const handleKeyDown = useCallback(
-		(event: KeyboardEvent<HTMLInputElement>) => {
-			if (event.key === 'Enter') {
-				event.preventDefault()
-				handleUpdate(toDoData, { title: titleRef.current?.value, dueDate: dueDateRef.current?.value })
-			}
-			if (event.key === 'Escape') setIsEditing({ title: false, dueDate: false })
-		},
-		[handleUpdate, toDoData, titleRef, dueDateRef]
-	)
-
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (titleRef.current)
-				if (dueDateRef.current) {
-					if (!titleRef.current.contains(event.target as Node) && !dueDateRef.current.contains(event.target as Node))
-						handleUpdate(toDoData, { title: titleRef.current?.value, dueDate: dueDateRef.current?.value })
-					else return
-				} else {
-					if (!titleRef.current.contains(event.target as Node)) handleUpdate(toDoData, { title: titleRef.current?.value })
-					else return
-				}
-			else {
-				if (dueDateRef.current) {
-					if (!dueDateRef.current.contains(event.target as Node)) handleUpdate(toDoData, { dueDate: dueDateRef.current?.value })
-					else return
-				} else return
-			}
-		}
-
-		const handleTabOutside = (event: globalThis.KeyboardEvent) => {
-			if (event.key === 'Tab') {
-				if (titleRef.current)
-					if (dueDateRef.current) {
-						if (!titleRef.current.contains(event.target as Node) && !dueDateRef.current.contains(event.target as Node))
-							handleUpdate(toDoData, { title: titleRef.current?.value, dueDate: dueDateRef.current?.value })
-						else return
-					} else {
-						if (!titleRef.current.contains(event.target as Node)) handleUpdate(toDoData, { title: titleRef.current?.value })
-						else return
-					}
-				else {
-					if (dueDateRef.current) {
-						if (!dueDateRef.current.contains(event.target as Node)) handleUpdate(toDoData, { dueDate: dueDateRef.current?.value })
-						else return
-					} else return
-				}
-			}
-		}
-
-		document.addEventListener('mousedown', handleClickOutside)
-		document.addEventListener('keydown', handleTabOutside)
-		return () => document.removeEventListener('mousedown', handleClickOutside)
-	}, [handleUpdate, toDoData, titleRef, dueDateRef])
-
 	return (
 		<div
 			className={
@@ -111,7 +53,7 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 				(toDoData?.completed ? 'bg-base-200' : 'bg-neutral')
 			}
 		>
-			<div className="flex items-center">
+			<div className="flex items-center flex-1">
 				{/* to-do check to complete and un-complete */}
 				<input
 					type="checkbox"
@@ -121,9 +63,13 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 				/>
 
 				{/* to-do title and title editing form */}
-				<div className="mr-2">
-					{isEditing.title ? (
-						<form>
+				<div className="mr-2 flex-1">
+					{isEditing ? (
+						<form
+							className="flex justify-between"
+							onBlur={handleSubmit((values) => handleUpdate(toDoData, values))}
+							onSubmit={handleSubmit((values) => handleUpdate(toDoData, values))}
+						>
 							<input
 								{...register('title', {
 									required: 'title required*',
@@ -133,79 +79,78 @@ function ToDo({ toDoData }: { toDoData: ToDoType }) {
 									},
 								})}
 								type="text"
-								name="title"
-								ref={titleRef}
-								onKeyDown={handleKeyDown}
 								defaultValue={toDoData?.title}
-								className={'input input-outline ' + (errors?.title ? 'input-error' : 'input-secondary')}
+								className={'input input-outline rounded-md mr-4 ' + (errors?.title ? 'input-error' : 'input-secondary')}
 								placeholder={String(errors?.title?.message || '')}
-								autoFocus
 							/>
+							<input
+								{...register('date', {
+									pattern: {
+										value: /^\d{4}-\d{2}-\d{2}$/,
+										message: 'date format mm/dd/yyyy required',
+									},
+								})}
+								type="date"
+								className={'input input-outline mr-6 ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
+							/>
+							<button className="btn btn-outline btn-primary">
+								<GoCheck className="w-5 h-5" />
+							</button>
+
+							<button className="btn btn-outline btn-primary" onClick={() => setIsEditing(false)} type="button">
+								<GoX className="w-5 h-5" />
+							</button>
 						</form>
 					) : (
-						<h3
-							onDoubleClick={() => setIsEditing((prevEditing) => ({ ...prevEditing, title: true }))}
-							className={'rounded-lg text-2xl font-bold my-2 ' + (toDoData.completed && 'line-through text-rose-400')}
-						>
-							{toDoData.title}
-						</h3>
+						<div className="flex items-center justify-between" onDoubleClick={() => setIsEditing(true)}>
+							<h3 className={'rounded-lg text-2xl font-bold my-2 mr-4 ' + (toDoData.completed && 'line-through text-rose-400')}>
+								{toDoData.title}
+							</h3>
+
+							<div>
+								{toDoData?.dueDate && (
+									<div onDoubleClick={() => setIsEditing(false)} className="flex items-center mr-6">
+										{/* due-date component  */}
+										<ToDoDueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
+									</div>
+								)}
+							</div>
+						</div>
 					)}
 				</div>
 			</div>
+			{!isEditing ? (
+				<div className="flex items-center">
+					{/* dropdown button for to-do */}
+					<div className="dropdown dropdown-bottom dropdown-end">
+						<div tabIndex={0} role="button" className="btn btn-primary btn-outline btn-round mr-2">
+							<GoKebabHorizontal className="w-4 h-4" />
+						</div>
+						<ul
+							tabIndex={0}
+							className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg z-[10] absolute w-52"
+						>
+							<li onClick={() => setIsEditing(true)}>
+								<p>edit</p>
+							</li>
+							<li onClick={() => setIsEditing(true)}>
+								<p>add due-date</p>
+							</li>
+							<li onClick={() => handleUpdate(toDoData, { dueDate: null })}>
+								<p>remove due-date</p>
+							</li>
+						</ul>
+					</div>
 
+					{/* delete to-do button */}
+					<div>
+						<button className="btn btn-outline btn-primary" onClick={console.log} onDoubleClick={() => onDelete(toDoData)}>
+							<GoTrash className="w-5 h-5" />
+						</button>
+					</div>
+				</div>
+			) : null}
 			{/* to-do due-date and editing form */}
-			<div className="flex items-center">
-				{isEditing.dueDate ? (
-					<form>
-						<input
-							{...register('date', {
-								pattern: {
-									value: /^\d{4}-\d{2}-\d{2}$/,
-									message: 'date format mm/dd/yyyy required',
-								},
-							})}
-							type="date"
-							name="date"
-							ref={dueDateRef}
-							onKeyDown={handleKeyDown}
-							className={'input input-outline mr-6 ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
-						/>
-					</form>
-				) : toDoData?.dueDate ? (
-					<div onDoubleClick={() => setIsEditing((prevEditing) => ({ ...prevEditing, dueDate: true }))} className="flex items-center mr-6">
-						{/* due-date component  */}
-						<ToDoDueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
-					</div>
-				) : null}
-
-				{/* dropdown button for to-do */}
-				<div className="dropdown dropdown-bottom dropdown-end">
-					<div tabIndex={0} role="button" className="btn btn-primary btn-outline btn-round mr-2">
-						<GoKebabHorizontal className="w-4 h-4" />
-					</div>
-					<ul
-						tabIndex={0}
-						className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg z-[10] absolute w-52"
-					>
-						<li onClick={() => setIsEditing({ title: true, dueDate: true })}>
-							<p>edit</p>
-						</li>
-						<li onClick={() => setIsEditing((prevEditing) => ({ ...prevEditing, dueDate: true }))}>
-							<p>add due-date</p>
-						</li>
-						<li onClick={() => handleUpdate(toDoData, { dueDate: null })}>
-							<p>remove due-date</p>
-						</li>
-					</ul>
-				</div>
-
-				{/* delete to-do button */}
-				<div>
-					<button className="btn btn-outline btn-primary" onClick={console.log} onDoubleClick={() => onDelete(toDoData)}>
-						<GoTrash className="w-5 h-5" />
-					</button>
-				</div>
-			</div>
 		</div>
 	)
 }
