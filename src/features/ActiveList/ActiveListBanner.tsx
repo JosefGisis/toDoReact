@@ -7,7 +7,7 @@ import { removeActiveList, selectActiveList } from '../../app/activeListSlice'
 import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSlice.js'
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
-import { GoKebabHorizontal } from 'react-icons/go'
+import { GoKebabHorizontal, GoCheck, GoX } from 'react-icons/go'
 
 import type { List, UpdateList } from '../../api/listsSlice.js'
 
@@ -56,7 +56,7 @@ function ActiveListBanner() {
 	return (
 		<div className="flex items-center justify-between">
 			{/* title or title input field. Defaults to to-dos if not active list */}
-			<div className="text-4xl font-bold my-5">
+			<div className="w-full text-4xl font-bold my-5">
 				{activeList ? (
 					!isEditing ? (
 						// title for active list
@@ -64,6 +64,7 @@ function ActiveListBanner() {
 					) : (
 						// input field when active list and isEditing
 						<form
+							className="flex items-center justify-between"
 							onBlur={handleSubmit((values) => handleUpdate(activeList, values))}
 							onSubmit={handleSubmit((values) => handleUpdate(activeList, values))}
 						>
@@ -83,6 +84,15 @@ function ActiveListBanner() {
 								placeholder={String(errors?.title?.message || '')}
 								autoFocus
 							/>
+							<div>
+								<button className="btn btn-ghost btn-round mr-2">
+									<GoCheck className="w-6 h-6" />
+								</button>
+
+								<button className="btn btn-ghost btn-round" onClick={() => setIsEditing(false)} type="button">
+									<GoX className="w-6 h-6" />
+								</button>
+							</div>
 						</form>
 					)
 				) : (
@@ -93,7 +103,7 @@ function ActiveListBanner() {
 
 			{/* dropdown button for created lists */}
 			{/* only appears if it is a list created by the user and not default list */}
-			{activeList && (
+			{activeList && !isEditing && (
 				<div className="menu-btn dropdown dropdown-bottom dropdown-end">
 					<div tabIndex={0} role="button" className="btn btn-ghost btn-info btn-round btn-md m-1">
 						<GoKebabHorizontal className="w-6 h-6" />
