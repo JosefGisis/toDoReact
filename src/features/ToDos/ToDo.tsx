@@ -9,6 +9,7 @@ import { GoKebabHorizontal, GoTrash } from 'react-icons/go'
 import type { ToDo as ToDoType, UpdateToDo } from '../../api/toDosSlice'
 import type { KeyboardEvent } from 'react'
 
+// Pre-refactor of to-do and editing functionality
 function ToDo({ toDoData }: { toDoData: ToDoType }) {
 	const [isEditing, setIsEditing] = useState({ title: false, dueDate: false })
 	const titleRef = useRef<HTMLInputElement | null>(null)
