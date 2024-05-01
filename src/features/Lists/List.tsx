@@ -8,13 +8,13 @@ import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSli
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
 import ListIcon from '../../components/ListIcon'
-import { GoKebabHorizontal } from 'react-icons/go'
+import { GoKebabHorizontal, GoCheck, GoX } from 'react-icons/go'
 
 import type { List as ListType, UpdateList } from '../../api/listsSlice.js'
+import type { ListPropsWithEditingId } from './ListsList.js'
 
-function List({ listData }: { listData: ListType }) {
+function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 	const [dropdownOpen, setDropdownOpen] = useState(false)
-	const [isEditing, setIsEditing] = useState(false)
 
 	// dropDownRef is used to detect clicks outside of the dropdown menu. It requires the contains property.
 	const dropdownRef = useRef<HTMLDivElement | null>(null)
@@ -39,7 +39,7 @@ function List({ listData }: { listData: ListType }) {
 		// Do not update list if it is already active
 		if (list.id === activeList?.id) return
 
-		setIsEditing(false)
+		setEditingId(null)
 		reset()
 
 		try {
@@ -63,7 +63,7 @@ function List({ listData }: { listData: ListType }) {
 	}, [])
 
 	const handleUpdate = useCallback(async (list: ListType, update: UpdateList) => {
-		setIsEditing(false)
+		setEditingId(null)
 		reset()
 		// Do not update list if title is the same
 		if (update.title === list.title) return
@@ -79,18 +79,6 @@ function List({ listData }: { listData: ListType }) {
 	useEffect(() => {
 		if (listData.id === activeList?.id && listData.title !== activeList.title) dispatch(setActiveList(listData))
 	}, [listData])
-
-	// Sets up event handler for clicks outside of the dropdown menu and toggles the dropdown menu.
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			// is the dropdownRef with the event.target. If not the mouse click is outside of the dropdown menu.
-			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setDropdownOpen(false)
-		}
-
-		// Sets up event listener for clicks outside of the dropdown menu and removes on unmount.
-		document.addEventListener('mousedown', handleClickOutside)
-		return () => document.removeEventListener('mousedown', handleClickOutside)
-	}, [])
 
 	return (
 		// div contains group tailwind class to interact with dropdown menu
@@ -110,8 +98,9 @@ function List({ listData }: { listData: ListType }) {
 				</div>
 				<div>
 					{/* both the title and a title input field */}
-					{isEditing && listData?.id === activeList?.id ? (
+					{editingId === listData.id && listData?.id === activeList?.id ? (
 						<form
+							className="flex justify-between"
 							onBlur={handleSubmit((values) => handleUpdate(listData, values))}
 							onSubmit={handleSubmit((values) => handleUpdate(listData, values))}
 						>
@@ -124,49 +113,58 @@ function List({ listData }: { listData: ListType }) {
 									},
 								})}
 								className={
-									'input rounded-sm input-sm w-full max-w-xs p-1 m-0 ' + (formErrors?.title ? 'input-error' : 'input-secondary')
+									'input rounded-sm input-sm w-full flex-1 max-w-xs p-1 m-0 mr-1 ' + (formErrors?.title ? 'input-error' : 'input-secondary')
 								}
 								type="text"
 								defaultValue={listData.title}
 								placeholder={String(formErrors?.title?.message || '')}
 								autoFocus
 							/>
+							<button className="btn btn-ghost btn-round btn-sm mr-0.5">
+								<GoCheck className="w-4 h-4" />
+							</button>
+
+							<button className="btn btn-ghost btn-round btn-sm" onClick={() => setEditingId(null)} type="button">
+								<GoX className="w-4 h-4" />
+							</button>
 						</form>
 					) : (
-						<div onDoubleClick={() => setIsEditing(true)}>{listData.title}</div>
+						<div onDoubleClick={() => setEditingId(listData.id)}>{listData.title}</div>
 					)}
 				</div>
 			</div>
 
 			{/* dropdown menu */}
-			<div className={' ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')} ref={dropdownRef}>
-				<button className="btn btn-ghost btn-round btn-sm m-1" onClick={() => setDropdownOpen(!dropdownOpen)} type="button">
-					<GoKebabHorizontal />
-				</button>
-				<ul
-					className={
-						'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] z-[1] -translate-x-[4rem] absolute ' +
-						(dropdownOpen ? '' : 'hidden')
-					}
-				>
-					<li
-						onClick={() => {
-							setIsEditing(true)
-							setDropdownOpen(false)
-						}}
+			{editingId !== listData.id && (
+				<div className={' ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')} ref={dropdownRef}>
+					<button className="btn btn-ghost btn-round btn-sm m-1" onClick={() => setDropdownOpen(!dropdownOpen)} type="button">
+						<GoKebabHorizontal />
+					</button>
+					<ul
+						className={
+							'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] z-[1] -translate-x-[4rem] absolute ' +
+							(dropdownOpen ? '' : 'hidden')
+						}
 					>
-						<p>edit</p>
-					</li>
-					<li
-						onClick={() => {
-							onDelete(listData.id)
-							setDropdownOpen(false)
-						}}
-					>
-						<p className="text-error">delete!</p>
-					</li>
-				</ul>
-			</div>
+						<li
+							onClick={() => {
+								setEditingId(listData.id)
+								setDropdownOpen(false)
+							}}
+						>
+							<p>edit</p>
+						</li>
+						<li
+							onClick={() => {
+								onDelete(listData.id)
+								setDropdownOpen(false)
+							}}
+						>
+							<p className="text-error">delete!</p>
+						</li>
+					</ul>
+				</div>
+			)}
 		</div>
 	)
 }
