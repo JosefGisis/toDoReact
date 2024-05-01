@@ -7,9 +7,18 @@ import AllToDosCompletedMessage from './AllToDosCompletedMessage'
 import FullPageLoadingIndicator from '../../components/FullPageLoadingIndicator'
 
 import type { ToDosProps } from '.'
+import type { ToDo as ToDoType } from '../../api/toDosSlice'
+import type { Dispatch, SetStateAction } from 'react'
+
+export interface ToDoPropsWithEditingId{
+	toDoData: ToDoType
+	editingId: null | number
+	setEditingId: Dispatch<SetStateAction<null | number>>
+}
 
 function ToDoList({ orderedToDos, toDosStatus }: ToDosProps) {
 	const [showCompleted, setShowCompleted] = useState(true)
+	const [editingId, setEditingId] = useState<null | number>(null)
 
 	// conditional rendering for to-do list
 	let content
@@ -21,7 +30,7 @@ function ToDoList({ orderedToDos, toDosStatus }: ToDosProps) {
 				{/* message for completed list and controls for completed list */}
 				<AllToDosCompletedMessage orderedToDos={orderedToDos} />
 				{/* displays non-completed to-dos */}
-				<div>{orderedToDos?.map((toDo, i) => !toDo.completed && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>
+				<div>{orderedToDos?.map((toDo, i) => !toDo.completed && <ToDo key={i} toDoData={toDo} editingId={editingId} setEditingId={setEditingId}></ToDo>)}</div>
 
 				{/* button to toggle completed to-dos visibility */}
 				{orderedToDos?.find((toDo) => toDo.completed) && (
@@ -36,7 +45,7 @@ function ToDoList({ orderedToDos, toDosStatus }: ToDosProps) {
 
 				{/* displays completed to-dos */}
 				<div className="mt-3">
-					{showCompleted && <div>{orderedToDos?.map((toDo, i) => toDo.completed && <ToDo key={i} toDoData={toDo}></ToDo>)}</div>}
+					{showCompleted && <div>{orderedToDos?.map((toDo, i) => toDo.completed && <ToDo key={i} toDoData={toDo} editingId={editingId} setEditingId={setEditingId}></ToDo>)}</div>}
 				</div>
 			</div>
 		)
