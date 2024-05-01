@@ -33,6 +33,6 @@ export const transformErrorResponse = (errorResponse: any): CustomErrorType => {
 	const status = typeof errorResponse?.status === 'number' ? errorResponse?.status : errorResponse?.originalStatus
 
 	if (isNotJsonErrorResponse(errorResponse)) return { message: errorResponse.data, status }
-	else if (isJsonErrorResponse(errorResponse)) return { message: errorResponse.data.message || 'Error performing request', status }
-	else return { message: 'Error performing request', status: 500, originalError: errorResponse }
+    if (isJsonErrorResponse(errorResponse)) return { message: errorResponse.data.message || 'Error performing request', status }
+	return { message: 'Error performing request', status: 500, unknownError: errorResponse }
 }
