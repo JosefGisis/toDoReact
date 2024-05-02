@@ -4,12 +4,11 @@ import { useDeleteToDoMutation, useUpdateToDoMutation } from '../../api/toDosSli
 import { useAuth } from '../../hooks/useAuth'
 
 import ToDoDueDate from './ToDoDueDate'
-import { GoKebabHorizontal, GoTrash, GoCheck, GoX } from 'react-icons/go'
+import { GoTrash, GoCheck, GoX, GoPencil } from 'react-icons/go'
 
 import type { ToDo as ToDoType, UpdateToDo } from '../../api/toDosSlice'
 import type { ToDoPropsWithEditingId } from './ToDoList'
 
-// pre to-do refactor
 function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 	const { logout } = useAuth()
 	const [deleteToDo] = useDeleteToDoMutation()
@@ -53,11 +52,17 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 				(toDoData?.completed ? 'bg-base-200' : 'bg-neutral')
 			}
 		>
+			{/**
+			 * This segment contains the checkbox, to-do title, and when in editing mode, the to-do editing form
+			 * and the accent and cancel changes buttons. The flex-1 class is used to make the to-do title expand when
+			 * in editing mode and the dropdown menu and delete buttons are hidden.
+			 */}
 			<div className="flex items-center flex-1">
 				{/* to-do check to complete and un-complete */}
 				<input
 					type="checkbox"
 					checked={toDoData?.completed}
+					// toggle completed status
 					onChange={() => handleUpdate(toDoData, { completed: !toDoData.completed })}
 					className="checkbox checkbox-primary mr-3"
 				/>
@@ -67,7 +72,9 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 					{editingId === toDoData.id ? (
 						<form
 							className="flex justify-between"
-							// onBlur={handleSubmit((values) => handleUpdate(toDoData, values))}
+							// can't use onBlur because it will trigger changing fields within the editing form
+							// and would not allow users to cancel changes with triggering onBlur.
+							// Is there a way to prevent onBlur when navigating elements within the form?
 							onSubmit={handleSubmit((values) => handleUpdate(toDoData, values))}
 						>
 							<input
@@ -94,6 +101,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								type="date"
 								className={'input input-outline rounded-md mr-6 w-full ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
 							/>
+
 							<button className="btn btn-ghost btn-round mr-2">
 								<GoCheck className="w-5 h-5" />
 							</button>
@@ -103,34 +111,43 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 							</button>
 						</form>
 					) : (
+						// When not in editing mode, display the to-do title and due-date (if available).
 						<div className="flex items-center justify-between" onDoubleClick={() => setEditingId(toDoData.id)}>
+							{/* to-do title*/}
 							<h3 className={'rounded-lg text-2xl font-bold my-2 mr-4 ' + (toDoData.completed && 'line-through text-rose-400')}>
 								{toDoData.title}
 							</h3>
 
-							<div>
-								{toDoData?.dueDate && (
-									<div className="flex items-center mr-6">
-										{/* due-date component  */}
-										<ToDoDueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
-									</div>
-								)}
-							</div>
+							{/* due-date component */}
+							{toDoData?.dueDate && (
+								<div className="flex items-center mr-6">
+									<ToDoDueDate dueDate={toDoData.dueDate} completed={toDoData.completed} />
+
+									<GoX
+										className="ml-1.5 w-5 h-5 text-rose-200 hover:text-red-400"
+										onClick={() => handleUpdate(toDoData, { dueDate: null })}
+									/>
+								</div>
+							)}
 						</div>
 					)}
 				</div>
 			</div>
 
+			{/* dropdown menu and delete button */}
 			{editingId !== toDoData.id ? (
 				<div className="flex items-center">
 					{/* dropdown button for to-do */}
-					<div className="dropdown dropdown-bottom dropdown-end">
+					{/* Not currently being used */}
+					{/* <div className="dropdown dropdown-bottom dropdown-end">
 						<div tabIndex={0} role="button" className="btn btn-ghost btn-round mr-2">
 							<GoKebabHorizontal className="w-4 h-4" />
 						</div>
 						<ul
 							tabIndex={0}
-							className="dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg z-[10] absolute w-52"
+							className={
+								'dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg z-[10] absolute w-52 '
+							}
 						>
 							<li onClick={() => setEditingId(toDoData.id)}>
 								<p>edit</p>
@@ -140,8 +157,14 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								<p>remove due-date</p>
 							</li>
 						</ul>
-					</div>
+					</div> */}
 
+					{/* edit button */}
+					<div>
+						<button className="btn btn-ghost mr-2" onClick={() => setEditingId(toDoData.id)}>
+							<GoPencil className="w-5 h-5" />
+						</button>
+					</div>
 					{/* delete to-do button */}
 					<div>
 						<button className="btn btn-ghost" onDoubleClick={() => onDelete(toDoData)}>
