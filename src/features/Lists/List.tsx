@@ -96,6 +96,7 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 				<div className="mr-2">
 					<ListIcon />
 				</div>
+
 				<div>
 					{/* both the title and a title input field */}
 					{editingId === listData.id && listData?.id === activeList?.id ? (
@@ -113,7 +114,8 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 									},
 								})}
 								className={
-									'input rounded-sm input-sm w-full flex-1 max-w-xs p-1 m-0 mr-1 ' + (formErrors?.title ? 'input-error' : 'input-secondary')
+									'input rounded-sm input-sm w-full flex-1 max-w-xs p-1 m-0 mr-1 ' +
+									(formErrors?.title ? 'input-error' : 'input-secondary')
 								}
 								type="text"
 								defaultValue={listData.title}
@@ -136,14 +138,15 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 
 			{/* dropdown menu */}
 			{editingId !== listData.id && (
-				<div className={' ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')} ref={dropdownRef}>
+				<div className={activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible'} ref={dropdownRef}>
 					<button className="btn btn-ghost btn-round btn-sm m-1" onClick={() => setDropdownOpen(!dropdownOpen)} type="button">
 						<GoKebabHorizontal />
 					</button>
+					
 					<ul
 						className={
 							'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] z-[1] -translate-x-[4rem] absolute ' +
-							(dropdownOpen ? '' : 'hidden')
+							(dropdownOpen && activeList?.id === listData.id ? '' : 'hidden')
 						}
 					>
 						<li
@@ -154,6 +157,7 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 						>
 							<p>edit</p>
 						</li>
+						
 						<li
 							onClick={() => {
 								onDelete(listData.id)
