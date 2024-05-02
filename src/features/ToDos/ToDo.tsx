@@ -81,6 +81,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								defaultValue={toDoData?.title}
 								className={'input input-outline rounded-md mr-4 w-full ' + (errors?.title ? 'input-error' : 'input-secondary')}
 								placeholder={String(errors?.title?.message || '')}
+								autoFocus
 							/>
 							<input
 								{...register('dueDate', {
@@ -92,11 +93,11 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								type="date"
 								className={'input input-outline rounded-md mr-6 w-full ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
 							/>
-							<button className="btn btn-outline btn-primary mr-2">
+							<button className="btn btn-ghost btn-round mr-2">
 								<GoCheck className="w-5 h-5" />
 							</button>
 
-							<button className="btn btn-outline btn-primary" onClick={() => setEditingId(null)} type="button">
+							<button className="btn btn-ghost btn-round" onClick={() => setEditingId(null)} type="button">
 								<GoX className="w-5 h-5" />
 							</button>
 						</form>
@@ -123,7 +124,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 				<div className="flex items-center">
 					{/* dropdown button for to-do */}
 					<div className="dropdown dropdown-bottom dropdown-end">
-						<div tabIndex={0} role="button" className="btn btn-primary btn-outline btn-round mr-2">
+						<div tabIndex={0} role="button" className="btn btn-ghost btn-round mr-2">
 							<GoKebabHorizontal className="w-4 h-4" />
 						</div>
 						<ul
@@ -142,7 +143,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 
 					{/* delete to-do button */}
 					<div>
-						<button className="btn btn-outline btn-primary" onDoubleClick={() => onDelete(toDoData)}>
+						<button className="btn btn-ghost" onDoubleClick={() => onDelete(toDoData)}>
 							<GoTrash className="w-5 h-5" />
 						</button>
 					</div>
