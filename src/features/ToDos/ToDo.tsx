@@ -9,6 +9,7 @@ import { GoKebabHorizontal, GoTrash, GoCheck, GoX } from 'react-icons/go'
 import type { ToDo as ToDoType, UpdateToDo } from '../../api/toDosSlice'
 import type { ToDoPropsWithEditingId } from './ToDoList'
 
+// pre to-do refactor
 function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 	const { logout } = useAuth()
 	const [deleteToDo] = useDeleteToDoMutation()
