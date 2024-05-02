@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../../hooks/useAuth'
@@ -14,11 +14,6 @@ import type { List as ListType, UpdateList } from '../../api/listsSlice.js'
 import type { ListPropsWithEditingId } from './ListsList.js'
 
 function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
-	const [dropdownOpen, setDropdownOpen] = useState(false)
-
-	// dropDownRef is used to detect clicks outside of the dropdown menu. It requires the contains property.
-	const dropdownRef = useRef<HTMLDivElement | null>(null)
-
 	const activeList = useSelector(selectActiveList)
 	const dispatch = useDispatch()
 
@@ -100,11 +95,7 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 				<div>
 					{/* both the title and a title input field */}
 					{editingId === listData.id && listData?.id === activeList?.id ? (
-						<form
-							className="flex justify-between"
-							onBlur={handleSubmit((values) => handleUpdate(listData, values))}
-							onSubmit={handleSubmit((values) => handleUpdate(listData, values))}
-						>
+						<form className="flex justify-between" onSubmit={handleSubmit((values) => handleUpdate(listData, values))}>
 							<input
 								{...register('title', {
 									required: 'title required*',
@@ -138,32 +129,26 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 
 			{/* dropdown menu */}
 			{editingId !== listData.id && (
-				<div className={activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible'} ref={dropdownRef}>
-					<button className="btn btn-ghost btn-round btn-sm m-1" onClick={() => setDropdownOpen(!dropdownOpen)} type="button">
+				// when list is active dropdown menu button is visible, else it is visible on hover.
+				<div className={'dropdown dropdown-end ' + (activeList?.id === listData.id ? 'visible' : 'invisible group-hover:visible')}>
+					<div tabIndex={0} role="button" className="btn btn-ghost btn-round btn-sm m-1">
 						<GoKebabHorizontal />
-					</button>
-					
+					</div>
+
 					<ul
+						tabIndex={0}
+						// the hidden class is not strictly necessary, but it is needed in this case because the dropdown menu open on the next list when the
+						// list is deleted. This hides the menu until the user clicks on another list.
 						className={
-							'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] z-[1] -translate-x-[4rem] absolute ' +
-							(dropdownOpen && activeList?.id === listData.id ? '' : 'hidden')
+							'dropdown-content dropdown-left menu z-[1] p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] ' +
+							(activeList?.id !== listData.id && 'hidden')
 						}
 					>
-						<li
-							onClick={() => {
-								setEditingId(listData.id)
-								setDropdownOpen(false)
-							}}
-						>
+						<li onClick={() => setEditingId(listData.id)}>
 							<p>edit</p>
 						</li>
-						
-						<li
-							onClick={() => {
-								onDelete(listData.id)
-								setDropdownOpen(false)
-							}}
-						>
+
+						<li onClick={() => onDelete(listData.id)}>
 							<p className="text-error">delete!</p>
 						</li>
 					</ul>
