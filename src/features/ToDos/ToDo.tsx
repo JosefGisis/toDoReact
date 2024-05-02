@@ -46,12 +46,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 	}, [])
 
 	return (
-		<div
-			className={
-				'flex items-center justify-between rounded-lg transition-all p-3 mb-3 hover:bg-base-300 ' +
-				(toDoData?.completed ? 'bg-base-200' : 'bg-neutral')
-			}
-		>
+		<div className={toDoData?.completed ? 'to-do-completed' : 'to-do-not-completed'}>
 			<div className="flex items-center flex-1">
 				{/* to-do check to complete and un-complete */}
 				<input

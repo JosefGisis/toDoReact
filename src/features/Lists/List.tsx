@@ -53,6 +53,7 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 
 	const onDelete = useCallback(async (listId: number) => {
 		try {
+			// Delete all todos associated with the list before deleting the list
 			await deleteToDosByList({ membership: listId }).unwrap()
 			await deleteList(listId).unwrap()
 			dispatch(removeActiveList())
@@ -65,7 +66,7 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 	const handleUpdate = useCallback(async (list: ListType, update: UpdateList) => {
 		setEditingId(null)
 		reset()
-		// Do not update list if title is the same
+		// Do not update list if title has not changed. This happens when the user clicks the check button without changing the title.
 		if (update.title === list.title) return
 
 		try {
@@ -76,21 +77,14 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 		}
 	}, [])
 
+	// Ensures that the active list is updated when the list title is changed. Checks if the list is active and if the title is different. If so, it updates the active list.
 	useEffect(() => {
 		if (listData.id === activeList?.id && listData.title !== activeList.title) dispatch(setActiveList(listData))
 	}, [listData])
 
 	return (
 		// div contains group tailwind class to interact with dropdown menu
-		<div
-			className={
-				'group flex items-center justify-between rounded-lg px-2 mb-3 ' +
-				(activeList?.id !== listData?.id
-					? 'bg-base-300 text-base-content border-2 border-neutral py-2'
-					: 'bg-neutral text-neutral-content py-3')
-			}
-			onClick={() => onSelect(listData, activeList)}
-		>
+		<div className={activeList?.id !== listData?.id ? 'list-not-active' : 'list-active'} onClick={() => onSelect(listData, activeList)}>
 			{/* list icon and list title */}
 			<div className="flex flex-row items-center">
 				<div className="mr-2">
@@ -113,7 +107,8 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 									},
 								})}
 								className={
-									'input rounded-sm input-sm w-full flex-1 max-w-xs p-1 m-0 mr-1 ' + (formErrors?.title ? 'input-error' : 'input-secondary')
+									'input rounded-sm input-sm w-full flex-1 max-w-xs p-1 m-0 mr-1 ' +
+									(formErrors?.title ? 'input-error' : 'input-secondary')
 								}
 								type="text"
 								defaultValue={listData.title}
@@ -140,12 +135,7 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 					<button className="btn btn-ghost btn-round btn-sm m-1" onClick={() => setDropdownOpen(!dropdownOpen)} type="button">
 						<GoKebabHorizontal />
 					</button>
-					<ul
-						className={
-							'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] z-[1] -translate-x-[4rem] absolute ' +
-							(dropdownOpen ? '' : 'hidden')
-						}
-					>
+					<ul className={dropdownOpen ? 'open-list-dropdown' : 'close-list-dropdown'}>
 						<li
 							onClick={() => {
 								setEditingId(listData.id)
