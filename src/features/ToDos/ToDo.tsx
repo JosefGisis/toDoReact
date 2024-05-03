@@ -46,21 +46,17 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 		}
 	}, [])
 
-	const handleFormBlur = (toDo: ToDoType, e: React.FormEvent) => {
-		const fieldValues = watch()
-		// @ts-ignore
-		if (e?.relatedTarget !== null && !e.relatedTarget?.classList.contains('cancel-edit') && !e.relatedTarget?.classList.contains('on-form')) {
-			handleUpdate(toDo, fieldValues)
+	// onBlur event handler for the form to update the to-do title and due-date when the user clicks outside the form.
+	const handleFormBlur = useCallback(
+		(toDo: ToDoType, e: React.FormEvent) => {
+			const fieldValues = watch()
 			// @ts-ignore
-		} else if (e?.relatedTarget !== null && e.relatedTarget?.classList.contains('on-form')) {
-			e.preventDefault()
-			// @ts-ignore
-		} else if (e?.relatedTarget !== null) {
-			e.preventDefault()
-		} else {
-			setEditingId(null)
-		}
-	}
+			if (e?.relatedTarget?.classList?.contains('on-form')) {
+				e.preventDefault()
+			} else handleUpdate(toDo, fieldValues)
+		},
+		[watch, handleUpdate]
+	)
 
 	// Attached to delete message modal to bring it up when delete button is clicked.
 	// Putting this in a function to use @ts-ignore.
@@ -81,7 +77,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 			 * and the accent and cancel changes buttons. The flex-1 class is used to make the to-do title expand when
 			 * in editing mode and the dropdown menu and delete buttons are hidden.
 			 */}
-			<div className="flex items-center flex-1">
+			<div className="flex items-center flex-1 on-form">
 				{/* to-do check to complete and un-complete */}
 				<input
 					type="checkbox"
@@ -105,7 +101,9 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								})}
 								type="text"
 								defaultValue={toDoData?.title}
-								className={'input input-outline rounded-md mr-4 w-full ' + (errors?.title ? 'input-error' : 'input-secondary')}
+								className={
+									'input input-outline rounded-md mr-4 w-full on-form ' + (errors?.title ? 'input-error' : 'input-secondary')
+								}
 								placeholder={String(errors?.title?.message || '')}
 								autoFocus
 							/>
@@ -123,11 +121,15 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								}
 							/>
 
-							<button className="btn btn-ghost btn-round mr-2" type="button">
+							<button
+								className="btn btn-ghost btn-round mr-2 on-form "
+								type="button"
+								onClick={handleSubmit((values) => handleUpdate(toDoData, values))}
+							>
 								<GoCheck className="w-5 h-5" />
 							</button>
 
-							<button className="btn btn-ghost btn-round cancel-edit" onClick={() => setEditingId(null)} type="button">
+							<button className="btn btn-ghost btn-round on-form" onClick={() => setEditingId(null)} type="button">
 								<GoX className="w-5 h-5" />
 							</button>
 						</form>
