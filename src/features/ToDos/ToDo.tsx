@@ -14,6 +14,11 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 	const [deleteToDo] = useDeleteToDoMutation()
 	const [updateToDo] = useUpdateToDoMutation()
 
+	function handleShowDelete() {
+		// @ts-ignore
+		document.getElementById('my_modal_1')?.showModal?.()
+	}
+
 	const {
 		register,
 		reset,
@@ -44,6 +49,23 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 			if (error?.status === 401) logout()
 		}
 	}, [])
+
+	const handleCancel = useCallback((e: React.MouseEvent) => {
+		console.log('handleCancel')
+		e.stopPropagation()
+		e.preventDefault()
+		setEditingId(null)
+	}, [])
+
+	const handleFormBlur = (e: React.FormEvent) => {
+		// @ts-ignore
+		if(e?.relatedTarget !== null && e.relatedTarget?.classList.contains('cancel-edit')) {
+			console.log('Do nothing because cancel was clicked')
+		}else{
+			console.log('form was blurred', e)
+		}
+		// handleSubmit((values) => handleUpdate(toDoData, values))
+	}
 
 	return (
 		<div
@@ -76,6 +98,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 							// and would not allow users to cancel changes with triggering onBlur.
 							// Is there a way to prevent onBlur when navigating elements within the form?
 							onSubmit={handleSubmit((values) => handleUpdate(toDoData, values))}
+							onBlur={handleFormBlur}
 						>
 							<input
 								{...register('title', {
@@ -91,6 +114,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								placeholder={String(errors?.title?.message || '')}
 								autoFocus
 							/>
+
 							<input
 								{...register('dueDate', {
 									pattern: {
@@ -106,7 +130,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								<GoCheck className="w-5 h-5" />
 							</button>
 
-							<button className="btn btn-ghost btn-round" onClick={() => setEditingId(null)} type="button">
+							<button className="btn btn-ghost btn-round cancel-edit" onClick={handleCancel} type="button">
 								<GoX className="w-5 h-5" />
 							</button>
 						</form>
@@ -134,6 +158,8 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 				</div>
 			</div>
 
+			{/* Open the modal using document.getElementById('ID').showModal() method */}
+
 			{/* dropdown menu and delete button */}
 			{editingId !== toDoData.id ? (
 				<div className="flex items-center">
@@ -155,9 +181,9 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 
 							<li onClick={() => handleUpdate(toDoData, { dueDate: null })}>
 								<p>remove due-date</p>
-							</li>
-						</ul>
-					</div> */}
+								</li>
+								</ul>
+							</div> */}
 
 					{/* edit button */}
 					<div>
@@ -167,9 +193,24 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 					</div>
 					{/* delete to-do button */}
 					<div>
-						<button className="btn btn-ghost" onDoubleClick={() => onDelete(toDoData)}>
+						<button className="btn btn-ghost" onClick={handleShowDelete}>
 							<GoTrash className="w-5 h-5" />
 						</button>
+						<dialog id="my_modal_1" className="modal">
+							<div className="modal-box">
+								<h3 className="font-bold text-lg text-rose-400 text-center">Warning!</h3>
+								<p className="py-4 text-center">This action is irreversible. Are you sure you would like to proceed?</p>
+								<div className="modal-action flex justify-around">
+									<form method="dialog" className="flex items-center justify-around">
+										{/* if there is a button in form, it will close the modal */}
+										<button className="btn" onClick={() => onDelete(toDoData)}>
+											Ok
+										</button>
+										<button className="btn mr-2">Cancel</button>
+									</form>
+								</div>
+							</div>
+						</dialog>
 					</div>
 				</div>
 			) : null}

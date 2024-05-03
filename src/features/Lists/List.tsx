@@ -140,9 +140,10 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 						// the hidden class is not strictly necessary, but it is needed in this case because the dropdown menu open on the next list when the
 						// list is deleted. This hides the menu until the user clicks on another list.
 						className={
-							'dropdown-content dropdown-left menu z-[1] p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] ' +
+							'dropdown-content dropdown-left absolute menu p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] ' +
 							(activeList?.id !== listData.id && 'hidden')
 						}
+						style={{ zIndex: 1000 }}
 					>
 						<li onClick={() => setEditingId(listData.id)}>
 							<p>edit</p>
