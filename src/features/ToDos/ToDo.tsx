@@ -14,15 +14,11 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 	const [deleteToDo] = useDeleteToDoMutation()
 	const [updateToDo] = useUpdateToDoMutation()
 
-	function handleShowDelete() {
-		// @ts-ignore
-		document.getElementById('my_modal_1')?.showModal?.()
-	}
-
 	const {
 		register,
 		reset,
 		handleSubmit,
+		watch,
 		formState: { errors },
 	} = useForm()
 
@@ -50,22 +46,28 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 		}
 	}, [])
 
-	const handleCancel = useCallback((e: React.MouseEvent) => {
-		console.log('handleCancel')
-		e.stopPropagation()
-		e.preventDefault()
-		setEditingId(null)
-	}, [])
-
-	const handleFormBlur = (e: React.FormEvent) => {
+	const handleFormBlur = (toDo: ToDoType, e: React.FormEvent) => {
+		const fieldValues = watch()
 		// @ts-ignore
-		if(e?.relatedTarget !== null && e.relatedTarget?.classList.contains('cancel-edit')) {
-			console.log('Do nothing because cancel was clicked')
-		}else{
-			console.log('form was blurred', e)
+		if (e?.relatedTarget !== null && !e.relatedTarget?.classList.contains('cancel-edit') && !e.relatedTarget?.classList.contains('on-form')) {
+			handleUpdate(toDo, fieldValues)
+			// @ts-ignore
+		} else if (e?.relatedTarget !== null && e.relatedTarget?.classList.contains('on-form')) {
+			e.preventDefault()
+			// @ts-ignore
+		} else if (e?.relatedTarget !== null) {
+			e.preventDefault()
+		} else {
+			setEditingId(null)
 		}
-		// handleSubmit((values) => handleUpdate(toDoData, values))
 	}
+
+	// Attached to delete message modal to bring it up when delete button is clicked.
+	// Putting this in a function to use @ts-ignore.
+	const handleShowDeleteModal = useCallback(() => {
+		// @ts-ignore
+		document.getElementById('my_modal_1')?.showModal?.()
+	}, [])
 
 	return (
 		<div
@@ -92,14 +94,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 				{/* to-do title and title editing form */}
 				<div className="flex-1">
 					{editingId === toDoData.id ? (
-						<form
-							className="flex justify-between"
-							// can't use onBlur because it will trigger changing fields within the editing form
-							// and would not allow users to cancel changes with triggering onBlur.
-							// Is there a way to prevent onBlur when navigating elements within the form?
-							onSubmit={handleSubmit((values) => handleUpdate(toDoData, values))}
-							onBlur={handleFormBlur}
-						>
+						<form className="flex justify-between" onBlur={(e) => handleFormBlur(toDoData, e)}>
 							<input
 								{...register('title', {
 									required: 'title required*',
@@ -123,14 +118,16 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 									},
 								})}
 								type="date"
-								className={'input input-outline rounded-md mr-6 w-full ' + (errors?.dueDate ? 'input-error' : 'input-secondary')}
+								className={
+									'input input-outline rounded-md mr-6 w-full on-form ' + (errors?.dueDate ? 'input-error' : 'input-secondary')
+								}
 							/>
 
-							<button className="btn btn-ghost btn-round mr-2">
+							<button className="btn btn-ghost btn-round mr-2" type="button">
 								<GoCheck className="w-5 h-5" />
 							</button>
 
-							<button className="btn btn-ghost btn-round cancel-edit" onClick={handleCancel} type="button">
+							<button className="btn btn-ghost btn-round cancel-edit" onClick={() => setEditingId(null)} type="button">
 								<GoX className="w-5 h-5" />
 							</button>
 						</form>
@@ -158,33 +155,9 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 				</div>
 			</div>
 
-			{/* Open the modal using document.getElementById('ID').showModal() method */}
-
 			{/* dropdown menu and delete button */}
 			{editingId !== toDoData.id ? (
 				<div className="flex items-center">
-					{/* dropdown button for to-do */}
-					{/* Not currently being used */}
-					{/* <div className="dropdown dropdown-bottom dropdown-end">
-						<div tabIndex={0} role="button" className="btn btn-ghost btn-round mr-2">
-							<GoKebabHorizontal className="w-4 h-4" />
-						</div>
-						<ul
-							tabIndex={0}
-							className={
-								'dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg z-[10] absolute w-52 '
-							}
-						>
-							<li onClick={() => setEditingId(toDoData.id)}>
-								<p>edit</p>
-							</li>
-
-							<li onClick={() => handleUpdate(toDoData, { dueDate: null })}>
-								<p>remove due-date</p>
-								</li>
-								</ul>
-							</div> */}
-
 					{/* edit button */}
 					<div>
 						<button className="btn btn-ghost mr-2" onClick={() => setEditingId(toDoData.id)}>
@@ -193,7 +166,7 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 					</div>
 					{/* delete to-do button */}
 					<div>
-						<button className="btn btn-ghost" onClick={handleShowDelete}>
+						<button className="btn btn-ghost" onClick={handleShowDeleteModal}>
 							<GoTrash className="w-5 h-5" />
 						</button>
 						<dialog id="my_modal_1" className="modal">
@@ -203,10 +176,10 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								<div className="modal-action flex justify-around">
 									<form method="dialog" className="flex items-center justify-around">
 										{/* if there is a button in form, it will close the modal */}
-										<button className="btn" onClick={() => onDelete(toDoData)}>
+										<button className="btn mr-2" onClick={() => onDelete(toDoData)}>
 											Ok
 										</button>
-										<button className="btn mr-2">Cancel</button>
+										<button className="btn">Cancel</button>
 									</form>
 								</div>
 							</div>
@@ -214,7 +187,6 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 					</div>
 				</div>
 			) : null}
-			{/* to-do due-date and editing form */}
 		</div>
 	)
 }
