@@ -12,19 +12,11 @@
         @apply flex items-center justify-between rounded-lg px-2 py-3 mb-3 bg-neutral text-neutral-content;
     }
 
-    .list-dropdown {
-        @apply dropdown-content dropdown-left menu absolute p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] z-[1] -translate-x-[4rem];
-    }
-
     .to-do-not-completed {
         @apply flex items-center justify-between rounded-lg transition-all p-3 mb-3 bg-neutral hover:bg-base-300;
     }
 
     .to-do-completed {
         @apply flex items-center justify-between rounded-lg transition-all p-3 mb-3 bg-base-200 hover:bg-base-300; 
-    }
-    
-    .to-do-dropdown {
-        @apply dropdown-content dropdown-left z-[1] menu p-2 shadow bg-base-300 border border-primary rounded-lg z-[10] absolute w-52; 
     }
 }

@@ -22,7 +22,7 @@ function DashboardPage() {
 	return (
 		<div className="w-screen h-screen overflow-hidden">
 			{/* navigation bar with profile controls */}
-			<div className="flex items-center h-[80px]">
+			<div className="flex items-center h-[80px] bg-base-300">
 				<Navigation />
 			</div>
 
@@ -31,7 +31,7 @@ function DashboardPage() {
 			<div className="px-3">
 				<div className="flex flex-row max-w-screen-lg mx-auto" style={{ height: 'calc(100vh - 80px)' }}>
 					{/* List Column */}
-					<div className="flex flex-col px-2 grow-0 shrink-0 basis-4/12">
+					<div className="flex flex-col px-2 grow-0 shrink-0 basis-4/12 bg-base-200">
 						{/* default list (non list associated to-dos) button */}
 						<div className="flex-none mt-2 mb-4">
 							<DefaultList />
@@ -42,12 +42,12 @@ function DashboardPage() {
 
 						{/* list sort controls */}
 						<div className="flex-none mt-4">
-							<OrderLists setOrderedLists={setOrderedLists} setListsStatus={setListsStatus}/>
+							<OrderLists setOrderedLists={setOrderedLists} setListsStatus={setListsStatus} />
 						</div>
 
 						{/* lists list */}
 						<div className="flex-auto overflow-y-auto pr-1 mt-4">
-							<Lists orderedLists={orderedLists} listsStatus={listsStatus}/>
+							<Lists orderedLists={orderedLists} listsStatus={listsStatus} />
 						</div>
 
 						{/* new list form */}
