@@ -90,7 +90,9 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 				{/* to-do title and title editing form */}
 				<div className="flex-1">
 					{editingId === toDoData.id ? (
-						<form className="flex justify-between" onBlur={(e) => handleFormBlur(toDoData, e)}>
+						<form className="flex justify-between" 
+						onSubmit={handleSubmit((values) => handleUpdate(toDoData, values))}
+						onBlur={(e) => handleFormBlur(toDoData, e)}>
 							<input
 								{...register('title', {
 									required: 'title required*',
@@ -178,10 +180,10 @@ function ToDo({ toDoData, editingId, setEditingId }: ToDoPropsWithEditingId) {
 								<div className="modal-action flex justify-around">
 									<form method="dialog" className="flex items-center justify-around">
 										{/* if there is a button in form, it will close the modal */}
-										<button className="btn mr-2" onClick={() => onDelete(toDoData)}>
+										<button className="btn mr-3 border border-secondary" onClick={() => onDelete(toDoData)}>
 											Ok
 										</button>
-										<button className="btn">Cancel</button>
+										<button className="btn border border-neutral">Cancel</button>
 									</form>
 								</div>
 							</div>
