@@ -8,7 +8,7 @@ import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSli
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
 import ListIcon from '../../components/ListIcon'
-import { GoKebabHorizontal, GoCheck, GoX } from 'react-icons/go'
+import { GoKebabHorizontal, GoCheck, GoX, GoTrash } from 'react-icons/go'
 
 import type { List as ListType, UpdateList } from '../../api/listsSlice.js'
 import type { ListPropsWithEditingId } from './ListsList.js'
@@ -69,6 +69,13 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 			console.log(error)
 			if (error?.status === 401) logout()
 		}
+	}, [])
+
+	// Attached to delete message modal to bring it up when delete button is clicked.
+	// Putting this in a function to use @ts-ignore.
+	const handleShowDeleteModal = useCallback(() => {
+		// @ts-ignore
+		document.getElementById('my_modal_1')?.showModal?.()
 	}, [])
 
 	useEffect(() => {
@@ -140,7 +147,7 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 						// the hidden class is not strictly necessary, but it is needed in this case because the dropdown menu open on the next list when the
 						// list is deleted. This hides the menu until the user clicks on another list.
 						className={
-							'dropdown-content dropdown-left absolute menu p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] ' +
+							'dropdown-content dropdown-left menu p-2 shadow bg-base-300 text-base-content border border-secondary rounded-md w-[7rem] ' +
 							(activeList?.id !== listData.id && 'hidden')
 						}
 						style={{ zIndex: 1000 }}
@@ -149,9 +156,26 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 							<p>edit</p>
 						</li>
 
-						<li onClick={() => onDelete(listData.id)}>
-							<p className="text-error">delete!</p>
-						</li>
+						<div>
+							<li className="" onClick={handleShowDeleteModal}>
+								<p className='text-error'>delete!</p>
+							</li>
+							<dialog id="my_modal_1" className="modal">
+								<div className="modal-box">
+									<h3 className="font-bold text-lg text-rose-400 text-center">Warning!</h3>
+									<p className="py-4 text-center">This action is irreversible. Are you sure you would like to proceed?</p>
+									<div className="modal-action flex justify-around">
+										<form method="dialog" className="flex items-center justify-around">
+											{/* if there is a button in form, it will close the modal */}
+											<button className="btn mr-3 border border-secondary" onClick={() => onDelete(listData.id)}>
+												Ok
+											</button>
+											<button className="btn border border-neutral">Cancel</button>
+										</form>
+									</div>
+								</div>
+							</dialog>
+						</div>
 					</ul>
 				</div>
 			)}
