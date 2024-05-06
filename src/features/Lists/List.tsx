@@ -8,7 +8,7 @@ import { useDeleteListMutation, useUpdateListMutation } from '../../api/listsSli
 import { useDeleteToDosByListMutation } from '../../api/toDosSlice.js'
 
 import ListIcon from '../../components/ListIcon'
-import { GoKebabHorizontal, GoCheck, GoX, GoTrash } from 'react-icons/go'
+import { GoKebabHorizontal, GoCheck, GoX } from 'react-icons/go'
 
 import type { List as ListType, UpdateList } from '../../api/listsSlice.js'
 import type { ListPropsWithEditingId } from './ListsList.js'
@@ -26,6 +26,7 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 		register,
 		reset,
 		handleSubmit,
+		watch,
 		formState: { errors: formErrors },
 	} = useForm()
 
@@ -82,6 +83,18 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 		if (listData.id === activeList?.id && listData.title !== activeList.title) dispatch(setActiveList(listData))
 	}, [listData])
 
+	// onBlur event handler for the form to update the list data when the user clicks outside the form.
+	const handleFormBlur = useCallback(
+		(list: ListType, e: React.FormEvent) => {
+			const fieldValues = watch()
+			// @ts-ignore
+			if (e?.relatedTarget?.classList?.contains('on-form')) {
+				e.preventDefault()
+			} else handleUpdate(list, fieldValues)
+		},
+		[watch, handleUpdate]
+	)
+
 	return (
 		// div contains group tailwind class to interact with dropdown menu
 		<div
@@ -102,7 +115,11 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 				<div>
 					{/* both the title and a title input field */}
 					{editingId === listData.id && listData?.id === activeList?.id ? (
-						<form className="flex justify-between" onSubmit={handleSubmit((values) => handleUpdate(listData, values))}>
+						<form
+							className="flex justify-between"
+							onBlur={(e) => handleFormBlur(listData, e)}
+							onSubmit={handleSubmit((values) => handleUpdate(listData, values))}
+						>
 							<input
 								{...register('title', {
 									required: 'title required*',
@@ -120,11 +137,11 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 								placeholder={String(formErrors?.title?.message || '')}
 								autoFocus
 							/>
-							<button className="btn btn-ghost btn-round btn-sm mr-0.5">
+							<button className="btn btn-ghost btn-round btn-sm mr-0.5 on-form">
 								<GoCheck className="w-4 h-4" />
 							</button>
 
-							<button className="btn btn-ghost btn-round btn-sm" onClick={() => setEditingId(null)} type="button">
+							<button className="btn btn-ghost btn-round btn-sm on-form" onClick={() => setEditingId(null)} type="button">
 								<GoX className="w-4 h-4" />
 							</button>
 						</form>
@@ -158,7 +175,7 @@ function List({ listData, editingId, setEditingId }: ListPropsWithEditingId) {
 
 						<div>
 							<li className="" onClick={handleShowDeleteModal}>
-								<p className='text-error'>delete!</p>
+								<p className="text-error">delete!</p>
 							</li>
 							<dialog id="my_modal_1" className="modal">
 								<div className="modal-box">
